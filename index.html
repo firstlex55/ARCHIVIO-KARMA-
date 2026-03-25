@@ -851,7 +851,7 @@ select.inp{cursor:pointer;}
     </div>
     <div class="modal-actions">
       <button class="btn btn-danger btn-sm" onclick="deleteTratta()" style="margin-right:auto;">🗑 Elimina</button>
-      <button class="btn btn-secondary" onclick="closeModal('modalEditTratta')">Annulla</button>
+      <button class="btn btn-secondary" onclick="closeModal('modalEditTratta');var ab=document.querySelector('#modalEditTratta .btn-secondary.btn-sm');if(ab)ab.style.display=''">Annulla</button>
       <button class="btn btn-primary" onclick="saveEditTratta()">💾 Salva</button>
     </div>
   </div>
@@ -2341,6 +2341,58 @@ function setPill(carrier) {
 // ================================================================
 let editingTratta = null; // {from, to}
 
+
+// Open edit modal for a SINGLE carrier price record
+function openEditSingle(globalIdx) {
+  var p = DB.trasporti[globalIdx];
+  if (!p) return;
+  editingTratta = { from: p.from, to: p.to, singleIdx: globalIdx };
+
+  document.getElementById('editTrattaTitle').textContent = '✏️ ' + p.carrier;
+  document.getElementById('editTrattaRoute').innerHTML =
+    '<strong style="color:#fff">' + p.from + '</strong>' +
+    '<span style="color:var(--t2)"> → </span>' +
+    '<strong style="color:var(--green)">' + p.to + '</strong>';
+
+  var provChecked = p.provisional ? 'checked' : '';
+  var treatChecked = p.negotiable ? 'checked' : '';
+  var html = '<div class="erow" data-idx="' + globalIdx + '">' +
+    '<div class="erow-fields">' +
+      '<div class="erow-field-group" style="flex:1;">' +
+        '<div class="erow-label">Prezzo</div>' +
+        '<input class="erow-input" id="singlePrice" type="number" step="0.01" value="' + p.price + '">' +
+      '</div>' +
+      '<div class="erow-field-group" style="width:110px;">' +
+        '<div class="erow-label">Unità</div>' +
+        '<select class="erow-select" id="singleUnit">' +
+          '<option value="€/vg"' + (p.unit==='€/vg'?' selected':'') + '>€/viaggio</option>' +
+          '<option value="€/ton"' + (p.unit==='€/ton'?' selected':'') + '>€/ton</option>' +
+        '</select>' +
+      '</div>' +
+    '</div>' +
+    '<div class="erow-field-group">' +
+      '<div class="erow-label">Condizioni pagamento</div>' +
+      '<input class="erow-input" id="singleCond" type="text" value="' + (p.conditions||'') + '" placeholder="es. BB 60 gg FM">' +
+    '</div>' +
+    '<label class="erow-prov-label">' +
+      '<input type="checkbox" id="singleProvisional" ' + provChecked + '> ' +
+      '<span>⚠️ Prezzo da confermare</span>' +
+    '</label>' +
+    '<label class="erow-prov-label" style="background:rgba(96,165,250,.10);border-color:rgba(96,165,250,.25);">' +
+      '<input type="checkbox" id="singleNegotiable" ' + treatChecked + '> ' +
+      '<span style="color:#7cb9ff;">🤝 Prezzo trattabile</span>' +
+    '</label>' +
+  '</div>';
+
+  document.getElementById('editPricesList').innerHTML = html;
+
+  // Hide the add-carrier button for single edit
+  var addBtn = document.querySelector('#modalEditTratta .btn-secondary.btn-sm');
+  if (addBtn) addBtn.style.display = 'none';
+
+  document.getElementById('modalEditTratta').classList.remove('hidden');
+}
+
 function openEditTratta(from, to) {
   editingTratta = {from, to};
   document.getElementById('editTrattaTitle').textContent = '✏️ Modifica tratta';
@@ -2431,6 +2483,31 @@ function addPriceRowInEdit() {
 }
 
 function saveEditTratta() {
+  // Single record edit (from openEditSingle)
+  if (editingTratta && editingTratta.singleIdx !== undefined) {
+    var idx = editingTratta.singleIdx;
+    var p = DB.trasporti[idx];
+    if (p) {
+      var priceEl = document.getElementById('singlePrice');
+      var unitEl  = document.getElementById('singleUnit');
+      var condEl  = document.getElementById('singleCond');
+      var provEl  = document.getElementById('singleProvisional');
+      var negEl   = document.getElementById('singleNegotiable');
+      if (priceEl) p.price      = parseFloat(priceEl.value) || p.price;
+      if (unitEl)  p.unit       = unitEl.value;
+      if (condEl)  p.conditions = condEl.value.trim();
+      if (provEl)  p.provisional = provEl.checked;
+      if (negEl)   p.negotiable  = negEl.checked;
+    }
+    closeModal('modalEditTratta');
+    // Restore add button
+    var addBtn = document.querySelector('#modalEditTratta .btn-secondary.btn-sm');
+    if (addBtn) addBtn.style.display = '';
+    saveAndSync(); refreshAll();
+    showToast('✅ Prezzo aggiornato', 'ok');
+    return;
+  }
+  // Full tratta edit (from openEditTratta)
   var rows = document.querySelectorAll('#editPricesList .erow');
   rows.forEach(function(row) {
     if (row.dataset.deleted) {
@@ -2851,12 +2928,14 @@ window.renderRapida = function(routes, filterCarrier) {
       out += '<div class="price-section-hd">' + unitLabel + '</div>';
       list.forEach(function(p) {
         var isBest = isBestFn(p);
-        out += '<div class="price-row' + (isBest ? ' best' : '') + '">' +
-          '<div class="price-row-who">' + p.carrier + '</div>' +
+        var globalIdx = DB.trasporti.indexOf(p);
+        out += '<div class="price-row' + (isBest ? ' best' : '') + '" onclick="openEditSingle(' + globalIdx + ')" style="cursor:pointer;">' +
+          '<div class="price-row-who">' + p.carrier + (p.provisional ? ' <span style="color:var(--amber);font-size:9px;">⚠</span>' : '') + '</div>' +
           '<div class="price-row-right">' +
             '<span class="price-row-val">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '</span>' +
             '<span class="price-row-unit">' + p.unit + '</span>' +
             (p.conditions ? '<span class="price-row-cond">' + p.conditions + '</span>' : '') +
+            (p.negotiable ? '<span class="price-row-cond" style="color:#7cb9ff;">🤝</span>' : '') +
           '</div>' +
         '</div>';
       });
