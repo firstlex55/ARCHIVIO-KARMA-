@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" style="background:#0b0f16;">
 <head>
 <meta charset="UTF-8">
+<meta name="theme-color" content="#0b0f16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Archivio Tariffe</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://accounts.google.com/gsi/client"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -81,7 +84,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .cpill.all.on{background:var(--amberdim);border-color:var(--amber);color:var(--amber);}
 
 /* RROW — card tratta */
-.rrow{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b1);border-left:3px solid var(--amber);border-radius:var(--r);margin-bottom:10px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.3);transition:transform .15s,box-shadow .15s;cursor:pointer;}
+.rrow {
+  background: linear-gradient(160deg, var(--s1) 0%, var(--s2) 100%);
+  border: 1px solid var(--b1);
+  border-left: 3px solid var(--amber);
+  border-radius: var(--r); margin-bottom: 10px; overflow: hidden;
+  box-shadow: 0 3px 14px rgba(0,0,0,.3);
+  transition: transform .12s, box-shadow .12s;
+  cursor: pointer;
+}
 .rrow:hover{transform:translateY(-1px);border-color:var(--green);border-left-color:var(--green);box-shadow:0 5px 20px rgba(52,211,153,.10);}
 .rrow-head{display:flex;align-items:flex-start;justify-content:space-between;padding:11px 13px 7px;gap:8px;}
 .rrow-route{flex:1;min-width:0;}
@@ -90,20 +101,25 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .rrow-arrow{font-size:11px;color:var(--green);flex-shrink:0;}
 .rrow-to{font-size:13px;font-weight:700;color:var(--green);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .rrow-best{text-align:right;flex-shrink:0;}
-.rrow-best-who{font-size:9px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.05em;}
-.rrow-best-price{font-size:18px;font-weight:900;color:var(--amber);line-height:1.1;}
+.rrow-best-who{font-size:9px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.06em;}
+.rrow-best-price{font-size:20px;font-weight:900;color:var(--amber);line-height:1;}
 .rrow-best-unit{font-size:9px;font-weight:700;color:rgba(251,146,60,.7);}
 
 /* CHIPS — lista verticale trasportatori */
-.chips{display:flex;flex-direction:column;gap:0;padding:0 0 4px;}
-.chip{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;gap:10px;border-bottom:1px solid rgba(255,255,255,.05);background:transparent;transition:background .1s;}
+.chips { display: flex; flex-direction: column; gap: 0; }
+.chip {
+  display: flex; align-items: center;
+  padding: 9px 14px; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  background: transparent;
+}
 .chip:last-child{border-bottom:none;}
 .chip:hover{background:rgba(255,255,255,.03);}
 .chip.best{background:rgba(251,146,60,.08);border-left:3px solid var(--amber);padding-left:11px;}
-.chip-who{font-size:13px;font-weight:700;color:#c0d4f0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chip-who{font-size:13px;font-weight:700;color:#dce8ff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .chip.best .chip-who{color:var(--amber);font-weight:800;}
 .chip-price-row{display:flex;align-items:baseline;gap:3px;flex-shrink:0;}
-.chip-val{font-size:16px;font-weight:800;color:#e8f0ff;}
+.chip-val{font-size:16px;font-weight:800;color:#ffffff;}
 .chip.best .chip-val{color:var(--amber);}
 .chip-unit{font-size:10px;font-weight:600;color:#5a7090;}
 .chip.best .chip-unit{color:rgba(251,146,60,.65);}
@@ -427,9 +443,100 @@ select.inp{cursor:pointer;}
 .margin-result-pct { font-size: 10px; font-weight: 700; }
 .margin-result-pct.pos { color: rgba(52,211,153,.7); }
 .margin-result-pct.neg { color: rgba(248,113,113,.7); }
+</sty
+.chip-section-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px 4px;
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .12em; color: #4a6480;
+  background: rgba(0,0,0,.2);
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.chip-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: rgba(255,255,255,.06);
+}
+.chip-cond {
+  font-size: 9px; font-weight: 500; color: #3a5068;
+  padding: 1px 0 3px 14px;
+}
+
+/* ═══ TRANSPORT CARDS ══════════════════════════════════ */
+.results-count {
+  font-size: 11px; color: var(--t2); margin-bottom: 10px; padding: 0 2px;
+}
+
+/* Price section header inside card */
+.price-section { }
+.price-section-hd {
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .12em; color: #5a7898;
+  padding: 5px 14px 3px;
+  background: rgba(0,0,0,.25);
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+
+/* Single carrier row */
+.price-row {
+  display: flex; align-items: center;
+  padding: 9px 14px; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.price-row:last-child { border-bottom: none; }
+.price-row.best {
+  background: rgba(251,146,60,.07);
+  border-left: 3px solid rgba(251,146,60,.65);
+  padding-left: 11px;
+}
+.price-row-who {
+  font-size: 13px; font-weight: 700; color: #dce8ff;
+  flex: 1; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.price-row.best .price-row-who { color: #fbbf24; font-weight: 800; }
+.price-row-right {
+  display: flex; align-items: baseline; gap: 5px; flex-shrink: 0;
+}
+.price-row-val {
+  font-size: 15px; font-weight: 800; color: #fff;
+}
+.price-row.best .price-row-val { color: #fbbf24; }
+.price-row-unit {
+  font-size: 10px; font-weight: 600; color: #4a6070;
+}
+.price-row.best .price-row-unit { color: rgba(251,191,36,.65); }
+.price-row-cond {
+  font-size: 9px; color: #3a5060; margin-left: 2px; flex-shrink: 0;
+}
+
+/* Edit/delete on hover */
+.rrow-acts {
+  display: none; gap: 5px; padding: 4px 14px 10px; justify-content: flex-end;
+}
+.rrow:hover .rrow-acts, .rrow:active .rrow-acts { display: flex; }
+.act {
+  padding: 5px 12px; border-radius: 7px; font-size: 11px;
+  font-weight: 700; cursor: pointer; border: none;
+}
+.act-edit { background: var(--gdim); color: var(--green); border: 1px solid rgba(52,211,153,.4); }
+.act-del  { background: var(--reddim); color: var(--red); border: 1px solid rgba(248,113,113,.4); }
+
+/* Chip section label */
+.chip-section-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .12em; color: #4a6480;
+  padding: 6px 14px 3px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  background: rgba(0,0,0,.2);
+}
+.chip-cond {
+  font-size: 9px; font-weight: 500; color: #3a5068;
+  padding: 1px 0 3px 14px;
+}
+
 </style>
 </head>
-<body>
+<body style="background:#0b0f16;">
 
 <div class="header">
   <div class="h-logo">🚛</div>
@@ -438,7 +545,31 @@ select.inp{cursor:pointer;}
     <div class="h-sub">Trasporti &amp; Prodotti</div>
   </div>
   <div class="h-badge" id="headerBadge">0 tratte</div>
-  <div class="h-drive" id="driveStatus" onclick="handleDriveClick()">☁️ Drive</div>
+  <div class="h-drive" id="driveStatus" onclick="toggleDrivePanel()">☁️ Drive</div>
+</div>
+<!-- DRIVE PANEL -->
+<div id="drivePanel" class="drive-panel hidden">
+  <div class="drive-panel-inner">
+    <div class="dp-status-row">
+      <span id="dpStatusText" style="font-size:12px;font-weight:700;color:var(--t2);">☁️ Drive non connesso</span>
+      <span id="dpLastSync" style="font-size:10px;color:var(--t3);"></span>
+    </div>
+    <div class="dp-buttons">
+      <button class="dp-btn dp-save" onclick="driveSave();closeDrivePanel()" id="dpSaveBtn">☁️ Salva su Drive</button>
+      <button class="dp-btn dp-load" onclick="driveLoad();closeDrivePanel()" id="dpLoadBtn">📥 Carica da Drive</button>
+    </div>
+    <div class="dp-connect-row" id="dpConnectRow">
+      <button class="dp-btn dp-connect" onclick="handleDriveClick();closeDrivePanel()">🔗 Connetti Google Drive</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNSAVED BANNER -->
+<div id="unsavedBanner" class="unsaved-banner hidden">
+  <span class="unsaved-dot"></span>
+  <span class="unsaved-text">Modifiche non salvate su Drive</span>
+  <button class="unsaved-save" onclick="driveSave()">Salva ora</button>
+  <button class="unsaved-dismiss" onclick="dismissUnsaved()">✕</button>
 </div>
 
 <div class="tabs">
@@ -651,6 +782,68 @@ select.inp{cursor:pointer;}
 
 <script>
 
+
+// ═══ DRIVE PANEL FUNCTIONS ═══════════════════════════════
+var _isDirty = false;
+var _drivePanel = false;
+var _dirtyTimer = null;
+
+function toggleDrivePanel() {
+  _drivePanel = !_drivePanel;
+  var panel = document.getElementById('drivePanel');
+  if (panel) panel.classList.toggle('hidden', !_drivePanel);
+  if (_drivePanel) updateDrivePanelStatus();
+}
+function closeDrivePanel() {
+  _drivePanel = false;
+  var panel = document.getElementById('drivePanel');
+  if (panel) panel.classList.add('hidden');
+}
+function updateDrivePanelStatus() {
+  var txt = document.getElementById('dpStatusText');
+  var ls  = document.getElementById('dpLastSync');
+  var cr  = document.getElementById('dpConnectRow');
+  var sb  = document.getElementById('dpSaveBtn');
+  var lb  = document.getElementById('dpLoadBtn');
+  if (!txt) return;
+  var connected = !!driveAccessToken;
+  txt.textContent = connected ? '✅ Drive connesso' : '☁️ Drive non connesso';
+  txt.style.color = connected ? 'var(--green)' : 'var(--t2)';
+  if (ls) {
+    var lastSync = DB.lastUpdate;
+    if (lastSync) { var d = new Date(lastSync); ls.textContent = 'Aggiornato: ' + d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}); }
+  }
+  if (cr) cr.className = 'dp-connect-row' + (connected ? '' : ' show');
+  if (sb) sb.style.opacity = connected ? '1' : '.45';
+  if (lb) lb.style.opacity = connected ? '1' : '.45';
+}
+function markDirty() {
+  try { if (!driveAccessToken) return; } catch(e) { return; }
+  _isDirty = true;
+  if (_dirtyTimer) clearTimeout(_dirtyTimer);
+  _dirtyTimer = setTimeout(showUnsavedBanner, 3000);
+}
+function showUnsavedBanner() {
+  try { if (!_isDirty || !driveAccessToken) return; } catch(e) { return; }
+  var b = document.getElementById('unsavedBanner');
+  if (b) b.classList.remove('hidden');
+}
+function dismissUnsaved() {
+  _isDirty = false;
+  if (_dirtyTimer) clearTimeout(_dirtyTimer);
+  var b = document.getElementById('unsavedBanner');
+  if (b) b.classList.add('hidden');
+}
+function hideUnsavedBanner() { dismissUnsaved(); }
+
+document.addEventListener('click', function(e) {
+  if (!_drivePanel) return;
+  var panel = document.getElementById('drivePanel');
+  var btn   = document.getElementById('driveStatus');
+  if (panel && btn && !panel.contains(e.target) && !btn.contains(e.target)) closeDrivePanel();
+});
+
+
 // ===================== DATA STORE =====================
 let DB = {
   trasporti: [],   // [{from, to, carrier, price, unit, conditions, rev}]
@@ -662,7 +855,7 @@ let importMode = 'add';
 let activeProdottoFilter = '';
 
 // ===================== DATI PDF PRECARICATI (REV 02/2026) =====================
-const PDF_DATA = [{"from": "Andalo Valtellino (SO)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 470.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "CEVOLO Trasporti", "price": 580.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "PADANA TRASPORTI", "price": 510.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 630.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "CEVOLO Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 600.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 32.7, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 32.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "UDERZO", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Barberino Tavernelle (FI)", "to": "Mezzano (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 400.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 400.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 520.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 510.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 425.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 440.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "RUFFINI", "price": 350.0, "unit": "€/vg", "conditions": "", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 790.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 780.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "UNITRAG", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castelfranco Emilia (MO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelfranco Emilia (MO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 410.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 400.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 500.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 420.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 715.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 715.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 715.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 480.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 790.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 1000.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 820.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "FRAULINI TRASPORTI", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "UDERZO", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "CEVOLO Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 32.5, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 600.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 32.5, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "UDERZO", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "CEVOLO Trasporti", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "ASCHIERI TRASPORTI", "price": 410.0, "unit": "€/vg", "conditions": "BB 30 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 310.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 380.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "S. Leo (RN)", "carrier": "COAP", "price": 620.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 520.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "COAP", "price": 460.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "CONECO", "price": 650.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 850.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 400.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 390.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 365.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 340.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 330.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 16.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 750.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Firenzuola (FI)", "to": "Mezzano (RA)", "carrier": "C.M. TRASPORTI", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Firenzuola (FI)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 280.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 420.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 410.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "COAP", "price": 460.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 21.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 290.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 800.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 750.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 240.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 270.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 18.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 420.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "STEGAGNO", "price": 420.0, "unit": "€/vg", "conditions": "RIB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Imola (BO)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 250.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Imola (BO)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 255.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 200.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 250.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 250.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "PADANA TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 25.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "CONECO", "price": 400.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "PADANA TRASPORTI", "price": 330.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 425.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 445.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 450.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 250.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 300.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 310.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 290.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CIRIONI Trasporti", "price": 525.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 27.5, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CONECO", "price": 700.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 28.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 715.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "AVIO TRASPORTI", "price": 380.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 365.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "PADANA TRASPORTI", "price": 320.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "AVIO TRASPORTI", "price": 460.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 470.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 400.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mondovì (CN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 24.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Tarmassia IdS (VR)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 500.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 540.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 650.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 320.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 460.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 19.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 300.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 330.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "PADANA TRASPORTI", "price": 350.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 300.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 370.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 370.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 350.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "San Giorgio di Piano (BO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 330.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "San Giorgio di Piano (BO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 390.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Tirano (SO)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Tirano (SO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 700.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Vione - Stadolina (BS)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 700.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Vione - Stadolina (BS)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 700.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}];
+const PDF_DATA = [{"from": "Andalo Valtellino (SO)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 470.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "CEVOLO Trasporti", "price": 580.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "PADANA TRASPORTI", "price": 510.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 630.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "CEVOLO Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 600.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 32.5, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 32.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "UDERZO", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Barberino Tavernelle (FI)", "to": "Mezzano (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 400.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 400.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 520.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 510.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 425.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 440.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "RUFFINI", "price": 350.0, "unit": "€/vg", "conditions": "", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 790.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 780.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "UNITRAG", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castelfranco Emilia (MO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelfranco Emilia (MO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 410.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 400.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 500.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 420.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 715.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 715.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 715.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 480.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 790.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 1000.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 820.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "FRAULINI TRASPORTI", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "UDERZO", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "CEVOLO Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 32.5, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 600.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 32.5, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "UDERZO", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "CEVOLO Trasporti", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "ASCHIERI TRASPORTI", "price": 410.0, "unit": "€/vg", "conditions": "BB 30 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 310.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 380.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "S. Leo (RN)", "carrier": "COAP", "price": 620.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 520.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "COAP", "price": 460.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "CONECO", "price": 650.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 850.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 400.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 390.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 365.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 340.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 330.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 16.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 750.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Firenzuola (FI)", "to": "Mezzano (RA)", "carrier": "C.M. TRASPORTI", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Firenzuola (FI)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 280.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 420.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 410.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "COAP", "price": 460.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 21.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 290.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 800.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 750.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 240.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 270.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 18.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 420.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "STEGAGNO", "price": 420.0, "unit": "€/vg", "conditions": "RIB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Imola (BO)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 250.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Imola (BO)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 255.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 200.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 250.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 250.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "PADANA TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 25.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "CONECO", "price": 400.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "PADANA TRASPORTI", "price": 330.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 425.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 445.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 450.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 250.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 300.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 310.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 290.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CIRIONI Trasporti", "price": 525.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 27.5, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CONECO", "price": 700.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 28.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 715.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "AVIO TRASPORTI", "price": 380.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 365.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "PADANA TRASPORTI", "price": 320.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "AVIO TRASPORTI", "price": 460.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 470.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 400.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mondovì (CN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 24.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Tarmassia IdS (VR)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 500.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 540.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 650.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 320.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 460.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 19.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 300.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 330.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "PADANA TRASPORTI", "price": 350.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 300.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 370.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 370.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 350.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "San Giorgio di Piano (BO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 330.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "San Giorgio di Piano (BO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 390.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Tirano (SO)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Tirano (SO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 700.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Vione - Stadolina (BS)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 700.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Vione - Stadolina (BS)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 700.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}];
 
 const KARMA_DATA = [{"prodotto": "Cippato", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 38.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 38.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da Ardenghi (Dosolo (MN))"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 65.0, "unita": "€/ton", "data": "", "note": "→ Bagnolo di Po (RO)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 65.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Carnovale", "luogo": "Colle Val d'Elsa (SI)", "prezzo": 50.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da Carnovale (Colle Val d'Elsa (SI))"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 55.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 55.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 95.0, "unita": "€/ton", "data": "", "note": "da Incontrato (Bientina (PI))"}, {"prodotto": "Lolla di Farro", "tipo": "acquisto", "entity": "Poggio al Farro", "luogo": "Firenzuola (FI)", "prezzo": 1.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Lolla di Farro", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 80.0, "unita": "€/ton", "data": "", "note": "da Poggio al Farro (Firenzuola (FI))"}, {"prodotto": "Lolla di Riso", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "Jolanda di Savoia (FE)", "prezzo": 30.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Lolla di Riso", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 70.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (Jolanda di Savoia (FE))"}, {"prodotto": "Pula/lolla mix cereali", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "S. Felice sul P.ro (MO)", "prezzo": 50.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Pula/lolla mix cereali", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (S. Felice sul P.ro (MO))"}, {"prodotto": "Sfarinato cereali mix", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "S. Felice sul P.ro (MO)", "prezzo": 130.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Sfarinato cereali mix", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 155.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (S. Felice sul P.ro (MO))"}, {"prodotto": "Sfarinato sorgo/b", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "Jolanda di Savoia (FE)", "prezzo": 75.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Sfarinato sorgo/b", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 100.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (Jolanda di Savoia (FE))"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 55, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 120, "unita": "€/ton", "data": "", "note": ""}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Carnovale", "luogo": "Colle Val d'Elsa (SI)", "prezzo": 60, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Covi Eredi", "luogo": "Pesaro Urbino", "prezzo": 72.5, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 78, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Sicem Saga", "luogo": "Ciano d'Enza (RE)", "prezzo": 17, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Tacchella", "luogo": "Grezzana (VR)", "prezzo": 50, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "ToscoImballaggi", "luogo": "Cetica (AR)", "prezzo": 50, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Ind. L. Tirano", "luogo": "Tirano (SO)", "prezzo": 14, "unita": "€/mc", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Segheria L. Vivo", "luogo": "Vione-Stadolina (BS)", "prezzo": 15, "unita": "€/mc", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Vender Legnami", "luogo": "Mezzocorona (TN)", "prezzo": 17, "unita": "€/mc", "data": "", "note": "→ Tarmassia / Verolavecchia"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 120, "unita": "€/ton", "data": "", "note": "da Incontrato (Bientina)"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 115, "unita": "€/ton", "data": "", "note": "da Covi Eredi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 110, "unita": "€/ton", "data": "", "note": "da Carnovale"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 110, "unita": "€/ton", "data": "", "note": "da Carnovale / Incontrato / ToscoImballaggi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 105, "unita": "€/ton", "data": "", "note": "da Ind.L.Tirano / Segheria / ToscoImballaggi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 90, "unita": "€/ton", "data": "", "note": "da Tacchella"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 85, "unita": "€/ton", "data": "", "note": "da Ardenghi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 70, "unita": "€/ton", "data": "", "note": "da Sicem Saga"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "Trucioli&Derivati", "luogo": "Tarmassia (VR)", "prezzo": 20, "unita": "€/mc", "data": "", "note": "da Vender Legnami"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 19.5, "unita": "€/mc", "data": "", "note": "da Vender Legnami"}];
 
@@ -672,7 +865,7 @@ function forceReload() {
   DB.trasporti = PDF_DATA.map(function(r){ return Object.assign({},r); });
   DB.pdfLoaded = true; DB.pdfRev = 'REV 03/2026';
   save(); refreshAll();
-  // resetNotice removed
+  // removed
   showToast('✅ ' + DB.trasporti.length + ' prezzi caricati correttamente', 'ok');
 }
 
@@ -703,6 +896,7 @@ function init() {
 
 function save() {
   DB.lastUpdate = new Date().toISOString();
+  if (typeof markDirty === 'function') try { markDirty(); } catch(e) {}
   localStorage.setItem('archivio-tariffe-v3', JSON.stringify(DB));
 }
 
@@ -1539,21 +1733,6 @@ function deleteProdotto(idx) {
   save(); refreshAll();
 }
 
-function openImportProdottiModal() {
-  document.getElementById('fileInputProdotti').click();
-}
-
-// ===================== GESTIONE DATI =====================
-function reloadBuiltinData() {
-  if(!confirm('Questo sostituirà tutti i prezzi caricati da Excel con i dati REV 03/2026. Le tariffe manuali e i prodotti verranno mantenuti. Continuare?')) return;
-  DB.trasporti = DB.trasporti.filter(function(t){ return t.rev === 'Manuale' || !t.rev || !t.rev.startsWith('REV'); });
-  var builtinData = PDF_DATA.map(function(r){ return Object.assign({}, r); });
-  DB.trasporti = builtinData.concat(DB.trasporti);
-  DB.pdfLoaded = true; DB.pdfRev = 'REV 03/2026';
-  save(); refreshAll();
-  showToast('✅ Dati REV 03/2026 ricaricati: ' + builtinData.length + ' prezzi', 'ok');
-}
-// ===================== GESTIONE DATI =====================
 function exportData() {
   const blob = new Blob([JSON.stringify(DB,null,2)], {type:'application/json'});
   const a = document.createElement('a');
@@ -1860,46 +2039,58 @@ function driveDisconnect() {
   showToast('🔓 Drive disconnesso', 'warn');
 }
 
-function saveAndSync() {
-  save();
-  if(driveAccessToken) driveSave();
+
+function driveLoad() {
+  if (!driveAccessToken) { showToast('⚠️ Drive non connesso', 'warn'); return; }
+  setDriveStatus('syncing');
+  const headers = { 'Authorization': 'Bearer ' + driveAccessToken };
+  // Find file
+  fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='" + DRIVE_FILENAME + "'&fields=files(id,name,modifiedTime)", { headers })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (!data.files || !data.files.length) {
+        showToast('☁️ Nessun backup trovato su Drive', 'warn');
+        setDriveStatus('connected');
+        return;
+      }
+      const fileId = data.files[0].id;
+      return fetch('https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media', { headers });
+    })
+    .then(function(r){ if(r) return r.json(); })
+    .then(function(loaded) {
+      if (!loaded) return;
+      if (loaded.trasporti) DB.trasporti = loaded.trasporti;
+      if (loaded.prodotti)  DB.prodotti  = loaded.prodotti;
+      if (loaded.lastUpdate) DB.lastUpdate = loaded.lastUpdate;
+      save();
+      refreshAll();
+      setDriveStatus('connected');
+      showToast('📥 Dati caricati da Drive', 'ok');
+    })
+    .catch(function(e) {
+      setDriveStatus('error');
+      showToast('❌ Errore caricamento Drive: ' + e.message, 'warn');
+    });
 }
-
-// Rinnovo token silenzioso ogni 50 minuti
-setInterval(function() {
-  if(localStorage.getItem('driveConnected') && driveAccessToken) {
-    if(typeof google === "undefined" || !google.accounts || !google.accounts.oauth2) return;
-    try {
-      google.accounts.oauth2.initTokenClient({
-        client_id: DRIVE_CLIENT_ID,
-        scope: DRIVE_SCOPE,
-        prompt: 'none',
-        callback: function(r) {
-          if(r && !r.error && r.access_token) driveAccessToken = r.access_token;
-          else driveAccessToken = null;
-        }
-      }).requestAccessToken({ prompt: 'none' });
-    } catch(e) { driveAccessToken = null; }
-  }
-}, 50 * 60 * 1000);
-
-// Auto-riconnessione silenziosa all'avvio (solo se già connesso in precedenza)
 function tryAutoReconnect() {
   if(!localStorage.getItem('driveConnected')) return;
   if(typeof google === "undefined" || !google.accounts || !google.accounts.oauth2) return;
   try {
-    google.accounts.oauth2.initTokenClient({
+    var _rc = google.accounts.oauth2.initTokenClient({
       client_id: DRIVE_CLIENT_ID,
       scope: DRIVE_SCOPE,
       prompt: 'none',
+      hint: '',
       callback: function(r) {
         if(r && !r.error && r.access_token) {
           driveAccessToken = r.access_token;
           setDriveStatus('connected');
-          driveSave(); // smart sync all'avvio
+          // Connesso silenziosamente — nessuna azione automatica
         }
+        // Se errore (token scaduto, revocato) → non fare nulla, lascia status grey
       }
-    }).requestAccessToken({ prompt: 'none' });
+    });
+    _rc.requestAccessToken({ prompt: 'none' });
   } catch(e) {}
 }
 
@@ -2081,6 +2272,211 @@ function loadKarmaData() {
 function openImportProdottiModal(){document.getElementById('fileInputProdotti').click();}
 function saveAndSync(){ save(); }
 
+
+
+
+// ═══════════════════════════════════════════════════════
+// EXPORT / STAMPA A3
+// ═══════════════════════════════════════════════════════
+
+function openExportModal() {
+  // Populate from/to selects
+  var froms = [...new Set(DB.trasporti.map(function(r){return r.from;}) )].sort();
+  var tos   = [...new Set(DB.trasporti.map(function(r){return r.to;})  )].sort();
+  var carriers = [...new Set(DB.trasporti.map(function(r){return r.carrier;}))].sort();
+
+  var selFrom = document.getElementById('expFrom');
+  selFrom.innerHTML = '<option value="">— Tutte le basi —</option>' +
+    froms.map(function(f){ return '<option value="'+f.replace(/"/g,'&quot;')+'">'+f+'</option>'; }).join('');
+
+  var selTo = document.getElementById('expTo');
+  selTo.innerHTML = '<option value="">— Tutte le destinazioni —</option>' +
+    tos.map(function(t){ return '<option value="'+t.replace(/"/g,'&quot;')+'">'+t+'</option>'; }).join('');
+
+  // Carrier checkboxes
+  var carrierList = document.getElementById('expCarrierList');
+  carrierList.innerHTML = carriers.map(function(name) {
+    var safe = name.replace(/"/g,'&quot;').replace(/'/g,"&#39;");
+    return '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:700;color:#c0d4f0;">' +
+      '<input type="checkbox" class="expCarrier" value="'+safe+'" checked style="accent-color:var(--green);width:14px;height:14px;"> ' + name + '</label>';
+  }).join('');
+
+  document.getElementById('modalExport').classList.remove('hidden');
+}
+
+function expSelectAll(v) {
+  document.querySelectorAll('.expCarrier').forEach(function(cb){ cb.checked = v; });
+}
+
+function doExport() {
+  var fromFilter  = document.getElementById('expFrom').value;
+  var toFilter    = document.getElementById('expTo').value;
+  var selCarriers = [...document.querySelectorAll('.expCarrier:checked')].map(function(cb){ return cb.value; });
+  var format      = document.querySelector('input[name="expFormat"]:checked').value;
+
+  // Filter data
+  var rows = DB.trasporti.filter(function(r) {
+    if (fromFilter && r.from !== fromFilter) return false;
+    if (toFilter   && r.to   !== toFilter)   return false;
+    if (!selCarriers.includes(r.carrier))     return false;
+    return true;
+  });
+
+  if (!rows.length) { showToast('⚠️ Nessun dato da esportare', 'warn'); return; }
+
+  closeModal('modalExport');
+
+  if (format === 'excel') {
+    exportToExcel(rows, selCarriers);
+  } else {
+    printA3(rows, selCarriers);
+  }
+}
+
+function exportToExcel(rows, selectedCarriers) {
+  // Build matrix: rows = tratte, cols = carriers
+  var routes = [];
+  var routeMap = {};
+  rows.forEach(function(r) {
+    var key = r.from + '||' + r.to;
+    if (!routeMap[key]) { routeMap[key] = {}; routes.push({from:r.from, to:r.to}); }
+    if (!routeMap[key][r.carrier]) routeMap[key][r.carrier] = [];
+    routeMap[key][r.carrier].push(r);
+  });
+
+  var carriers = selectedCarriers.filter(function(c) {
+    return routes.some(function(rt) { return routeMap[rt.from+'||'+rt.to][c]; });
+  });
+
+  // Build worksheet data
+  var wsData = [];
+  // Row 1: date + carriers
+  var row1 = ['Ferrara ' + new Date().toLocaleDateString('it-IT'), 'REV 03/2026'].concat(carriers);
+  wsData.push(row1);
+  // Row 2: labels
+  wsData.push(['Base di Carico', 'Luogo di Consegna'].concat(carriers.map(function(){return '';})));
+  // Row 3: conditions
+  var conds = carriers.map(function(carrier) {
+    var sample = rows.find(function(r){ return r.carrier===carrier; });
+    return sample ? sample.conditions : '';
+  });
+  wsData.push([null, 'Condizioni pagamento'].concat(conds));
+  // Data rows
+  routes.forEach(function(rt) {
+    var key = rt.from + '||' + rt.to;
+    var prices = carriers.map(function(carrier) {
+      var recs = routeMap[key][carrier];
+      if (!recs || !recs.length) return null;
+      // Sort: €/vg first
+      recs.sort(function(a,b){ return a.unit==='€/vg'?-1:1; });
+      return recs.map(function(r){
+        return r.price.toLocaleString('it-IT',{minimumFractionDigits:2}) + ' ' + r.unit;
+      }).join(' / ');
+    });
+    wsData.push([rt.from, rt.to].concat(prices));
+  });
+
+  // Use XLSX.js to build the file
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Column widths
+  var colWidths = [{wch:28},{wch:28}].concat(carriers.map(function(){return {wch:18};}));
+  ws['!cols'] = colWidths;
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Tariffe REV 03-2026');
+  XLSX.writeFile(wb, 'Tariffe_Pro_Trasporti_' + new Date().toISOString().split('T')[0] + '.xlsx');
+  showToast('✅ Excel esportato', 'ok');
+}
+
+function printA3(rows, selectedCarriers) {
+  // Build matrix
+  var routes = [];
+  var routeMap = {};
+  rows.forEach(function(r) {
+    var key = r.from + '||' + r.to;
+    if (!routeMap[key]) { routeMap[key] = {}; routes.push({from:r.from, to:r.to}); }
+    if (!routeMap[key][r.carrier]) routeMap[key][r.carrier] = [];
+    routeMap[key][r.carrier].push(r);
+  });
+
+  var carriers = selectedCarriers.filter(function(c) {
+    return routes.some(function(rt) { return routeMap[rt.from+'||'+rt.to][c]; });
+  });
+
+  var today = new Date().toLocaleDateString('it-IT');
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<style>' +
+    '@page { size: A3 landscape; margin: 12mm; }' +
+    'body { font-family: Arial, sans-serif; font-size: 8pt; color: #111; }' +
+    'h1 { font-size: 13pt; margin: 0 0 2mm; color: #0b3d6b; }' +
+    '.subtitle { font-size: 8pt; color: #555; margin-bottom: 4mm; }' +
+    'table { width: 100%; border-collapse: collapse; page-break-inside: auto; }' +
+    'th { background: #0b3d6b; color: #fff; font-size: 7.5pt; padding: 3px 4px; text-align: center; border: 1px solid #ccc; }' +
+    'th.route { background: #1a5a9e; text-align: left; }' +
+    'td { padding: 3px 4px; border: 1px solid #ddd; font-size: 7.5pt; vertical-align: middle; }' +
+    'td.from { font-weight: bold; color: #0b3d6b; background: #f0f5ff; }' +
+    'td.to { color: #1a5a9e; }' +
+    'td.price { text-align: center; }' +
+    'td.price-vg { font-weight: bold; }' +
+    'td.price-ton { color: #8b5e00; font-style: italic; }' +
+    'td.best { background: #fff8e1; font-weight: bold; }' +
+    'tr:nth-child(even) td { background: #f8f9ff; }' +
+    'tr:nth-child(even) td.from { background: #e8f0ff; }' +
+    '.cond { font-size: 6.5pt; color: #666; }' +
+    '.footer { margin-top: 4mm; font-size: 7pt; color: #888; border-top: 1px solid #ccc; padding-top: 2mm; display:flex; justify-content:space-between; }' +
+    '</style></head><body>';
+
+  html += '<h1>🚛 PRO TRASPORTI — Archivio Tariffe</h1>';
+  html += '<div class="subtitle">REV 03/2026 — ' + today + ' — ' + routes.length + ' tratte, ' + carriers.length + ' trasportatori</div>';
+
+  html += '<table><thead><tr>';
+  html += '<th class="route" style="width:120px;">Base di Carico</th>';
+  html += '<th class="route" style="width:120px;">Destinazione</th>';
+  carriers.forEach(function(c) {
+    var cond = (rows.find(function(r){return r.carrier===c;})||{}).conditions||'';
+    html += '<th>' + c + '<br><span class="cond">' + cond + '</span></th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  routes.forEach(function(rt, idx) {
+    var key = rt.from + '||' + rt.to;
+    // Find best price
+    var bestPrice = Infinity;
+    carriers.forEach(function(carrier) {
+      var recs = routeMap[key][carrier]||[];
+      recs.forEach(function(r){ if(r.price < bestPrice) bestPrice = r.price; });
+    });
+
+    html += '<tr>';
+    html += '<td class="from">' + rt.from + '</td>';
+    html += '<td class="to">' + rt.to + '</td>';
+    carriers.forEach(function(carrier) {
+      var recs = routeMap[key][carrier];
+      if (!recs || !recs.length) { html += '<td class="price">—</td>'; return; }
+      var vg  = recs.filter(function(r){return r.unit==='€/vg';}).sort(function(a,b){return a.price-b.price;});
+      var ton = recs.filter(function(r){return r.unit==='€/ton';}).sort(function(a,b){return a.price-b.price;});
+      var isBest = (vg[0]||ton[0]||{}).price === bestPrice;
+      var content = '';
+      if (vg.length)  content += '<span class="price-vg">' + vg[0].price.toLocaleString('it-IT',{minimumFractionDigits:0}) + ' €</span>';
+      if (ton.length) content += (content?'<br>':'') + '<span class="price-ton">' + ton[0].price.toLocaleString('it-IT',{minimumFractionDigits:2}) + ' €/t</span>';
+      html += '<td class="price' + (isBest?' best':'') + '">' + content + '</td>';
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  html += '<div class="footer"><span>Pro Trasporti Srl — Archivio Tariffe REV 03/2026</span><span>Stampato il ' + today + '</span></div>';
+  html += '</body></html>';
+
+  var w = window.open('', '_blank', 'width=1200,height=800');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(function(){ w.print(); }, 500);
+}
+
 // ─── RENDER PATCHES (must run before init) ───
 // PATCH: renderRapida e refreshProdotti completi
 window.renderRapida = function(routes, filterCarrier) {
@@ -2095,52 +2491,49 @@ window.renderRapida = function(routes, filterCarrier) {
     return;
   }
 
-  var html = '<div style="font-size:11px;color:var(--t2);margin-bottom:8px;">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
+  var html = '<div class="results-count">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
 
   routes.forEach(function(route) {
     var prices = route.prices;
-    if (filterCarrier) prices = prices.filter(function(p){ return p.carrier === filterCarrier; });
+    if (filterCarrier) prices = prices.filter(function(p){ return p.carrier===filterCarrier; });
 
-    var vg  = prices.filter(function(p){ return p.unit === '€/vg';  }).sort(function(a,b){ return a.price-b.price; });
-    var ton = prices.filter(function(p){ return p.unit === '€/ton'; }).sort(function(a,b){ return a.price-b.price; });
+    var vg  = prices.filter(function(p){ return p.unit==='€/vg';  }).sort(function(a,b){ return a.price-b.price; });
+    var ton = prices.filter(function(p){ return p.unit==='€/ton'; }).sort(function(a,b){ return a.price-b.price; });
     var best = vg[0] || ton[0] || null;
 
-    // Best pill header
+    // Best pill (top right)
     var bestHtml = '';
     if (best) {
       bestHtml = '<div class="rrow-best">' +
         '<div class="rrow-best-who">' + abbrev(best.carrier) + '</div>' +
         '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT',{minimumFractionDigits:0}) + '€</div>' +
         '<div class="rrow-best-unit">' + best.unit + '</div>' +
-        '</div>';
+      '</div>';
     }
 
-    // Build section rows — VG e TON separati
-    function buildRows(list, isBestFn) {
-      var rows = '';
+    // Build price rows for one unit group
+    function buildSection(list, isBestFn, unitLabel) {
+      if (!list.length) return '';
+      var out = '<div class="price-section">';
+      out += '<div class="price-section-hd">' + unitLabel + '</div>';
       list.forEach(function(p) {
         var isBest = isBestFn(p);
-        rows += '<div class="chip' + (isBest ? ' best' : '') + '">' +
-          '<div class="chip-who">' + p.carrier + '</div>' +
-          '<div class="chip-price-row">' +
-            '<span class="chip-val">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '</span>' +
-            '<span class="chip-unit">' + p.unit + '</span>' +
+        out += '<div class="price-row' + (isBest ? ' best' : '') + '">' +
+          '<div class="price-row-who">' + p.carrier + '</div>' +
+          '<div class="price-row-right">' +
+            '<span class="price-row-val">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '</span>' +
+            '<span class="price-row-unit">' + p.unit + '</span>' +
+            (p.conditions ? '<span class="price-row-cond">' + p.conditions + '</span>' : '') +
           '</div>' +
-          (p.provisional ? '<div class="chip-prov">⚠ da conf.</div>' : '') +
-          (p.conditions   ? '<div class="chip-cond">' + p.conditions + '</div>' : '')
-          '</div>';
+        '</div>';
       });
-      return rows;
+      out += '</div>';
+      return out;
     }
 
-    var vgBest = vg[0] || null;
-    var tonBest = ton[0] || null;
-    var vgRows  = buildRows(vg,  function(p){ return vgBest  && p.carrier===vgBest.carrier; });
-    var tonRows = buildRows(ton, function(p){ return tonBest && p.carrier===tonBest.carrier; });
-
-    var chipsHtml = '';
-    if (vgRows)  chipsHtml += '<div class="chip-section-label">💰 €/viaggio</div><div class="chips">' + vgRows  + '</div>';
-    if (tonRows) chipsHtml += '<div class="chip-section-label">⚖️ €/ton</div><div class="chips">'     + tonRows + '</div>';
+    var body = '';
+    body += buildSection(vg,  function(p){ return vg[0]  && p.carrier===vg[0].carrier;  }, '💰 €/viaggio');
+    body += buildSection(ton, function(p){ return ton[0] && p.carrier===ton[0].carrier;  }, '⚖️ €/ton');
 
     var key = route.from + '||' + route.to;
     var sf = route.from.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
@@ -2153,10 +2546,10 @@ window.renderRapida = function(routes, filterCarrier) {
           '<div class="rrow-to-line"><span class="rrow-arrow">→</span><span class="rrow-to">' + route.to + '</span></div>' +
         '</div>' + bestHtml +
       '</div>' +
-      chipsHtml +
+      body +
       '<div class="rrow-acts">' +
         '<button class="act act-edit" onclick="event.stopPropagation();openEditTratta(\'' + sf + '\',\'' + st + '\')">✏️ Modifica</button>' +
-        '<button class="act act-del"  onclick="event.stopPropagation();editingTratta={from:\'' + sf + '\',to:\'' + st + '\'};deleteTratta()">🗑</button>' +
+        '<button class="act act-del" onclick="event.stopPropagation();editingTratta={from:\'' + sf + '\',to:\'' + st + '\'};deleteTratta()">🗑</button>' +
       '</div>' +
     '</div>';
   });
@@ -2234,6 +2627,7 @@ window.addEventListener("load", function() {
     handleFileImport({target:{files:[file],value:""}},type);
   });
 });
+
 
 </script>
 </body>
