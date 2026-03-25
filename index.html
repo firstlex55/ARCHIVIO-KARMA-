@@ -7,479 +7,430 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://accounts.google.com/gsi/client"></script>
 <style>
-/* ═══════════════════════════════════════
-   RESET & VARIABLES
-═══════════════════════════════════════ */
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-:root {
-  --bg:       #0b0f16;
-  --s1:       #111720;
-  --s2:       #171f2e;
-  --s3:       #1e2840;
-  --b1:       #243048;
-  --b2:       #2e3d5c;
-  --green:    #34d399;
-  --green2:   #10b981;
-  --gdim:     rgba(52,211,153,.10);
-  --gglow:    rgba(52,211,153,.20);
-  --amber:    #fb923c;
-  --amberdim: rgba(251,146,60,.14);
-  --ambersolid: rgba(251,146,60,.22);
-  --red:      #f87171;
-  --reddim:   rgba(248,113,113,.12);
-  --blue:     #60a5fa;
-  --bluedim:  rgba(96,165,250,.12);
-  --t1:       #f0f4fa;
-  --t2:       #8a9ab8;
-  --t3:       #3d4f68;
-  --r:        12px;
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0b0f16; --s1:#111720; --s2:#171f2e; --s3:#1e2840;
+  --b1:#243048; --b2:#2e3d5c;
+  --green:#34d399; --green2:#10b981;
+  --gdim:rgba(52,211,153,.10);
+  --amber:#fb923c; --amberdim:rgba(251,146,60,.14); --ambersolid:rgba(251,146,60,.22);
+  --red:#f87171; --reddim:rgba(248,113,113,.12);
+  --blue:#60a5fa; --bluedim:rgba(96,165,250,.12);
+  --t1:#f5f8ff; --t2:#c2cfea; --t3:#7a90b4;
+  --r:12px;
 }
-body {
-  background: var(--bg); color: var(--t1);
-  font-family: -apple-system, "SF Pro Display", "Segoe UI", sans-serif;
-  min-height: 100vh; overflow-x: hidden;
+body{background:var(--bg);color:var(--t1);font-family:-apple-system,"SF Pro Display","Segoe UI",sans-serif;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(52,211,153,.05) 0%,transparent 70%);}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px;}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:100;background:linear-gradient(180deg,#131c2c 0%,var(--s1) 100%);border-bottom:1px solid var(--b1);padding:0 12px;height:58px;display:flex;align-items:center;gap:8px;}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,var(--green) 40%,var(--amber) 70%,transparent 100%);}
+.h-logo{font-size:30px;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(52,211,153,.35));}
+.h-text{flex:1;min-width:0;}
+.h-title{font-size:20px;font-weight:900;letter-spacing:.05em;line-height:1;background:linear-gradient(90deg,#fff 0%,var(--green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.h-sub{font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t2);margin-top:2px;white-space:nowrap;}
+.h-badge{background:var(--amberdim);color:var(--amber);border:1.5px solid rgba(251,146,60,.4);border-radius:20px;font-size:10px;font-weight:800;padding:3px 9px;flex-shrink:0;}
+.h-drive{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:5px 9px;border-radius:20px;border:1.5px solid var(--b2);background:var(--s2);color:var(--t2);cursor:pointer;transition:all .15s;flex-shrink:0;}
+.h-drive.connected{border-color:var(--green);color:var(--green);background:var(--gdim);}
+.h-drive.syncing{border-color:var(--amber);color:var(--amber);animation:pulse 1s infinite;}
+.h-drive.error{border-color:var(--red);color:var(--red);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* TABS */
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--b1);position:relative;z-index:1;}
+.tab{flex:1;padding:13px 4px;font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.tab.active{color:var(--green);border-bottom-color:var(--green);}
+
+/* PAGE */
+.page{display:none;padding:12px 12px 80px;max-width:600px;margin:0 auto;position:relative;z-index:1;}
+.page.active{display:block;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.stat-card{background:linear-gradient(145deg,var(--s2) 0%,var(--s3) 100%);border:1px solid var(--b1);border-top:2px solid var(--green);border-radius:var(--r);padding:12px 8px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.stat-n{font-size:26px;font-weight:900;color:var(--green);line-height:1;}
+.stat-l{font-size:9px;font-weight:800;color:var(--t2);margin-top:4px;letter-spacing:.1em;text-transform:uppercase;}
+
+/* SEARCH CARD */
+.search-card{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;margin-bottom:12px;box-shadow:0 4px 20px rgba(0,0,0,.35);}
+.search-card-top{padding:10px 10px 0;display:flex;flex-direction:column;gap:6px;}
+.sf{display:flex;align-items:center;gap:8px;background:var(--s3);border:1.5px solid var(--b1);border-radius:9px;padding:0 12px;height:46px;transition:border-color .15s,box-shadow .15s;}
+.sf:focus-within{border-color:var(--green);box-shadow:0 0 0 3px rgba(52,211,153,.10);}
+.sf-icon{font-size:15px;flex-shrink:0;}
+.sf-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);white-space:nowrap;}
+.sf-input{flex:1;background:none;border:none;outline:none;color:var(--t1);font-size:14px;font-weight:600;min-width:0;}
+.sf-input::placeholder{color:var(--t3);font-weight:400;}
+.sf-connector{display:flex;align-items:center;justify-content:center;padding:0 10px;position:relative;}
+.sf-connector::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1.5px;background:linear-gradient(180deg,var(--green) 0%,var(--amber) 100%);transform:translateX(-50%);}
+.sf-arrow{width:24px;height:24px;background:var(--s1);border:1.5px solid var(--b2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--green);position:relative;z-index:1;}
+.search-card-bar{display:flex;align-items:center;gap:6px;padding:8px 10px;border-top:1px solid var(--b1);margin-top:8px;background:rgba(0,0,0,.15);}
+.view-pill-wrap{display:flex;background:var(--bg);border:1px solid var(--b1);border-radius:7px;overflow:hidden;flex-shrink:0;}
+.vpill{padding:6px 11px;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;border:none;background:none;transition:all .12s;white-space:nowrap;}
+.vpill.active{background:linear-gradient(135deg,var(--green) 0%,var(--green2) 100%);color:#0b0f16;border-radius:5px;}
+.search-spacer{flex:1;}
+.ic-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;border:1px solid var(--b2);background:var(--s3);color:var(--t2);transition:all .15s;flex-shrink:0;}
+.ic-btn:hover{border-color:var(--green);color:var(--green);}
+.ic-btn.primary{background:linear-gradient(135deg,var(--green) 0%,var(--green2) 100%);border-color:transparent;color:#0b0f16;font-size:20px;font-weight:900;box-shadow:0 2px 10px rgba(52,211,153,.3);}
+
+/* CARRIER PILLS */
+.cpills{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 0 8px;}
+.cpills::-webkit-scrollbar{display:none;}
+.cpill{flex-shrink:0;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--b1);background:var(--s2);color:var(--t2);transition:all .12s;white-space:nowrap;}
+.cpill.on{background:var(--gdim);border-color:var(--green);color:var(--green);}
+.cpill.all.on{background:var(--amberdim);border-color:var(--amber);color:var(--amber);}
+
+/* RROW — card tratta */
+.rrow{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b1);border-left:3px solid var(--amber);border-radius:var(--r);margin-bottom:10px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.3);transition:transform .15s,box-shadow .15s;cursor:pointer;}
+.rrow:hover{transform:translateY(-1px);border-color:var(--green);border-left-color:var(--green);box-shadow:0 5px 20px rgba(52,211,153,.10);}
+.rrow-head{display:flex;align-items:flex-start;justify-content:space-between;padding:11px 13px 7px;gap:8px;}
+.rrow-route{flex:1;min-width:0;}
+.rrow-from{font-size:14px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rrow-to-line{display:flex;align-items:center;gap:5px;margin-top:2px;}
+.rrow-arrow{font-size:11px;color:var(--green);flex-shrink:0;}
+.rrow-to{font-size:13px;font-weight:700;color:var(--green);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rrow-best{text-align:right;flex-shrink:0;}
+.rrow-best-who{font-size:9px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.05em;}
+.rrow-best-price{font-size:18px;font-weight:900;color:var(--amber);line-height:1.1;}
+.rrow-best-unit{font-size:9px;font-weight:700;color:rgba(251,146,60,.7);}
+
+/* CHIPS — lista verticale trasportatori */
+.chips{display:flex;flex-direction:column;gap:0;padding:0 0 4px;}
+.chip{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;gap:10px;border-bottom:1px solid rgba(255,255,255,.05);background:transparent;transition:background .1s;}
+.chip:last-child{border-bottom:none;}
+.chip:hover{background:rgba(255,255,255,.03);}
+.chip.best{background:rgba(251,146,60,.08);border-left:3px solid var(--amber);padding-left:11px;}
+.chip-who{font-size:13px;font-weight:700;color:#c0d4f0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chip.best .chip-who{color:var(--amber);font-weight:800;}
+.chip-price-row{display:flex;align-items:baseline;gap:3px;flex-shrink:0;}
+.chip-val{font-size:16px;font-weight:800;color:#e8f0ff;}
+.chip.best .chip-val{color:var(--amber);}
+.chip-unit{font-size:10px;font-weight:600;color:#5a7090;}
+.chip.best .chip-unit{color:rgba(251,146,60,.65);}
+.chip-prov{display:none;}
+
+/* EDIT ACTIONS */
+.rrow-acts{display:none;gap:5px;padding:0 13px 9px;justify-content:flex-end;}
+.rrow:hover .rrow-acts{display:flex;}
+.act{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;}
+.act-edit{background:var(--gdim);color:var(--green);border:1px solid var(--green);}
+.act-del{background:var(--reddim);color:var(--red);border:1px solid var(--red);}
+
+/* CONFRONTO */
+.ccard{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b1);border-top:2px solid var(--green);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.ccard-route{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.ccard-from{font-size:14px;font-weight:900;color:#fff;}
+.ccard-arrow{font-size:13px;color:var(--t3);}
+.ccard-to{font-size:14px;font-weight:800;color:var(--green);}
+.cgroup-label{font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:8px;margin:14px 0 8px;}
+.cgroup-label::after{content:'';flex:1;height:1px;background:var(--b1);}
+.cbar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.cbar-name{font-size:11px;font-weight:700;color:#c0cfea;width:100px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cbar-wrap{flex:1;height:28px;}
+.cbar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 9px;min-width:48px;}
+.cbar.best{background:linear-gradient(90deg,var(--green2) 0%,var(--green) 100%);box-shadow:0 0 10px rgba(52,211,153,.2);}
+.cbar.other{background:var(--s3);border:1px solid var(--b2);}
+.cbar-price{font-size:12px;font-weight:800;white-space:nowrap;}
+.cbar.best .cbar-price{color:#0b0f16;}
+.cbar.other .cbar-price{color:var(--t1);}
+.cdelta{font-size:10px;color:var(--t3);font-weight:600;flex-shrink:0;width:40px;text-align:right;}
+.cdelta.pos{color:var(--red);}
+.cinfo{font-size:10px;color:var(--t3);margin:-3px 0 5px 108px;}
+
+/* PRODOTTI */
+.prow{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b1);border-left:3px solid var(--green);border-radius:var(--r);margin-bottom:12px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.3);}
+.prow-head{display:flex;align-items:flex-start;justify-content:space-between;padding:11px 13px 8px;gap:8px;}
+.prow-title{font-size:16px;font-weight:900;color:#fff;flex:1;letter-spacing:.01em;}
+.prow-bests{display:flex;gap:6px;flex-shrink:0;}
+.prow-best{display:flex;flex-direction:column;align-items:center;border-radius:8px;padding:5px 9px;text-align:center;min-width:60px;}
+.prow-best.buy{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);}
+.prow-best.sell{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);}
+.prow-best-label{font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1px;}
+.prow-best.buy .prow-best-label{color:#fca5a5;}
+.prow-best.sell .prow-best-label{color:#6ee7b7;}
+.prow-best-price{font-size:15px;font-weight:900;color:#fff;line-height:1;}
+.prow-best-who{font-size:8px;color:#6a85aa;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62px;}
+.prow-section-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--t2);padding:5px 14px;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.18);}
+
+/* PCHIPS — griglia 2 colonne prodotti */
+.pchips{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:5px 11px 12px;}
+.pchip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:9px 10px;display:flex;flex-direction:column;gap:3px;}
+.pchip.best-buy{background:rgba(248,113,113,.10);border-color:rgba(248,113,113,.35);}
+.pchip.best-sell{background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.35);}
+/* Nome fornitore/cliente — ciano brillante, leggibilissimo */
+.pchip-who{font-size:10px;font-weight:900;color:#38bdf8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.04em;}
+.pchip.best-buy .pchip-who{color:#fca5a5;}
+.pchip.best-sell .pchip-who{color:#6ee7b7;}
+.pchip-price-row{display:flex;align-items:baseline;gap:3px;}
+.pchip-val{font-size:18px;font-weight:900;color:#e2ecff;line-height:1;}
+.pchip.best-buy .pchip-val{color:#f87171;}
+.pchip.best-sell .pchip-val{color:#34d399;}
+.pchip-unit{font-size:10px;font-weight:600;color:#4a6080;}
+.pchip.best-buy .pchip-unit{color:rgba(248,113,113,.6);}
+.pchip.best-sell .pchip-unit{color:rgba(52,211,153,.6);}
+.pchip-loc{font-size:9px;color:#4a6080;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* CARDS */
+.card{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b1);border-radius:var(--r);padding:14px;margin-bottom:12px;}
+.card-title{font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
+
+/* BUTTONS */
+.btn{padding:10px 16px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
+.btn-primary{background:linear-gradient(135deg,var(--green) 0%,var(--green2) 100%);color:#0b0f16;box-shadow:0 2px 10px rgba(52,211,153,.25);}
+.btn-secondary{background:var(--s3);color:var(--t1);border:1px solid var(--b2);}
+.btn-secondary:hover{border-color:var(--green);color:var(--green);}
+.btn-danger{background:var(--reddim);color:var(--red);border:1px solid var(--red);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+
+/* INPUTS */
+.inp{width:100%;background:var(--s3);border:1.5px solid var(--b1);border-radius:9px;padding:11px 13px;color:var(--t1);font-size:13px;outline:none;transition:border .15s;}
+.inp:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(52,211,153,.08);}
+.inp::placeholder{color:var(--t3);}
+select.inp{cursor:pointer;}
+.form-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:130px;}
+.form-label{font-size:10px;font-weight:800;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;}
+
+/* DROP ZONE */
+.drop-zone{border:2px dashed var(--b2);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .15s;position:relative;}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--green);background:var(--gdim);}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
+.drop-icon{font-size:26px;margin-bottom:6px;}
+.drop-text{font-size:13px;color:var(--t2);}
+.drop-sub{font-size:10px;color:var(--t3);margin-top:3px;}
+.import-options{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.import-opt{flex:1;min-width:120px;background:var(--s3);border:2px solid var(--b1);border-radius:9px;padding:12px;cursor:pointer;text-align:center;transition:all .15s;}
+.import-opt:hover{border-color:var(--green);}
+.import-opt.selected{border-color:var(--green);background:var(--gdim);}
+.import-opt-icon{font-size:18px;margin-bottom:4px;}
+.import-opt-label{font-size:12px;font-weight:700;}
+.import-opt-desc{font-size:10px;color:var(--t2);margin-top:2px;}
+
+/* LOG */
+.log-box{background:#080c12;border:1px solid var(--b1);border-radius:8px;padding:10px 12px;font-size:11px;font-family:monospace;color:var(--t2);max-height:120px;overflow-y:auto;margin-top:8px;}
+.log-ok{color:var(--green);}.log-warn{color:var(--amber);}.log-err{color:var(--red);}
+
+/* PRODOTTI tab filtro */
+.ptabs,.cpills{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 0 8px;margin-bottom:8px;}
+.ptabs::-webkit-scrollbar,.cpills::-webkit-scrollbar{display:none;}
+.ptab{flex-shrink:0;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--b1);background:var(--s2);color:var(--t2);transition:all .12s;white-space:nowrap;}
+.ptab.active{background:var(--bluedim);color:var(--blue);border-color:var(--blue);}
+
+/* SEC HEAD */
+.sec-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.sec-head .sp{flex:1;}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;}
+.modal-backdrop.hidden{display:none;}
+.modal{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b2);border-radius:16px;padding:20px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.modal-title{font-size:15px;font-weight:800;margin-bottom:14px;}
+.modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+
+/* EDIT PRICE ROWS */
+.erow{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--s3);border:1px solid var(--b1);border-radius:8px;margin-bottom:6px;}
+.erow-carrier{font-size:12px;font-weight:700;flex:1;}
+.erow-input{width:80px;background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:5px 8px;color:var(--t1);font-size:13px;font-weight:700;text-align:right;outline:none;}
+.erow-input:focus{border-color:var(--green);}
+.erow-unit{font-size:10px;color:var(--t2);width:32px;}
+.erow-del{font-size:14px;cursor:pointer;color:var(--t3);padding:0 4px;}
+.erow-del:hover{color:var(--red);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:11px 20px;font-size:13px;font-weight:700;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.warn{border-color:var(--amber);color:var(--amber);}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:.5;}
+.empty-text{font-size:13px;color:var(--t2);line-height:1.6;}
+
+.hidden{display:none!important;}
+.search-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+
+/* ═══ PRODOTTI ═══════════════════════════════ */
+.prow {
+  background: linear-gradient(160deg, var(--s1) 0%, var(--s2) 100%);
+  border: 1px solid var(--b1); border-left: 3px solid var(--green);
+  border-radius: 12px; margin-bottom: 10px; overflow: hidden;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25);
 }
-/* Subtle bg glow */
-body::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(52,211,153,.06) 0%, transparent 70%);
+.prow-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 14px 9px; gap: 8px;
+}
+.prow-title {
+  font-size: 15px; font-weight: 900; color: #fff;
+  flex: 1; letter-spacing: .01em;
+}
+.prow-badges { display: flex; gap: 6px; flex-shrink: 0; }
+.pbadge {
+  display: flex; flex-direction: column; align-items: center;
+  border-radius: 8px; padding: 4px 10px; min-width: 56px; text-align: center;
+}
+.pbadge.buy  { background: rgba(248,113,113,.12); border: 1px solid rgba(248,113,113,.3); }
+.pbadge.sell { background: rgba(52,211,153,.12);  border: 1px solid rgba(52,211,153,.3); }
+.pbadge-lbl { font-size: 8px; font-weight: 800; letter-spacing:.08em; margin-bottom:1px; }
+.pbadge.buy  .pbadge-lbl { color: #fca5a5; }
+.pbadge.sell .pbadge-lbl { color: #86efac; }
+.pbadge-val { font-size: 14px; font-weight: 900; color: #fff; line-height:1; }
+
+/* Sezione acquisto/vendita */
+.psec-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--t2);
+  padding: 5px 14px 4px;
+  border-top: 1px solid var(--b1); background: rgba(0,0,0,.15);
 }
 
-/* ═══════════════════════════════════════
-   SCROLLBAR
-═══════════════════════════════════════ */
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 4px; }
+/* Riga singola fornitore */
+.prow-line {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-top: 1px solid rgba(255,255,255,.04);
+  min-height: 38px;
+}
+.prow-line.best-buy  { background: rgba(248,113,113,.07); border-left: 2px solid rgba(248,113,113,.5); }
+.prow-line.best-sell { background: rgba(52,211,153,.07);  border-left: 2px solid rgba(52,211,153,.5); }
 
-/* ═══════════════════════════════════════
-   HEADER
-═══════════════════════════════════════ */
-.header {
-  position: sticky; top: 0; z-index: 100;
-  background: linear-gradient(180deg, #131c2c 0%, var(--s1) 100%);
+/* Nome fornitore/cliente — azzurro brillante */
+
+.prl-left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.prl-who { font-size: 13px; font-weight: 800; color: #e8f0ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prow-line.best-buy  .prl-who { color: #fca5a5; font-weight: 900; }
+.prow-line.best-sell .prl-who { color: #86efac; font-weight: 900; }
+.prl-note { font-size: 9px; color: #5a7898; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+
+/* Prezzo */
+.prl-price {
+  font-size: 15px; font-weight: 900; color: #ffffff;
+  flex-shrink: 0; display: flex; align-items: baseline; gap: 2px;
+}
+.prow-line.best-buy  .prl-price { color: #fca5a5; }
+.prow-line.best-sell .prl-price { color: #86efac; }
+.prl-unit {
+  font-size: 10px; font-weight: 600; color: #6a87a8; margin-left: 2px;
+}
+
+/* Luogo */
+.prl-loc {
+  font-size: 10px; font-weight: 500; color: #6a87a8;
+  flex-shrink: 0; text-align: right;
+  max-width: 105px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.chip-cond { font-size: 9px; color: #4a6070; margin-left: 8px; flex-shrink: 0; }
+
+/* ═══ PRODOTTI VIEW SWITCHER ═══════════════ */
+.prod-view-wrap {
+  display: flex; gap: 4px; margin-bottom: 10px;
+  background: var(--s2); border: 1px solid var(--b1);
+  border-radius: 10px; padding: 3px; overflow-x: auto;
+  scrollbar-width: none;
+}
+.prod-view-wrap::-webkit-scrollbar { display: none; }
+.pvbtn {
+  flex: 1; min-width: 0; white-space: nowrap;
+  padding: 7px 10px; border: none; border-radius: 7px;
+  font-size: 11px; font-weight: 700; color: var(--t2);
+  background: none; cursor: pointer; transition: all .15s;
+}
+.pvbtn.active {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green2) 100%);
+  color: #0b0f16; box-shadow: 0 2px 8px rgba(52,211,153,.25);
+}
+
+/* ═══ VISTA FORNITORE / CLIENTE ═══════════ */
+.entity-card {
+  border-left: 3px solid var(--red);
+  background: linear-gradient(145deg, var(--s1) 0%, var(--s2) 100%);
+  border: 1px solid var(--b1); border-radius: 12px;
+  margin-bottom: 10px; overflow: hidden;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25);
+}
+.entity-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 14px 9px; gap: 8px;
   border-bottom: 1px solid var(--b1);
-  padding: 0 12px; height: 56px;
+}
+.entity-name {
+  font-size: 15px; font-weight: 900; color: #fff;
+  flex: 1; letter-spacing: .01em;
+}
+.entity-meta {
+  font-size: 10px; font-weight: 600; color: var(--t2);
+  background: var(--s3); border: 1px solid var(--b2);
+  border-radius: 20px; padding: 2px 9px; flex-shrink: 0;
+}
+.entity-row {
   display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-top: 1px solid rgba(255,255,255,.04);
 }
-.header::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent 0%, var(--green) 40%, var(--amber) 70%, transparent 100%);
+.entity-prod {
+  font-size: 12px; font-weight: 700; color: #7dd3fc;
+  width: 90px; flex-shrink: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.h-logo { font-size: 28px; flex-shrink: 0; filter: drop-shadow(0 0 8px rgba(52,211,153,.35)); }
-.h-text { flex: 1; min-width: 0; }
-.h-title {
-  font-size: 18px; font-weight: 900; letter-spacing: .05em; line-height: 1;
-  background: linear-gradient(90deg, #fff 0%, var(--green) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+.entity-price {
+  font-size: 15px; font-weight: 900; color: #fff;
+  flex-shrink: 0; display: flex; align-items: baseline; gap: 2px;
 }
-.h-sub {
-  font-size: 8px; font-weight: 700; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--t2); margin-top: 2px; white-space: nowrap;
+.entity-price.buy  { color: #fca5a5; }
+.entity-price.sell { color: #86efac; }
+.entity-unit { font-size: 9px; font-weight: 600; color: #5a7898; }
+.entity-loc {
+  font-size: 10px; color: #4a6480; flex: 1; text-align: right;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.h-badge {
-  background: var(--amberdim); color: var(--amber);
-  border: 1.5px solid rgba(251,146,60,.4);
-  border-radius: 20px; font-size: 10px; font-weight: 800;
-  padding: 3px 9px; flex-shrink: 0; white-space: nowrap;
-}
-.h-drive {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 10px; font-weight: 700; padding: 5px 9px;
-  border-radius: 20px; border: 1.5px solid var(--b2);
-  background: var(--s2); color: var(--t2);
-  cursor: pointer; transition: all .15s; flex-shrink: 0;
-}
-.h-drive.connected { border-color: var(--green); color: var(--green); background: var(--gdim); }
-.h-drive.syncing { border-color: var(--amber); color: var(--amber); animation: pulse 1s infinite; }
-.h-drive.error   { border-color: var(--red);   color: var(--red); }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
 
-/* ═══════════════════════════════════════
-   TABS
-═══════════════════════════════════════ */
-.tabs {
-  display: flex; background: var(--s1);
-  border-bottom: 1px solid var(--b1); position: relative; z-index: 1;
-}
-.tab {
-  flex: 1; padding: 14px 4px; font-size: 12px; font-weight: 700;
-  color: var(--t2); cursor: pointer; border: none; background: none;
-  border-bottom: 2px solid transparent; transition: all .15s;
-  white-space: nowrap; letter-spacing: .02em;
-}
-.tab.active { color: var(--green); border-bottom-color: var(--green); }
-
-/* ═══════════════════════════════════════
-   PAGE WRAPPER
-═══════════════════════════════════════ */
-.page { display: none; padding: 14px 14px 80px; max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
-.page.active { display: block; }
-
-/* ═══════════════════════════════════════
-   STAT CARDS
-═══════════════════════════════════════ */
-.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
-.stat-card {
-  background: linear-gradient(145deg, var(--s2) 0%, var(--s3) 100%);
-  border: 1px solid var(--b1); border-top: 2px solid var(--green);
-  border-radius: var(--r); padding: 14px 10px; text-align: center;
-  box-shadow: 0 4px 16px rgba(0,0,0,.3);
-}
-.stat-n { font-size: 26px; font-weight: 900; color: var(--green); line-height: 1; }
-.stat-l { font-size: 9px; font-weight: 800; color: var(--t2); margin-top: 5px; letter-spacing: .1em; text-transform: uppercase; }
-
-/* ═══════════════════════════════════════
-   SEARCH CARD
-═══════════════════════════════════════ */
-.search-card {
+/* ═══ VISTA MARGINE ═══════════════════════ */
+.margin-card {
   background: linear-gradient(145deg, var(--s1) 0%, var(--s2) 100%);
-  border: 1px solid var(--b1);
-  border-radius: var(--r); overflow: hidden;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,.35);
+  border: 1px solid var(--b1); border-radius: 12px;
+  margin-bottom: 10px; overflow: hidden;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25);
 }
-.search-card-top {
-  padding: 12px 12px 0;
-  display: flex; flex-direction: column; gap: 8px;
+.margin-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 14px 9px; border-bottom: 1px solid var(--b1);
 }
-.sf {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--s3); border: 1.5px solid var(--b1);
-  border-radius: 10px; padding: 0 14px; height: 50px;
-  transition: border-color .15s, box-shadow .15s;
+.margin-prod { font-size: 15px; font-weight: 900; color: #fff; flex: 1; }
+.margin-pill {
+  font-size: 12px; font-weight: 900;
+  border-radius: 20px; padding: 4px 12px; flex-shrink: 0;
 }
-.sf:focus-within {
-  border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(52,211,153,.10), inset 0 0 0 1px rgba(52,211,153,.05);
+.margin-pill.pos { background: rgba(52,211,153,.15); color: #86efac; border: 1px solid rgba(52,211,153,.3); }
+.margin-pill.neg { background: rgba(248,113,113,.15); color: #fca5a5; border: 1px solid rgba(248,113,113,.3); }
+.margin-row {
+  display: flex; align-items: center; gap: 0;
+  padding: 10px 14px; border-top: 1px solid rgba(255,255,255,.04);
 }
-.sf-icon { font-size: 16px; flex-shrink: 0; }
-.sf-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--t3); white-space: nowrap; }
-.sf-input {
-  flex: 1; background: none; border: none; outline: none;
-  color: var(--t1); font-size: 15px; font-weight: 600; min-width: 0;
+.margin-col { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.margin-col-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing:.08em; color: #4a6480; }
+.margin-col-val { font-size: 18px; font-weight: 900; line-height: 1; }
+.margin-col-val.buy  { color: #fca5a5; }
+.margin-col-val.sell { color: #86efac; }
+.margin-col-who { font-size: 10px; color: #5a7898; margin-top: 1px; }
+.margin-divider {
+  width: 1px; background: var(--b1); align-self: stretch; margin: 0 12px; flex-shrink: 0;
 }
-.sf-input::placeholder { color: var(--t3); font-weight: 400; font-size: 14px; }
-.sf-connector {
-  display: flex; align-items: center; justify-content: center; padding: 0 12px;
-  position: relative;
+.margin-result {
+  width: 70px; flex-shrink: 0; text-align: center;
+  display: flex; flex-direction: column; gap: 2px; align-items: center;
 }
-.sf-connector::before {
-  content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1.5px;
-  background: linear-gradient(180deg, var(--green) 0%, var(--amber) 100%);
-  transform: translateX(-50%);
-}
-.sf-arrow {
-  width: 26px; height: 26px; background: var(--s1);
-  border: 1.5px solid var(--b2); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; color: var(--green); position: relative; z-index: 1;
-}
-
-/* Bottom toolbar inside search card */
-.search-card-bar {
-  display: flex; align-items: center; gap: 6px;
-  padding: 10px 12px; border-top: 1px solid var(--b1); margin-top: 10px;
-  background: rgba(0,0,0,.15);
-}
-.view-pill-wrap {
-  display: flex; background: var(--bg); border: 1px solid var(--b1);
-  border-radius: 8px; overflow: hidden; flex-shrink: 0;
-}
-.vpill {
-  padding: 7px 11px; font-size: 11px; font-weight: 700;
-  color: var(--t2); cursor: pointer; border: none; background: none;
-  transition: all .12s; white-space: nowrap;
-}
-.vpill.active {
-  background: linear-gradient(135deg, var(--green) 0%, var(--green2) 100%);
-  color: #0b0f16; border-radius: 6px;
-}
-.search-spacer { flex: 1; }
-.ic-btn {
-  width: 34px; height: 34px; border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 15px; cursor: pointer; border: 1px solid var(--b2);
-  background: var(--s3); color: var(--t2); transition: all .15s;
-  flex-shrink: 0;
-}
-.ic-btn:hover { border-color: var(--green); color: var(--green); }
-.ic-btn.primary {
-  background: linear-gradient(135deg, var(--green) 0%, var(--green2) 100%);
-  border-color: transparent; color: #0b0f16; font-size: 20px; font-weight: 900;
-  box-shadow: 0 2px 12px rgba(52,211,153,.3);
-}
-.ic-btn.primary:hover { box-shadow: 0 3px 16px rgba(52,211,153,.45); }
-
-/* ═══════════════════════════════════════
-   CARRIER PILLS
-═══════════════════════════════════════ */
-.cpills {
-  display: flex; gap: 5px; overflow-x: auto;
-  scrollbar-width: none; -webkit-overflow-scrolling: touch;
-  padding: 0 0 10px;
-}
-.cpills::-webkit-scrollbar { display: none; }
-.cpill {
-  flex-shrink: 0; padding: 6px 13px; border-radius: 20px;
-  font-size: 11px; font-weight: 700; cursor: pointer;
-  border: 1.5px solid var(--b1); background: var(--s2); color: var(--t2);
-  transition: all .12s; white-space: nowrap;
-}
-.cpill.on { background: var(--gdim); border-color: var(--green); color: var(--green); }
-.cpill.all.on { background: var(--amberdim); border-color: var(--amber); color: var(--amber); }
-
-/* ═══════════════════════════════════════
-   RAPID ROW
-═══════════════════════════════════════ */
-.rrow {
-  background: linear-gradient(145deg, var(--s1) 0%, var(--s2) 100%);
-  border: 1px solid var(--b1); border-left: 3px solid var(--amber);
-  border-radius: var(--r); margin-bottom: 9px; overflow: hidden;
-  transition: transform .15s, box-shadow .15s, border-color .15s;
-  cursor: pointer;
-}
-.rrow:hover { transform: translateY(-1px); border-color: var(--green); border-left-color: var(--green); box-shadow: 0 6px 20px rgba(52,211,153,.10); }
-.rrow-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 13px 7px; gap: 8px; }
-.rrow-route { flex: 1; min-width: 0; }
-.rrow-from { font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rrow-to-line { display: flex; align-items: center; gap: 5px; margin-top: 2px; }
-.rrow-arrow { font-size: 11px; color: var(--green); flex-shrink: 0; }
-.rrow-to { font-size: 13px; font-weight: 700; color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rrow-best { text-align: right; flex-shrink: 0; }
-.rrow-best-who { font-size: 9px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: .05em; }
-.rrow-best-price { font-size: 22px; font-weight: 900; color: var(--amber); line-height: 1.05; }
-.rrow-best-unit { font-size: 9px; font-weight: 700; color: rgba(251,146,60,.7); }
-/* chips */
-.chips { display: flex; gap: 5px; padding: 3px 13px 11px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-.chips::-webkit-scrollbar { display: none; }
-.chip {
-  flex-shrink: 0; min-width: 72px;
-  background: var(--s3); border: 1px solid var(--b1);
-  border-radius: 9px; padding: 6px 9px;
-  display: flex; flex-direction: column; align-items: center; gap: 1px;
-  transition: border-color .12s;
-}
-.chip.best { background: var(--ambersolid); border-color: var(--amber); box-shadow: 0 0 10px rgba(251,146,60,.12); }
-.chip-who { font-size: 8px; font-weight: 800; color: var(--t2); text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chip.best .chip-who { color: var(--amber); }
-.chip-val { font-size: 15px; font-weight: 900; color: #fff; }
-.chip-unit { font-size: 8px; font-weight: 700; color: var(--green); letter-spacing: .04em; }
-.chip.best .chip-unit { color: var(--amber); }
-.chip-prov { font-size: 8px; color: var(--amber); opacity: .8; margin-top: 1px; }
-/* edit actions */
-.rrow-acts { display: none; gap: 5px; padding: 0 13px 9px; justify-content: flex-end; }
-.rrow:hover .rrow-acts { display: flex; }
-.act { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; }
-.act-edit { background: var(--gdim); color: var(--green); border: 1px solid var(--green); }
-.act-del  { background: var(--reddim); color: var(--red); border: 1px solid var(--red); }
-
-/* ═══════════════════════════════════════
-   CONFRONTO
-═══════════════════════════════════════ */
-.ccard {
-  background: linear-gradient(145deg, var(--s1) 0%, var(--s2) 100%);
-  border: 1px solid var(--b1); border-top: 2px solid var(--green);
-  border-radius: var(--r); padding: 16px; margin-bottom: 10px;
-  box-shadow: 0 4px 20px rgba(0,0,0,.3);
-}
-.ccard-route { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }
-.ccard-from { font-size: 14px; font-weight: 900; color: #fff; }
-.ccard-arrow { font-size: 13px; color: var(--t3); }
-.ccard-to { font-size: 14px; font-weight: 800; color: var(--green); }
-.cgroup-label {
-  font-size: 10px; font-weight: 800; color: var(--green);
-  text-transform: uppercase; letter-spacing: .08em;
-  display: flex; align-items: center; gap: 8px; margin: 14px 0 8px;
-}
-.cgroup-label::after { content: ''; flex: 1; height: 1px; background: var(--b1); }
-.cbar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-.cbar-name { font-size: 11px; font-weight: 700; color: var(--t2); width: 100px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cbar-wrap { flex: 1; height: 28px; }
-.cbar { height: 100%; border-radius: 6px; display: flex; align-items: center; padding: 0 9px; min-width: 48px; }
-.cbar.best { background: linear-gradient(90deg, var(--green2) 0%, var(--green) 100%); box-shadow: 0 0 10px rgba(52,211,153,.2); }
-.cbar.other { background: var(--s3); border: 1px solid var(--b2); }
-.cbar-price { font-size: 12px; font-weight: 800; white-space: nowrap; }
-.cbar.best .cbar-price { color: #0b0f16; }
-.cbar.other .cbar-price { color: var(--t1); }
-.cdelta { font-size: 10px; color: var(--t3); font-weight: 600; flex-shrink: 0; width: 40px; text-align: right; }
-.cdelta.pos { color: var(--red); }
-.cinfo { font-size: 10px; color: var(--t3); margin: -3px 0 5px 108px; }
-
-/* ═══════════════════════════════════════
-   CARDS GENERICHE
-═══════════════════════════════════════ */
-.card {
-  background: linear-gradient(145deg, var(--s1) 0%, var(--s2) 100%);
-  border: 1px solid var(--b1); border-radius: var(--r);
-  padding: 16px; margin-bottom: 12px;
-}
-.card-title { font-size: 10px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 12px; }
-
-/* ═══════════════════════════════════════
-   BUTTONS
-═══════════════════════════════════════ */
-.btn { padding: 10px 16px; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all .15s; white-space: nowrap; }
-.btn-primary { background: linear-gradient(135deg, var(--green) 0%, var(--green2) 100%); color: #0b0f16; box-shadow: 0 2px 10px rgba(52,211,153,.25); }
-.btn-primary:hover { box-shadow: 0 3px 14px rgba(52,211,153,.4); }
-.btn-secondary { background: var(--s3); color: var(--t1); border: 1px solid var(--b2); }
-.btn-secondary:hover { border-color: var(--green); color: var(--green); }
-.btn-danger { background: var(--reddim); color: var(--red); border: 1px solid var(--red); }
-.btn-sm { padding: 6px 12px; font-size: 12px; }
-
-/* ═══════════════════════════════════════
-   FORM INPUTS
-═══════════════════════════════════════ */
-.inp {
-  width: 100%; background: var(--s3); border: 1.5px solid var(--b1);
-  border-radius: 9px; padding: 11px 13px; color: var(--t1);
-  font-size: 13px; outline: none; transition: border .15s;
-}
-.inp:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(52,211,153,.08); }
-.inp::placeholder { color: var(--t3); }
-select.inp { cursor: pointer; }
-.form-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-.form-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 130px; }
-.form-label { font-size: 10px; font-weight: 800; color: var(--t2); text-transform: uppercase; letter-spacing: .07em; }
-
-/* ═══════════════════════════════════════
-   IMPORT DROP ZONE
-═══════════════════════════════════════ */
-.drop-zone {
-  border: 2px dashed var(--b2); border-radius: var(--r);
-  padding: 28px; text-align: center; cursor: pointer;
-  transition: all .15s; position: relative;
-}
-.drop-zone:hover, .drop-zone.drag { border-color: var(--green); background: var(--gdim); }
-.drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
-.drop-icon { font-size: 28px; margin-bottom: 7px; }
-.drop-text { font-size: 13px; color: var(--t2); }
-.drop-sub { font-size: 10px; color: var(--t3); margin-top: 3px; }
-.import-options { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-.import-opt {
-  flex: 1; min-width: 120px; background: var(--s3); border: 2px solid var(--b1);
-  border-radius: 9px; padding: 12px; cursor: pointer; text-align: center; transition: all .15s;
-}
-.import-opt:hover { border-color: var(--green); }
-.import-opt.selected { border-color: var(--green); background: var(--gdim); }
-.import-opt-icon { font-size: 18px; margin-bottom: 4px; }
-.import-opt-label { font-size: 12px; font-weight: 700; }
-.import-opt-desc { font-size: 10px; color: var(--t2); margin-top: 2px; }
-
-/* ═══════════════════════════════════════
-   LOG
-═══════════════════════════════════════ */
-.log-box {
-  background: #080c12; border: 1px solid var(--b1); border-radius: 8px;
-  padding: 10px 12px; font-size: 11px; font-family: monospace;
-  color: var(--t2); max-height: 120px; overflow-y: auto; margin-top: 8px;
-}
-.log-ok { color: var(--green); }
-.log-warn { color: var(--amber); }
-.log-err { color: var(--red); }
-
-/* ═══════════════════════════════════════
-   PRODOTTI
-═══════════════════════════════════════ */
-.ptabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
-.ptab {
-  padding: 6px 13px; border-radius: 20px; font-size: 11px; font-weight: 700;
-  cursor: pointer; border: 1.5px solid var(--b1); background: var(--s2); color: var(--t2); transition: all .12s;
-}
-.ptab.active { background: var(--bluedim); color: var(--blue); border-color: var(--blue); }
-.ptable { width: 100%; border-collapse: collapse; font-size: 12px; }
-.ptable th {
-  background: var(--s3); color: var(--t2); font-weight: 700;
-  padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--b1);
-  font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
-}
-.ptable td { padding: 9px 10px; border-bottom: 1px solid var(--b1); }
-.ptable tr:hover td { background: rgba(255,255,255,.02); }
-.price-buy { color: var(--red); font-weight: 700; }
-.price-sell { color: var(--green); font-weight: 700; }
-.tag { display: inline-block; border-radius: 4px; font-size: 9px; font-weight: 800; padding: 2px 6px; }
-.tag-buy { background: var(--reddim); color: var(--red); }
-.tag-sell { background: var(--gdim); color: var(--green); }
-.best-badge { font-size: 9px; font-weight: 800; color: var(--amber); background: var(--amberdim); border-radius: 4px; padding: 1px 5px; margin-left: 4px; }
-
-/* ═══════════════════════════════════════
-   MODAL
-═══════════════════════════════════════ */
-.modal-backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,.75);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 200; padding: 16px;
-}
-.modal-backdrop.hidden { display: none; }
-.modal {
-  background: linear-gradient(145deg, var(--s1) 0%, var(--s2) 100%);
-  border: 1px solid var(--b2); border-radius: 16px;
-  padding: 20px; max-width: 480px; width: 100%;
-  box-shadow: 0 20px 60px rgba(0,0,0,.6);
-}
-.modal-title { font-size: 15px; font-weight: 800; margin-bottom: 14px; }
-.modal-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
-
-/* ═══════════════════════════════════════
-   TOAST
-═══════════════════════════════════════ */
-.toast {
-  position: fixed; bottom: 24px; left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--s2); border: 1px solid var(--b2);
-  border-radius: 12px; padding: 11px 20px;
-  font-size: 13px; font-weight: 700;
-  box-shadow: 0 8px 30px rgba(0,0,0,.5); z-index: 999;
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-  white-space: nowrap; pointer-events: none;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
-.toast.ok   { border-color: var(--green); color: var(--green); }
-.toast.warn { border-color: var(--amber); color: var(--amber); }
-
-/* ═══════════════════════════════════════
-   EMPTY STATE
-═══════════════════════════════════════ */
-.empty { text-align: center; padding: 40px 20px; }
-.empty-icon { font-size: 36px; margin-bottom: 10px; opacity: .5; }
-.empty-text { font-size: 13px; color: var(--t2); line-height: 1.6; }
-
-/* ═══════════════════════════════════════
-   EDIT PRICE ROWS (modal)
-═══════════════════════════════════════ */
-.erow {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px; background: var(--s3); border: 1px solid var(--b1);
-  border-radius: 8px; margin-bottom: 6px;
-}
-.erow-carrier { font-size: 12px; font-weight: 700; flex: 1; }
-.erow-input {
-  width: 80px; background: var(--s2); border: 1px solid var(--b2);
-  border-radius: 6px; padding: 5px 8px; color: var(--t1);
-  font-size: 13px; font-weight: 700; text-align: right; outline: none;
-}
-.erow-input:focus { border-color: var(--green); }
-.erow-unit { font-size: 10px; color: var(--t2); width: 32px; }
-.erow-del { font-size: 14px; cursor: pointer; color: var(--t3); padding: 0 4px; }
-.erow-del:hover { color: var(--red); }
-
-/* ═══════════════════════════════════════
-   SECTION HEAD
-═══════════════════════════════════════ */
-.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.sec-head h2 { font-size: 14px; font-weight: 800; }
-.sec-head .sp { flex: 1; }
-
-/* ═══════════════════════════════════════
-   MISC
-═══════════════════════════════════════ */
-.hidden { display: none !important; }
-.search-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.margin-result-label { font-size: 8px; font-weight: 800; letter-spacing:.08em; color: #4a6480; text-transform:uppercase; }
+.margin-result-val { font-size: 20px; font-weight: 900; }
+.margin-result-val.pos { color: #34d399; }
+.margin-result-val.neg { color: #f87171; }
+.margin-result-pct { font-size: 10px; font-weight: 700; }
+.margin-result-pct.pos { color: rgba(52,211,153,.7); }
+.margin-result-pct.neg { color: rgba(248,113,113,.7); }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div class="h-logo">🚛</div>
   <div class="h-text">
@@ -490,46 +441,32 @@ select.inp { cursor: pointer; }
   <div class="h-drive" id="driveStatus" onclick="handleDriveClick()">☁️ Drive</div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
   <button class="tab active" onclick="switchTab('trasporti')">🚛 Trasporti</button>
   <button class="tab" onclick="switchTab('prodotti')">🌾 Prodotti</button>
   <button class="tab" onclick="switchTab('import')">📤 Import</button>
 </div>
 
-<!-- ═══════ TAB TRASPORTI ═══════ -->
+<!-- TRASPORTI -->
 <div class="page active" id="page-trasporti">
-
-  <!-- STAT CARDS -->
-  <div class="stats-row" style="margin-top:14px;">
+  <div class="stats-row" style="margin-top:12px;">
     <div class="stat-card"><div class="stat-n" id="statTratte">0</div><div class="stat-l">Tratte</div></div>
     <div class="stat-card"><div class="stat-n" id="statTrasportatori">0</div><div class="stat-l">Trasportatori</div></div>
     <div class="stat-card"><div class="stat-n" id="statPrezzi">0</div><div class="stat-l">Prezzi</div></div>
   </div>
-
-  <!-- SEARCH CARD -->
   <div class="search-card">
     <div class="search-card-top">
-      <!-- Campo partenza -->
       <div class="sf">
-        <span class="sf-icon">📍</span>
-        <span class="sf-label">Da</span>
+        <span class="sf-icon">📍</span><span class="sf-label">Da</span>
         <input class="sf-input" id="searchFrom" placeholder="Base di carico..." oninput="filterRoutes()" list="listFrom" autocomplete="off">
       </div>
-      <!-- Connettore -->
-      <div class="sf-connector">
-        <div class="sf-arrow">↓</div>
-      </div>
-      <!-- Campo arrivo -->
+      <div class="sf-connector"><div class="sf-arrow">↓</div></div>
       <div class="sf">
-        <span class="sf-icon">🎯</span>
-        <span class="sf-label">A</span>
+        <span class="sf-icon">🎯</span><span class="sf-label">A</span>
         <input class="sf-input" id="searchTo" placeholder="Destinazione..." oninput="filterRoutes()" list="listTo" autocomplete="off">
       </div>
     </div>
-    <datalist id="listFrom"></datalist>
-    <datalist id="listTo"></datalist>
-    <!-- Toolbar -->
+    <datalist id="listFrom"></datalist><datalist id="listTo"></datalist>
     <div class="search-card-bar">
       <div class="view-pill-wrap">
         <button id="btnViewRapida" class="vpill active" onclick="setView('rapida')">⚡ Rapida</button>
@@ -537,169 +474,97 @@ select.inp { cursor: pointer; }
       </div>
       <div class="search-spacer"></div>
       <button class="ic-btn" onclick="clearSearch()" title="Reset">↺</button>
-      <button class="ic-btn" onclick="exportFilteredExcel()" title="Esporta Excel">⬇️</button>
-      <button class="ic-btn primary" onclick="openAddTariffaModal()" title="Aggiungi tariffa">＋</button>
+      <button class="ic-btn" onclick="exportFilteredExcel()" title="Excel">⬇️</button>
+      <button class="ic-btn primary" onclick="openAddTariffaModal()">＋</button>
     </div>
   </div>
-
-  <!-- CARRIER PILLS -->
   <div class="cpills" id="carrierPills"></div>
-
-  <!-- Hidden select for logic -->
   <select id="searchCarrier" onchange="filterRoutes()" style="display:none;"><option value="">Tutti</option></select>
-
-  <!-- VISTA RAPIDA -->
-  <div id="viewRapida">
-    <div id="resultsContainer">
-      <div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.</div></div>
-    </div>
-  </div>
-
-  <!-- VISTA CONFRONTO -->
+  <div id="viewRapida"><div id="resultsContainer"><div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.</div></div></div></div>
   <div id="viewConfronto" style="display:none;">
-    <select class="inp" id="confrontoSelect" onchange="renderConfronto()" style="margin-bottom:12px; font-weight:700;">
-      <option value="">— Seleziona una tratta —</option>
-    </select>
-    <div id="confrontoContainer">
-      <div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta per confrontare.</div></div>
-    </div>
+    <select class="inp" id="confrontoSelect" onchange="renderConfronto()" style="margin-bottom:12px;font-weight:700;"><option value="">— Seleziona una tratta —</option></select>
+    <div id="confrontoContainer"><div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta.</div></div></div>
   </div>
-
 </div>
 
-<!-- ═══════ TAB PRODOTTI ═══════ -->
+<!-- PRODOTTI -->
 <div class="page" id="page-prodotti">
-  <div style="margin-top:14px;">
+  <div style="margin-top:12px;">
     <div class="stats-row">
       <div class="stat-card"><div class="stat-n" id="statProdotti">0</div><div class="stat-l">Prodotti</div></div>
       <div class="stat-card"><div class="stat-n" id="statFornitori">0</div><div class="stat-l">Fornitori</div></div>
       <div class="stat-card"><div class="stat-n" id="statClienti">0</div><div class="stat-l">Clienti</div></div>
     </div>
-    <div class="sec-head">
-      <h2>Prezzi prodotti</h2>
-      <div class="sp"></div>
-      <button class="btn btn-primary btn-sm" onclick="openAddProdottoModal()">➕ Aggiungi</button>
-      <button class="btn btn-secondary btn-sm" onclick="openImportProdottiModal()">📤 Import</button>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+      <input class="inp" id="prodSearch" placeholder="🔍 Cerca..." oninput="filterProdotti()" style="flex:1;height:38px;font-size:13px;">
+      <button class="ic-btn primary" onclick="openAddProdottoModal()" title="Aggiungi" style="height:38px;width:38px;font-size:20px;flex-shrink:0;">＋</button>
     </div>
-    <div class="search-row">
-      <input class="inp" id="prodSearch" placeholder="🔍 Cerca prodotto, fornitore, cliente..." oninput="filterProdotti()" style="flex:1;">
-      <select class="inp" id="prodTipo" onchange="filterProdotti()" style="max-width:150px;">
-        <option value="">Tutti i tipi</option>
-        <option value="acquisto">Acquisto</option>
-        <option value="vendita">Vendita</option>
-      </select>
+    <div class="prod-view-wrap">
+      <button class="pvbtn active" id="pvbtn-prodotto"  onclick="setProdView('prodotto')">📦 Prodotto</button>
+      <button class="pvbtn"        id="pvbtn-fornitore" onclick="setProdView('fornitore')">🏭 Fornitore</button>
+      <button class="pvbtn"        id="pvbtn-cliente"   onclick="setProdView('cliente')">🏢 Cliente</button>
+      <button class="pvbtn"        id="pvbtn-margine"   onclick="setProdView('margine')">📈 Margine</button>
     </div>
     <div class="ptabs" id="prodottiTabs"></div>
-    <div id="prodottiContainer">
-      <div class="empty"><div class="empty-icon">🌾</div><div class="empty-text">Nessun prezzo prodotto inserito.</div></div>
-    </div>
+    <div id="prodottiContainer"><div class="empty"><div class="empty-icon">🌾</div><div class="empty-text">Nessun prezzo inserito.</div></div></div>
   </div>
 </div>
 
-<!-- ═══════ TAB IMPORT ═══════ -->
+<!-- IMPORT -->
 <div class="page" id="page-import">
-  <div style="margin-top:14px;">
-
-    <!-- Import trasporti -->
+  <div style="margin-top:12px;">
     <div class="card">
       <div class="card-title">🚛 Import tariffe trasporti</div>
       <div class="import-options" id="importMode">
-        <div class="import-opt selected" data-mode="add" onclick="selectImportMode(this,'add')">
-          <div class="import-opt-icon">➕</div>
-          <div class="import-opt-label">Aggiungi</div>
-          <div class="import-opt-desc">Integra dati esistenti</div>
-        </div>
-        <div class="import-opt" data-mode="replace" onclick="selectImportMode(this,'replace')">
-          <div class="import-opt-icon">🔄</div>
-          <div class="import-opt-label">Sostituisci</div>
-          <div class="import-opt-desc">Cancella e reimporta</div>
-        </div>
+        <div class="import-opt selected" data-mode="add" onclick="selectImportMode(this,'add')"><div class="import-opt-icon">➕</div><div class="import-opt-label">Aggiungi</div><div class="import-opt-desc">Integra esistenti</div></div>
+        <div class="import-opt" data-mode="replace" onclick="selectImportMode(this,'replace')"><div class="import-opt-icon">🔄</div><div class="import-opt-label">Sostituisci</div><div class="import-opt-desc">Cancella e reimporta</div></div>
       </div>
       <div class="drop-zone" id="dropZoneTrasporti">
         <input type="file" id="fileInputTrasporti" accept=".xlsx,.xls,.csv" onchange="handleFileImport(event,'trasporti')">
-        <div class="drop-icon">📂</div>
-        <div class="drop-text">Trascina o clicca per caricare</div>
-        <div class="drop-sub">.xlsx · .xls · .csv</div>
+        <div class="drop-icon">📂</div><div class="drop-text">Trascina o clicca</div><div class="drop-sub">.xlsx · .xls · .csv</div>
       </div>
       <div class="log-box hidden" id="logTrasporti"></div>
     </div>
-
-    <!-- Import prodotti -->
     <div class="card">
       <div class="card-title">🌾 Import prezzi prodotti</div>
       <div class="drop-zone" id="dropZoneProdotti">
         <input type="file" id="fileInputProdotti" accept=".xlsx,.xls,.csv" onchange="handleFileImport(event,'prodotti')">
-        <div class="drop-icon">📂</div>
-        <div class="drop-text">Trascina o clicca per caricare</div>
-        <div class="drop-sub">.xlsx · .xls · .csv</div>
+        <div class="drop-icon">📂</div><div class="drop-text">Trascina o clicca</div><div class="drop-sub">.xlsx · .xls · .csv</div>
+      </div>
+      <div style="margin-top:10px;padding:10px;background:var(--s3);border:1px solid var(--b2);border-radius:9px;text-align:center;">
+        <div style="font-size:11px;color:var(--t2);margin-bottom:8px;">Oppure carica il listino integrato:</div>
+        <button class="btn btn-primary" onclick="loadKarmaData()" style="width:100%;">🌾 Carica Listino KarMa 03/2026</button>
       </div>
       <div class="log-box hidden" id="logProdotti"></div>
     </div>
-
-    <!-- Gestione dati -->
     <div class="card">
       <div class="card-title">⚙️ Gestione dati</div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇️ Esporta JSON</button>
-        <button class="btn btn-secondary btn-sm" onclick="importDataJSON()">📥 Importa JSON</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇️ JSON</button>
+        <button class="btn btn-secondary btn-sm" onclick="importDataJSON()">📥 JSON</button>
         <input type="file" id="jsonImportInput" accept=".json" class="hidden" onchange="loadJSON(event)">
-        <button class="btn btn-secondary btn-sm" onclick="reloadBuiltinData()" style="border-color:var(--green);color:var(--green);">🔄 Ricarica REV 03</button>
-        <button class="btn btn-secondary btn-sm" onclick="exportFilteredExcel()">⬇️ Export Excel</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmClear()">🗑 Svuota tutto</button>
+        <button class="btn btn-secondary btn-sm" onclick="reloadBuiltinData()" style="border-color:var(--green);color:var(--green);">🔄 REV 03</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportFilteredExcel()">⬇️ Excel</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmClear()">🗑 Svuota</button>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <!-- MODAL DRIVE CONFLICT -->
 <div class="modal-backdrop hidden" id="modalDriveConflict">
   <div class="modal">
-    <div class="modal-title">⚠️ Conflitto di sincronizzazione</div>
-    <p style="font-size:13px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Un altro dispositivo ha salvato su Drive dopo la tua ultima sincronizzazione.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;">
-      <div style="background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:12px;text-align:center;">
-        <div style="font-size:20px;margin-bottom:4px;">📱</div>
-        <div style="font-size:11px;font-weight:700;margin-bottom:4px;">Questo dispositivo</div>
-        <div id="conflictLocalInfo" style="font-size:10px;color:var(--t2);"></div>
-      </div>
-      <div style="background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:12px;text-align:center;">
-        <div style="font-size:20px;margin-bottom:4px;">☁️</div>
-        <div style="font-size:11px;font-weight:700;margin-bottom:4px;">Google Drive</div>
-        <div id="conflictDriveInfo" style="font-size:10px;color:var(--t2);"></div>
-      </div>
+    <div class="modal-title">⚠️ Conflitto sincronizzazione</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:12px;text-align:center;"><div style="font-size:20px;margin-bottom:4px;">📱</div><div style="font-size:11px;font-weight:700;margin-bottom:4px;">Questo dispositivo</div><div id="conflictLocalInfo" style="font-size:10px;color:var(--t2);"></div></div>
+      <div style="background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:12px;text-align:center;"><div style="font-size:20px;margin-bottom:4px;">☁️</div><div style="font-size:11px;font-weight:700;margin-bottom:4px;">Google Drive</div><div id="conflictDriveInfo" style="font-size:10px;color:var(--t2);"></div></div>
     </div>
     <div class="modal-actions" style="flex-direction:column;gap:6px;">
       <button class="btn btn-primary" style="width:100%;" onclick="resolveConflict('local')">✅ Tieni questo dispositivo</button>
       <button class="btn btn-secondary" style="width:100%;" onclick="resolveConflict('drive')">☁️ Usa dati Drive</button>
       <button class="btn btn-secondary" style="width:100%;" onclick="closeModal('modalDriveConflict')">✕ Annulla</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL SETUP DRIVE -->
-<div class="modal-backdrop hidden" id="modalDriveSetup">
-  <div class="modal" style="max-width:460px;">
-    <div class="modal-title">☁️ Configura Google Drive</div>
-    <p style="font-size:13px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Inserisci il tuo <strong style="color:var(--t1);">Client ID OAuth 2.0</strong> Google per abilitare la sincronizzazione.</p>
-    <div style="background:var(--s3);border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:11px;color:var(--t2);line-height:1.9;">
-      <div><span style="color:var(--green);font-weight:800;">1.</span> <span style="color:var(--t1);font-weight:700;">console.cloud.google.com</span></div>
-      <div><span style="color:var(--green);font-weight:800;">2.</span> Abilita <span style="color:var(--t1);font-weight:700;">Google Drive API</span></div>
-      <div><span style="color:var(--green);font-weight:800;">3.</span> Credenziali → ID client OAuth 2.0 → Applicazione web</div>
-      <div><span style="color:var(--green);font-weight:800;">4.</span> Aggiungi l'URL di questa pagina come origine autorizzata</div>
-    </div>
-    <div class="form-group" style="margin-bottom:10px;">
-      <label class="form-label">Client ID</label>
-      <input class="inp" id="driveClientIdInput" placeholder="xxxx.apps.googleusercontent.com" style="font-family:monospace;font-size:12px;">
-    </div>
-    <div style="font-size:10px;color:var(--t3);margin-bottom:4px;">🔒 Salvato solo nel tuo browser.</div>
-    <div class="modal-actions">
-      <button class="btn btn-danger btn-sm" onclick="removeDriveClientId()" id="btnRemoveDrive" style="margin-right:auto;display:none;">🗑 Rimuovi</button>
-      <button class="btn btn-secondary" onclick="closeModal('modalDriveSetup')">Annulla</button>
-      <button class="btn btn-primary" onclick="saveDriveClientId()">☁️ Connetti</button>
     </div>
   </div>
 </div>
@@ -724,50 +589,26 @@ select.inp { cursor: pointer; }
 <!-- MODAL AGGIUNGI TARIFFA -->
 <div class="modal-backdrop hidden" id="modalTariffa">
   <div class="modal">
-    <div class="modal-title">➕ Aggiungi tariffa di trasporto</div>
+    <div class="modal-title">➕ Aggiungi tariffa</div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Base di carico</label>
-        <input class="inp" id="mtFrom" placeholder="es. Canossa (RE)" list="listFromModal"><datalist id="listFromModal"></datalist>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Destinazione</label>
-        <input class="inp" id="mtTo" placeholder="es. Verolavecchia (BS)" list="listToModal"><datalist id="listToModal"></datalist>
-      </div>
+      <div class="form-group"><label class="form-label">Base di carico</label><input class="inp" id="mtFrom" placeholder="es. Canossa (RE)" list="listFromModal"><datalist id="listFromModal"></datalist></div>
+      <div class="form-group"><label class="form-label">Destinazione</label><input class="inp" id="mtTo" placeholder="es. Verolavecchia (BS)" list="listToModal"><datalist id="listToModal"></datalist></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Trasportatore</label>
-        <input class="inp" id="mtCarrier" placeholder="Nome trasportatore" list="listCarrierModal"><datalist id="listCarrierModal"></datalist>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Condizioni pagamento</label>
-        <input class="inp" id="mtConditions" placeholder="es. BB 60 gg FM">
-      </div>
+      <div class="form-group"><label class="form-label">Trasportatore</label><input class="inp" id="mtCarrier" placeholder="Nome" list="listCarrierModal"><datalist id="listCarrierModal"></datalist></div>
+      <div class="form-group"><label class="form-label">Condizioni</label><input class="inp" id="mtConditions" placeholder="es. BB 60 gg FM"></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Prezzo</label>
-        <input class="inp" id="mtPrice" type="number" step="0.01" placeholder="0.00">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Unità</label>
-        <select class="inp" id="mtUnit"><option value="€/vg">€/viaggio</option><option value="€/ton">€/ton</option></select>
-      </div>
+      <div class="form-group"><label class="form-label">Prezzo</label><input class="inp" id="mtPrice" type="number" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label class="form-label">Unità</label><select class="inp" id="mtUnit"><option value="€/vg">€/viaggio</option><option value="€/ton">€/ton</option></select></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-top:6px;padding:10px 12px;background:var(--amberdim);border:1px solid rgba(251,146,60,.3);border-radius:9px;cursor:pointer;" onclick="document.getElementById('mtProvisional').click()">
       <input type="checkbox" id="mtProvisional" style="width:16px;height:16px;accent-color:var(--amber);cursor:pointer;flex-shrink:0;">
-      <div>
-        <div style="font-size:12px;font-weight:700;color:var(--amber);">⚠️ Prezzo da confermare</div>
-        <div style="font-size:10px;color:var(--t2);margin-top:1px;">Il prezzo è provvisorio</div>
-      </div>
-    </div>
-    <div style="font-size:11px;color:var(--t3);margin-top:8px;padding:7px 10px;background:var(--s3);border-radius:7px;">
-      ℹ️ Se la tratta esiste già, il prezzo verrà <strong style="color:var(--amber);">aggiornato</strong>.
+      <div><div style="font-size:12px;font-weight:700;color:var(--amber);">⚠️ Prezzo da confermare</div><div style="font-size:10px;color:var(--t2);margin-top:1px;">Il prezzo è provvisorio</div></div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('modalTariffa')">Annulla</button>
-      <button class="btn btn-primary" onclick="saveTariffa()">💾 Salva tariffa</button>
+      <button class="btn btn-primary" onclick="saveTariffa()">💾 Salva</button>
     </div>
   </div>
 </div>
@@ -777,49 +618,20 @@ select.inp { cursor: pointer; }
   <div class="modal">
     <div class="modal-title">➕ Aggiungi prezzo prodotto</div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Prodotto</label>
-        <input class="inp" id="mpProdotto" placeholder="es. Cippato, Segatura…">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Tipo</label>
-        <select class="inp" id="mpTipo">
-          <option value="acquisto">Acquisto</option>
-          <option value="vendita">Vendita</option>
-        </select>
-      </div>
+      <div class="form-group"><label class="form-label">Prodotto</label><input class="inp" id="mpProdotto" placeholder="es. Cippato"></div>
+      <div class="form-group"><label class="form-label">Tipo</label><select class="inp" id="mpTipo"><option value="acquisto">Acquisto</option><option value="vendita">Vendita</option></select></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label" id="mpEntityLabel">Fornitore</label>
-        <input class="inp" id="mpEntity" placeholder="Nome fornitore o cliente">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Luogo</label>
-        <input class="inp" id="mpLuogo" placeholder="es. Ferrara">
-      </div>
+      <div class="form-group"><label class="form-label" id="mpEntityLabel">Fornitore</label><input class="inp" id="mpEntity" placeholder="Nome"></div>
+      <div class="form-group"><label class="form-label">Luogo</label><input class="inp" id="mpLuogo" placeholder="es. Ferrara"></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Prezzo</label>
-        <input class="inp" id="mpPrezzo" type="number" placeholder="0.00">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Unità</label>
-        <select class="inp" id="mpUnita">
-          <option>€/ton</option><option>€/mc</option><option>€/q</option><option>€/kg</option><option>€/vg</option>
-        </select>
-      </div>
+      <div class="form-group"><label class="form-label">Prezzo</label><input class="inp" id="mpPrezzo" type="number" placeholder="0.00"></div>
+      <div class="form-group"><label class="form-label">Unità</label><select class="inp" id="mpUnita"><option>€/ton</option><option>€/mc</option><option>€/q</option><option>€/kg</option><option>€/vg</option></select></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Data</label>
-        <input class="inp" id="mpData" type="date">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Note</label>
-        <input class="inp" id="mpNote" placeholder="opzionale">
-      </div>
+      <div class="form-group"><label class="form-label">Data</label><input class="inp" id="mpData" type="date"></div>
+      <div class="form-group"><label class="form-label">Note</label><input class="inp" id="mpNote" placeholder="opzionale"></div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('modalProdotto')">Annulla</button>
@@ -832,11 +644,8 @@ select.inp { cursor: pointer; }
 <div class="modal-backdrop hidden" id="modalClear">
   <div class="modal">
     <div class="modal-title">⚠️ Svuota archivio</div>
-    <p style="font-size:13px;color:var(--t2);">Stai per cancellare <strong>tutti i dati</strong>. Operazione irreversibile.</p>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeModal('modalClear')">Annulla</button>
-      <button class="btn btn-danger" onclick="clearAll()">🗑 Svuota tutto</button>
-    </div>
+    <p style="font-size:13px;color:var(--t2);">Cancellare <strong>tutti i dati</strong>? Operazione irreversibile.</p>
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('modalClear')">Annulla</button><button class="btn btn-danger" onclick="clearAll()">🗑 Svuota</button></div>
   </div>
 </div>
 
@@ -855,6 +664,8 @@ let activeProdottoFilter = '';
 // ===================== DATI PDF PRECARICATI (REV 02/2026) =====================
 const PDF_DATA = [{"from": "Andalo Valtellino (SO)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 470.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "CEVOLO Trasporti", "price": 580.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "PADANA TRASPORTI", "price": 510.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 630.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "CEVOLO Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 600.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 32.7, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 32.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "UDERZO", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Barberino Tavernelle (FI)", "to": "Mezzano (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 400.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 400.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 520.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 510.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 425.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 440.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "RUFFINI", "price": 350.0, "unit": "€/vg", "conditions": "", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 790.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 780.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "UNITRAG", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castelfranco Emilia (MO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelfranco Emilia (MO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 410.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 400.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 500.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 420.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 715.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 715.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 715.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 480.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 790.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 1000.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 820.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "FRAULINI TRASPORTI", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "UDERZO", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "CEVOLO Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 32.5, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 600.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 32.5, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "UDERZO", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "CEVOLO Trasporti", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "ASCHIERI TRASPORTI", "price": 410.0, "unit": "€/vg", "conditions": "BB 30 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 310.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 380.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "S. Leo (RN)", "carrier": "COAP", "price": 620.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 520.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "COAP", "price": 460.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "CONECO", "price": 650.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 850.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 400.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 390.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 365.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 340.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 330.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 16.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 750.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Firenzuola (FI)", "to": "Mezzano (RA)", "carrier": "C.M. TRASPORTI", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Firenzuola (FI)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 280.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 420.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 410.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "COAP", "price": 460.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 21.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 290.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 800.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 750.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 240.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 270.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 18.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 420.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "STEGAGNO", "price": 420.0, "unit": "€/vg", "conditions": "RIB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Imola (BO)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 250.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Imola (BO)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 255.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 200.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 250.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 250.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "PADANA TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 25.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "CONECO", "price": 400.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "PADANA TRASPORTI", "price": 330.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 425.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 445.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 450.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 250.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 300.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 310.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 290.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CIRIONI Trasporti", "price": 525.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 27.5, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CONECO", "price": 700.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 28.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 715.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "AVIO TRASPORTI", "price": 380.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 365.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "PADANA TRASPORTI", "price": 320.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "AVIO TRASPORTI", "price": 460.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 470.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 400.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mondovì (CN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 24.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Tarmassia IdS (VR)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 500.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 540.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 650.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 320.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 460.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 19.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 300.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 330.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "PADANA TRASPORTI", "price": 350.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 300.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 370.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 370.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 350.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "San Giorgio di Piano (BO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 330.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "San Giorgio di Piano (BO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 390.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Tirano (SO)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Tirano (SO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 700.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Vione - Stadolina (BS)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 700.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Vione - Stadolina (BS)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 700.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}];
 
+const KARMA_DATA = [{"prodotto": "Cippato", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 38.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 38.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da Ardenghi (Dosolo (MN))"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 65.0, "unita": "€/ton", "data": "", "note": "→ Bagnolo di Po (RO)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 65.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Carnovale", "luogo": "Colle Val d'Elsa (SI)", "prezzo": 50.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da Carnovale (Colle Val d'Elsa (SI))"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 55.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 55.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 95.0, "unita": "€/ton", "data": "", "note": "da Incontrato (Bientina (PI))"}, {"prodotto": "Lolla di Farro", "tipo": "acquisto", "entity": "Poggio al Farro", "luogo": "Firenzuola (FI)", "prezzo": 1.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Lolla di Farro", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 80.0, "unita": "€/ton", "data": "", "note": "da Poggio al Farro (Firenzuola (FI))"}, {"prodotto": "Lolla di Riso", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "Jolanda di Savoia (FE)", "prezzo": 30.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Lolla di Riso", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 70.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (Jolanda di Savoia (FE))"}, {"prodotto": "Pula/lolla mix cereali", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "S. Felice sul P.ro (MO)", "prezzo": 50.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Pula/lolla mix cereali", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (S. Felice sul P.ro (MO))"}, {"prodotto": "Sfarinato cereali mix", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "S. Felice sul P.ro (MO)", "prezzo": 130.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Sfarinato cereali mix", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 155.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (S. Felice sul P.ro (MO))"}, {"prodotto": "Sfarinato sorgo/b", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "Jolanda di Savoia (FE)", "prezzo": 75.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Sfarinato sorgo/b", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 100.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (Jolanda di Savoia (FE))"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 55, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 120, "unita": "€/ton", "data": "", "note": ""}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Carnovale", "luogo": "Colle Val d'Elsa (SI)", "prezzo": 60, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Covi Eredi", "luogo": "Pesaro Urbino", "prezzo": 72.5, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 78, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Sicem Saga", "luogo": "Ciano d'Enza (RE)", "prezzo": 17, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Tacchella", "luogo": "Grezzana (VR)", "prezzo": 50, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "ToscoImballaggi", "luogo": "Cetica (AR)", "prezzo": 50, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Ind. L. Tirano", "luogo": "Tirano (SO)", "prezzo": 14, "unita": "€/mc", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Segheria L. Vivo", "luogo": "Vione-Stadolina (BS)", "prezzo": 15, "unita": "€/mc", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Vender Legnami", "luogo": "Mezzocorona (TN)", "prezzo": 17, "unita": "€/mc", "data": "", "note": "→ Tarmassia / Verolavecchia"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 120, "unita": "€/ton", "data": "", "note": "da Incontrato (Bientina)"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 115, "unita": "€/ton", "data": "", "note": "da Covi Eredi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 110, "unita": "€/ton", "data": "", "note": "da Carnovale"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 110, "unita": "€/ton", "data": "", "note": "da Carnovale / Incontrato / ToscoImballaggi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 105, "unita": "€/ton", "data": "", "note": "da Ind.L.Tirano / Segheria / ToscoImballaggi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 90, "unita": "€/ton", "data": "", "note": "da Tacchella"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 85, "unita": "€/ton", "data": "", "note": "da Ardenghi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 70, "unita": "€/ton", "data": "", "note": "da Sicem Saga"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "Trucioli&Derivati", "luogo": "Tarmassia (VR)", "prezzo": 20, "unita": "€/mc", "data": "", "note": "da Vender Legnami"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 19.5, "unita": "€/mc", "data": "", "note": "da Vender Legnami"}];
+
 // ===================== INIT =====================
 function forceReload() {
   DB = {trasporti:[], prodotti:[], lastUpdate:null};
@@ -866,7 +677,7 @@ function forceReload() {
 }
 
 function init() {
-  // Pulizia vecchie chiavi
+  // Se esiste vecchia cache v2, mostra avviso reset
   localStorage.removeItem('archivio-tariffe-old');
   const saved = localStorage.getItem('archivio-tariffe-v3');
   if (saved) {
@@ -897,14 +708,11 @@ function save() {
 
 // ===================== TABS =====================
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const tabs = ['trasporti','prodotti','import'];
-  const idx = tabs.indexOf(tab);
-  const tabEls = document.querySelectorAll('.tab');
-  if(tabEls[idx]) tabEls[idx].classList.add('active');
-  const page = document.getElementById('page-' + tab);
-  if(page) page.classList.add('active');
+  document.querySelectorAll('.tab')[tabs.indexOf(tab)].classList.add('active');
+  document.getElementById('page-' + tab).classList.add('active');
 }
 
 // ===================== REFRESH =====================
@@ -918,33 +726,31 @@ function refreshAll() {
 function refreshStats() {
   const tratte = getUniqueRoutes();
   const carriers = [...new Set(DB.trasporti.map(r => r.carrier))];
-  const se = id => document.getElementById(id);
-  if(se('statTratte')) se('statTratte').textContent = tratte.length;
-  if(se('statTrasportatori')) se('statTrasportatori').textContent = carriers.length;
-  if(se('statPrezzi')) se('statPrezzi').textContent = DB.trasporti.length;
-  if(se('headerBadge')) se('headerBadge').textContent = tratte.length + ' tratte';
+  document.getElementById('statTratte').textContent = tratte.length;
+  document.getElementById('statTrasportatori').textContent = carriers.length;
+  document.getElementById('statPrezzi').textContent = DB.trasporti.length;
+  document.getElementById('headerBadge').textContent = tratte.length + ' tratte';
 
   const prodotti = [...new Set(DB.prodotti.map(p => p.prodotto))];
   const fornitori = [...new Set(DB.prodotti.filter(p=>p.tipo==='acquisto').map(p=>p.entity))];
   const clienti = [...new Set(DB.prodotti.filter(p=>p.tipo==='vendita').map(p=>p.entity))];
-  if(se('statProdotti')) se('statProdotti').textContent = prodotti.length;
-  if(se('statFornitori')) se('statFornitori').textContent = fornitori.length;
-  if(se('statClienti')) se('statClienti').textContent = clienti.length;
+  document.getElementById('statProdotti').textContent = prodotti.length;
+  document.getElementById('statFornitori').textContent = fornitori.length;
+  document.getElementById('statClienti').textContent = clienti.length;
 
   // Autocomplete
   const froms = [...new Set(DB.trasporti.map(r=>r.from))].sort();
   const tos = [...new Set(DB.trasporti.map(r=>r.to))].sort();
-  const lf = document.getElementById('listFrom'); if(lf) lf.innerHTML = froms.map(f=>`<option value="${f}">`).join('');
-  const lt = document.getElementById('listTo');   if(lt) lt.innerHTML = tos.map(t=>`<option value="${t}">`).join('');
-  if(typeof renderCarrierPills === 'function') renderCarrierPills();
-  // Carrier select (hidden)
+  document.getElementById('listFrom').innerHTML = froms.map(f=>`<option value="${f}">`).join('');
+  document.getElementById('listTo').innerHTML = tos.map(t=>`<option value="${t}">`).join('');
+
+  renderCarrierPills();
+  // Carrier select
   const sel = document.getElementById('searchCarrier');
-  if(sel) {
-    const cur = sel.value;
-    sel.innerHTML = '<option value="">Tutti</option>' +
-      carriers.sort().map(cc=>`<option value="${cc}">${cc}</option>`).join('');
-    if(cur) sel.value = cur;
-  }
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">🚚 Tutti i trasportatori</option>' +
+    carriers.sort().map(c=>`<option value="${c}">${c}</option>`).join('');
+  if(cur) sel.value = cur;
   // sync pill highlight
   if(activePill && !carriers.includes(activePill)) activePill = '';
 }
@@ -964,15 +770,7 @@ function getUniqueRoutes() {
   }));
 }
 
-
-// ── Patch class names for new HTML ──
-// renderRapida uses rrow, rrow-head, chips, chip, chip-who, chip-val, chip-unit, chip.best, rrow-acts, act
-// renderConfronto uses ccard, ccard-route, ccard-from, ccard-arrow, ccard-to, cgroup-label, cbar-row, cbar-name, cbar-wrap, cbar, cbar-price, cdelta, cinfo
-// refreshStats uses carrierPills -> cpills via renderCarrierPills
-// carrier-pills -> cpills, carrier-pill -> cpill, .on for active
-
 // ===================== RICERCA TRASPORTI =====================
-
 let currentView = 'rapida';
 
 function setView(v) {
@@ -1124,7 +922,7 @@ function renderConfronto() {
   const vgPrices = prices.filter(function(p){ return p.unit==='€/vg'; }).sort(function(a,b){ return a.price-b.price; });
   const tonPrices = prices.filter(function(p){ return p.unit==='€/ton'; }).sort(function(a,b){ return a.price-b.price; });
 
-  let html = '<div class="ccard">' +
+  let html = '<div class="confronto-card">' +
     '<div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">' +
       '<div style="font-size:14px; font-weight:900; color:#ffffff;">' + from + '</div>' +
       '<div style="color:var(--text3); font-size:12px;">→</div>' +
@@ -1134,7 +932,7 @@ function renderConfronto() {
 
   function renderBars(list, label, unitLabel) {
     if(!list.length) return '';
-    let out = '<div class="cgroup-label">' + label + '</div>';
+    let out = '<div class="confronto-group-label">' + label + '</div>';
     const maxVal = Math.max.apply(null, list.map(function(p){return p.price;}));
     const minVal = list[0].price;
     list.forEach(function(p, i) {
@@ -1143,11 +941,11 @@ function renderConfronto() {
       const delta = p.price - minVal;
       const deltaStr = delta===0 ? '⭐ min' : '+' + delta.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '€';
       const provTag = p.provisional ? ' <span style="font-size:9px;background:rgba(245,200,66,.2);color:var(--gold);border-radius:3px;padding:1px 4px;">da conf.</span>' : '';
-      out += '<div class="cbar-row">' +
-        '<div class="cbar-name" title="' + p.carrier + '">' + p.carrier + '</div>' +
-        '<div class="cbar-wrap">' +
+      out += '<div class="confront-bar-row">' +
+        '<div class="confront-bar-name" title="' + p.carrier + '">' + p.carrier + '</div>' +
+        '<div class="confront-bar-wrap">' +
           '<div class="confront-bar ' + (isBest?'best':'other') + '" style="width:' + pct + '%">' +
-            '<span class="cbar-price">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €' + (unitLabel?' '+unitLabel:'') + '</span>' +
+            '<span class="confront-bar-price">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €' + (unitLabel?' '+unitLabel:'') + '</span>' +
           '</div>' +
         '</div>' +
         '<div class="confront-delta ' + (delta>0?'pos':'') + '">' + deltaStr + '</div>' +
@@ -1379,84 +1177,278 @@ function filterProdotti() {
   refreshProdotti();
 }
 
+
+// ═══════════════════════════════════════════════════════
+// PRODOTTI — GESTIONE VISTE
+// ═══════════════════════════════════════════════════════
+var currentProdView = 'prodotto';
+
+function setProdView(view) {
+  currentProdView = view;
+  // Update buttons
+  ['prodotto','fornitore','cliente','margine'].forEach(function(v) {
+    var btn = document.getElementById('pvbtn-' + v);
+    if (btn) btn.className = 'pvbtn' + (v === view ? ' active' : '');
+  });
+  // Mostra/nascondi pills (solo in vista prodotto)
+  var tabs = document.getElementById('prodottiTabs');
+  if (tabs) tabs.style.display = (view === 'prodotto') ? 'flex' : 'none';
+  refreshProdotti();
+}
+
+function renderViewFornitore(data) {
+  var byForn = {};
+  data.filter(function(p){ return p.tipo === 'acquisto'; }).forEach(function(p) {
+    var k = (p.entity||'—').trim();
+    if (!byForn[k]) byForn[k] = [];
+    byForn[k].push(p);
+  });
+  if (!Object.keys(byForn).length) return '<div class="empty"><div class="empty-icon">🏭</div><div class="empty-text">Nessun fornitore.</div></div>';
+
+  var html = '';
+  Object.keys(byForn).sort().forEach(function(forn) {
+    var rows = byForn[forn].sort(function(a,b){ return a.prodotto.localeCompare(b.prodotto); });
+    var nProd = [...new Set(rows.map(function(r){ return r.prodotto.trim(); }))].length;
+    html += '<div class="entity-card">';
+    html += '<div class="entity-head">' +
+      '<div class="entity-name">🏭 ' + forn + '</div>' +
+      '<div class="entity-meta">' + nProd + ' prodott' + (nProd===1?'o':'i') + '</div>' +
+      '</div>';
+    rows.forEach(function(p) {
+      html += '<div class="entity-row">' +
+        '<div class="entity-prod">' + p.prodotto.trim() + '</div>' +
+        '<div class="entity-price buy">' + p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '<span class="entity-unit"> ' + (p.unita||'€/ton') + '</span></div>' +
+        '<div class="entity-loc">' + (p.luogo||'') + '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+  });
+  return html;
+}
+
+function renderViewCliente(data) {
+  var byCli = {};
+  data.filter(function(p){ return p.tipo === 'vendita'; }).forEach(function(p) {
+    var k = (p.entity||'—').trim();
+    if (!byCli[k]) byCli[k] = [];
+    byCli[k].push(p);
+  });
+  if (!Object.keys(byCli).length) return '<div class="empty"><div class="empty-icon">🏢</div><div class="empty-text">Nessun cliente.</div></div>';
+
+  var html = '';
+  Object.keys(byCli).sort().forEach(function(cli) {
+    var rows = byCli[cli].sort(function(a,b){ return b.prezzo - a.prezzo; });
+    var nProd = [...new Set(rows.map(function(r){ return r.prodotto.trim(); }))].length;
+    html += '<div class="entity-card" style="border-left-color:var(--green);">';
+    html += '<div class="entity-head">' +
+      '<div class="entity-name">🏢 ' + cli + '</div>' +
+      '<div class="entity-meta">' + nProd + ' prodott' + (nProd===1?'o':'i') + '</div>' +
+      '</div>';
+    rows.forEach(function(p) {
+      html += '<div class="entity-row">' +
+        '<div class="entity-prod">' + p.prodotto.trim() + '</div>' +
+        '<div class="entity-price sell">' + p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '<span class="entity-unit"> ' + (p.unita||'€/ton') + '</span></div>' +
+        '<div class="entity-loc">' + (p.luogo||'') + '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+  });
+  return html;
+}
+
+function renderViewMargine(data) {
+  // Per ogni prodotto: best acquisto vs best vendita, calcola margine
+  var byProd = {};
+  data.forEach(function(p) {
+    var k = p.prodotto.trim();
+    if (!byProd[k]) byProd[k] = { acquisto:[], vendita:[] };
+    byProd[k][p.tipo].push(p);
+  });
+
+  var rows = [];
+  Object.keys(byProd).sort().forEach(function(prod) {
+    var grp = byProd[prod];
+    // Best acquisto: minimo prezzo €/ton, fallback €/mc
+    var buys_ton = grp.acquisto.filter(function(p){ return p.unita==='€/ton'; }).sort(function(a,b){ return a.prezzo-b.prezzo; });
+    var buys_mc  = grp.acquisto.filter(function(p){ return p.unita==='€/mc';  }).sort(function(a,b){ return a.prezzo-b.prezzo; });
+    // Best vendita: massimo prezzo stesso unit
+    var sells_ton = grp.vendita.filter(function(p){ return p.unita==='€/ton'; }).sort(function(a,b){ return b.prezzo-a.prezzo; });
+    var sells_mc  = grp.vendita.filter(function(p){ return p.unita==='€/mc';  }).sort(function(a,b){ return b.prezzo-a.prezzo; });
+
+    // Calcola margine per ogni coppia unità
+    var pairs = [];
+    if (buys_ton.length && sells_ton.length) pairs.push({ unit:'€/ton', buy:buys_ton[0], sell:sells_ton[0] });
+    if (buys_mc.length  && sells_mc.length)  pairs.push({ unit:'€/mc',  buy:buys_mc[0],  sell:sells_mc[0] });
+    // Se solo acquisto o solo vendita
+    if (!pairs.length) {
+      if (buys_ton.length)  pairs.push({ unit:'€/ton', buy:buys_ton[0],  sell:null });
+      if (buys_mc.length)   pairs.push({ unit:'€/mc',  buy:buys_mc[0],   sell:null });
+      if (sells_ton.length) pairs.push({ unit:'€/ton', buy:null, sell:sells_ton[0] });
+    }
+
+    pairs.forEach(function(pair) {
+      var margin = (pair.buy && pair.sell) ? pair.sell.prezzo - pair.buy.prezzo : null;
+      var pct    = (margin !== null && pair.buy) ? ((margin / pair.buy.prezzo) * 100) : null;
+      rows.push({ prod:prod, pair:pair, margin:margin, pct:pct });
+    });
+  });
+
+  if (!rows.length) return '<div class="empty"><div class="empty-icon">📈</div><div class="empty-text">Dati insufficienti per calcolare i margini.</div></div>';
+
+  // Sort by margin DESC
+  rows.sort(function(a,b){ return (b.margin||0) - (a.margin||0); });
+
+  var html = '<div style="font-size:11px;color:var(--t2);margin-bottom:8px;">Margine = prezzo vendita massimo − acquisto minimo (stessa unità)</div>';
+  rows.forEach(function(r) {
+    var pair = r.pair;
+    var isPos = r.margin !== null && r.margin > 0;
+    var isNeg = r.margin !== null && r.margin < 0;
+    var pillTxt = r.margin !== null
+      ? (isPos?'+':'') + r.margin.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:1}) + ' ' + pair.unit
+      : '—';
+    var pillCls = r.margin === null ? '' : (isPos ? 'pos' : 'neg');
+    var pctTxt  = r.pct !== null ? ((r.pct>0?'+':'') + r.pct.toFixed(0) + '%') : '';
+
+    html += '<div class="margin-card">';
+    html += '<div class="margin-head">' +
+      '<div class="margin-prod">' + r.prod + ' <span style="font-size:11px;color:var(--t2);font-weight:600;">' + pair.unit + '</span></div>' +
+      (r.margin !== null ? '<div class="margin-pill ' + pillCls + '">' + pillTxt + '</div>' : '') +
+      '</div>';
+
+    html += '<div class="margin-row">';
+    // Acquisto
+    html += '<div class="margin-col">' +
+      '<div class="margin-col-label">Acquisto min.</div>' +
+      (pair.buy
+        ? '<div class="margin-col-val buy">' + pair.buy.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '€</div>' +
+          '<div class="margin-col-who">' + (pair.buy.entity||'') + '</div>'
+        : '<div class="margin-col-val" style="color:var(--t3);">—</div>') +
+      '</div>';
+
+    html += '<div class="margin-divider"></div>';
+
+    // Vendita
+    html += '<div class="margin-col">' +
+      '<div class="margin-col-label">Vendita max.</div>' +
+      (pair.sell
+        ? '<div class="margin-col-val sell">' + pair.sell.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '€</div>' +
+          '<div class="margin-col-who">' + (pair.sell.entity||'') + '</div>'
+        : '<div class="margin-col-val" style="color:var(--t3);">—</div>') +
+      '</div>';
+
+    html += '<div class="margin-divider"></div>';
+
+    // Risultato
+    html += '<div class="margin-result">' +
+      '<div class="margin-result-label">Margine</div>' +
+      (r.margin !== null
+        ? '<div class="margin-result-val ' + pillCls + '">' + (isPos?'+':'') + r.margin.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:1}) + '</div>' +
+          (pctTxt ? '<div class="margin-result-pct ' + pillCls + '">' + pctTxt + '</div>' : '')
+        : '<div class="margin-result-val" style="color:var(--t3);">—</div>') +
+      '</div>';
+
+    html += '</div></div>';
+  });
+  return html;
+}
+
+
 function refreshProdotti() {
-  const q = (document.getElementById('prodSearch').value||'').toLowerCase();
-  const tipo = document.getElementById('prodTipo').value;
+  var srchEl = document.getElementById('prodSearch');
+  var q = srchEl ? (srchEl.value||'').toLowerCase() : '';
+  var tipoEl = document.getElementById('prodTipo');
+  var tipo = tipoEl ? tipoEl.value : '';
+  var prodottiSet = [...new Set(DB.prodotti.map(function(p){ return p.prodotto.trim(); }))].sort();
 
-  const prodottiSet = [...new Set(DB.prodotti.map(p=>p.prodotto))].sort();
+  // Pill tabs
+  var tabsEl = document.getElementById('prodottiTabs');
+  if (tabsEl) {
+    var th = '<div class="cpill all' + (activeProdottoFilter==='' ? ' on' : '') + '" onclick="setProdottoFilter(\'\')">Tutti</div>';
+    prodottiSet.forEach(function(p) {
+      th += '<div class="cpill' + (activeProdottoFilter===p ? ' on' : '') + '" onclick="setProdottoFilter(\'' + p.replace(/'/g,"\\'") + '\')">' + p + '</div>';
+    });
+    tabsEl.innerHTML = th;
+  }
 
-  // Render tabs
-  const tabsEl = document.getElementById('prodottiTabs');
-  tabsEl.innerHTML = `<div class="ptab ${activeProdottoFilter===''?'active':''}" onclick="setProdottoFilter('')">Tutti</div>` +
-    prodottiSet.map(p => `<div class="ptab ${activeProdottoFilter===p?'active':''}" onclick="setProdottoFilter('${p.replace(/'/g,"\\'")}'">${p}</div>`).join('');
+  var data = DB.prodotti;
+  if (activeProdottoFilter) data = data.filter(function(p){ return p.prodotto.trim() === activeProdottoFilter; });
+  if (tipo) data = data.filter(function(p){ return p.tipo === tipo; });
+  if (q)    data = data.filter(function(p){
+    return (p.prodotto||'').toLowerCase().includes(q) ||
+           (p.entity||'').toLowerCase().includes(q)   ||
+           (p.luogo||'').toLowerCase().includes(q)    ||
+           (p.note||'').toLowerCase().includes(q);
+  });
 
-  let data = DB.prodotti;
-  if(activeProdottoFilter) data = data.filter(p=>p.prodotto===activeProdottoFilter);
-  if(tipo) data = data.filter(p=>p.tipo===tipo);
-  if(q) data = data.filter(p =>
-    p.prodotto.toLowerCase().includes(q) ||
-    p.entity.toLowerCase().includes(q) ||
-    p.luogo.toLowerCase().includes(q) ||
-    (p.note||'').toLowerCase().includes(q)
-  );
+  var container = document.getElementById('prodottiContainer');
+  if (!container) return;
 
-  const container = document.getElementById('prodottiContainer');
-  if(data.length===0) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">🌾</div><div class="empty-text">Nessun prezzo trovato.</div></div>`;
+  // Vista fornitore / cliente / margine
+  if (currentProdView === 'fornitore') { container.innerHTML = renderViewFornitore(data); return; }
+  if (currentProdView === 'cliente')   { container.innerHTML = renderViewCliente(data);   return; }
+  if (currentProdView === 'margine')   { container.innerHTML = renderViewMargine(data);   return; }
+
+  if (data.length === 0) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🌾</div><div class="empty-text">Nessun prezzo trovato.</div></div>';
     return;
   }
 
-  // Raggruppa per prodotto
-  const byProduct = {};
-  data.forEach(p => {
-    if(!byProduct[p.prodotto]) byProduct[p.prodotto] = [];
-    byProduct[p.prodotto].push(p);
+  // Group by prodotto
+  var byProd = {};
+  data.forEach(function(p) {
+    var key = p.prodotto.trim();
+    if (!byProd[key]) byProd[key] = { acquisto:[], vendita:[] };
+    if (p.tipo === 'vendita') byProd[key].vendita.push(p);
+    else                      byProd[key].acquisto.push(p);
   });
 
-  let html = '';
-  Object.entries(byProduct).forEach(([prod, items]) => {
-    const buys = items.filter(i=>i.tipo==='acquisto').sort((a,b)=>a.prezzo-b.prezzo);
-    const sells = items.filter(i=>i.tipo==='vendita').sort((a,b)=>b.prezzo-a.prezzo);
+  var html = '';
+  Object.keys(byProd).sort().forEach(function(prod) {
+    var grp   = byProd[prod];
+    var buys  = grp.acquisto.sort(function(a,b){ return a.prezzo - b.prezzo; });
+    var sells = grp.vendita.sort(function(a,b){ return b.prezzo - a.prezzo; });
 
-    html += `<div class="card" style="margin-bottom:10px;">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
-        <div style="font-size:14px; font-weight:800;">${prod}</div>
-        <span class="tag tag-buy">${buys.length} acquisto</span>
-        <span class="tag tag-sell">${sells.length} vendita</span>
-        <div style="flex:1"></div>
-        <button class="btn btn-secondary btn-sm" onclick="openAddProdottoModal('${prod.replace(/'/g,"\\'")}')">+ Aggiungi</button>
-      </div>`;
+    // Summary badges (best acquisto + best vendita)
+    var summ = '';
+    if (buys[0])  summ += '<div class="pbadge buy"><span class="pbadge-lbl">ACQ.</span><span class="pbadge-val">' + buys[0].prezzo.toLocaleString('it-IT',{minimumFractionDigits:0}) + '€</span></div>';
+    if (sells[0]) summ += '<div class="pbadge sell"><span class="pbadge-lbl">VEND.</span><span class="pbadge-val">' + sells[0].prezzo.toLocaleString('it-IT',{minimumFractionDigits:0}) + '€</span></div>';
 
-    if(items.length>0) {
-      html += `<table class="ptable"><thead><tr>
-        <th>Tipo</th><th>Fornitore/Cliente</th><th>Luogo</th>
-        <th>Prezzo</th><th>Unità</th><th>Data</th><th>Note</th><th></th>
-      </tr></thead><tbody>`;
-      [...buys,...sells].forEach((item,idx) => {
-        const isBestBuy = item.tipo==='acquisto' && buys.indexOf(item)===0 && buys.length>0;
-        const isBestSell = item.tipo==='vendita' && sells.indexOf(item)===0 && sells.length>0;
-        html += `<tr>
-          <td><span class="tag ${item.tipo==='acquisto'?'tag-buy':'tag-sell'}">${item.tipo}</span></td>
-          <td>${item.entity||'—'}</td>
-          <td style="color:var(--text2)">${item.luogo||'—'}</td>
-          <td class="${item.tipo==='acquisto'?'price-buy':'price-sell'}">
-            ${(item.prezzo||0).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})} €
-            ${isBestBuy?'<span class="best-badge" style="margin-left:4px;">⭐ min</span>':''}
-            ${isBestSell?'<span class="best-badge" style="margin-left:4px;">⭐ max</span>':''}
-          </td>
-          <td style="color:var(--text2)">${item.unita||''}</td>
-          <td style="color:var(--text2)">${item.data||'—'}</td>
-          <td style="color:var(--text2); max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.note||''}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="deleteProdotto(${DB.prodotti.indexOf(item)})">✕</button></td>
-        </tr>`;
+    html += '<div class="prow">';
+    html += '<div class="prow-head"><div class="prow-title">' + prod + '</div><div class="prow-badges">' + summ + '</div></div>';
+
+    // Helper: render rows grouped by unit
+    function renderByUnit(list, cls, icon, label) {
+      if (!list.length) return '';
+      var units = {};
+      list.forEach(function(p) { var u=p.unita||'€/ton'; if(!units[u]) units[u]=[]; units[u].push(p); });
+      var out = '';
+      Object.keys(units).sort().forEach(function(u) {
+        var grp = units[u].sort(function(a,b){ return cls==='best-buy' ? a.prezzo-b.prezzo : b.prezzo-a.prezzo; });
+        out += '<div class="psec-label">' + icon + ' ' + label + ' ' + u + '</div>';
+        grp.forEach(function(p, i) {
+          var noteHtml = p.note ? '<div class="prl-note">' + p.note + '</div>' : '';
+          out += '<div class="prow-line' + (i===0 ? ' '+cls : '') + '">' +
+            '<div class="prl-left">' +
+              '<div class="prl-who">' + (p.entity||'—') + '</div>' +
+              noteHtml +
+            '</div>' +
+            '<div class="prl-price">' + p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '<span class="prl-unit">' + u + '</span></div>' +
+            '<div class="prl-loc">' + (p.luogo||'') + '</div>' +
+            '</div>';
+        });
       });
-      html += '</tbody></table>';
+      return out;
     }
+
+    html += renderByUnit(buys,  'best-buy',  '🛒', 'Acquisto');
+    html += renderByUnit(sells, 'best-sell', '💰', 'Vendita');
+
     html += '</div>';
   });
 
   container.innerHTML = html;
 }
+
 
 function setProdottoFilter(p) {
   activeProdottoFilter = p;
@@ -1956,38 +1948,38 @@ function renderEditPricesList(prices) {
   let html = '';
   prices.forEach(function(p, idx) {
     const globalIdx = DB.trasporti.indexOf(p);
-    html += '<div class="erow" data-idx="' + globalIdx + '">' +
-      '<div class="erow-carrier">' + p.carrier + '<div style="font-size:9px;color:var(--text3);margin-top:1px;">' + (p.conditions||'') + '</div></div>' +
-      '<input class="erow-input" type="number" step="0.01" value="' + p.price + '" data-idx="' + globalIdx + '">' +
-      '<div class="erow-unit">' + p.unit + '</div>' +
-      '<div class="erow-del" onclick="removePriceRow(this,' + globalIdx + ')" title="Elimina">✕</div>' +
+    html += '<div class="edit-price-row" data-idx="' + globalIdx + '">' +
+      '<div class="edit-price-carrier">' + p.carrier + '<div style="font-size:9px;color:var(--text3);margin-top:1px;">' + (p.conditions||'') + '</div></div>' +
+      '<input class="edit-price-input" type="number" step="0.01" value="' + p.price + '" data-idx="' + globalIdx + '">' +
+      '<div class="edit-price-unit">' + p.unit + '</div>' +
+      '<div class="edit-price-del" onclick="removePriceRow(this,' + globalIdx + ')" title="Elimina">✕</div>' +
       '</div>';
   });
   document.getElementById('editPricesList').innerHTML = html;
 }
 
 function removePriceRow(el, globalIdx) {
-  el.closest('.erow').style.opacity = '0.3';
-  el.closest('.erow').style.textDecoration = 'line-through';
-  el.closest('.erow').dataset.deleted = '1';
+  el.closest('.edit-price-row').style.opacity = '0.3';
+  el.closest('.edit-price-row').style.textDecoration = 'line-through';
+  el.closest('.edit-price-row').dataset.deleted = '1';
 }
 
 function addPriceRowInEdit() {
   const carriers = [...new Set(DB.trasporti.map(r=>r.carrier))].sort();
-  let html = '<div class="erow" data-new="1">' +
+  let html = '<div class="edit-price-row" data-new="1">' +
     '<select style="flex:1;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);font-size:11px;">' +
     carriers.map(function(c){ return '<option>' + c + '</option>'; }).join('') +
     '<option value="__new__">+ Nuovo...</option>' +
     '</select>' +
-    '<input class="erow-input" type="number" step="0.01" placeholder="0.00">' +
+    '<input class="edit-price-input" type="number" step="0.01" placeholder="0.00">' +
     '<select style="width:55px;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);font-size:11px;"><option>€/vg</option><option>€/ton</option></select>' +
-    '<div class="erow-del" onclick="this.closest(\'.erow\').remove()" title="Rimuovi">✕</div>' +
+    '<div class="edit-price-del" onclick="this.closest(\'.edit-price-row\').remove()" title="Rimuovi">✕</div>' +
     '</div>';
   document.getElementById('editPricesList').insertAdjacentHTML('beforeend', html);
 }
 
 function saveEditTratta() {
-  const rows = document.querySelectorAll('#editPricesList .erow');
+  const rows = document.querySelectorAll('#editPricesList .edit-price-row');
   rows.forEach(function(row) {
     if(row.dataset.deleted) {
       const idx = parseInt(row.dataset.idx);
@@ -2058,60 +2050,120 @@ function exportFilteredExcel() {
 }
 
 // ===================== START =====================
+init();
+window.addEventListener("load", function() {
+  // Aspetta che Google Identity Services sia caricato, poi auto-riconnetti
+  function waitForGoogleAndReconnect(attempts) {
+    if(typeof google !== "undefined" && google.accounts && google.accounts.oauth2) {
+      if(localStorage.getItem('driveConnected')) tryAutoReconnect();
+    } else if(attempts > 0) {
+      setTimeout(function(){ waitForGoogleAndReconnect(attempts - 1); }, 500);
+    }
+  }
+  setTimeout(function(){ waitForGoogleAndReconnect(10); }, 800);
+});
+
+function reloadBuiltinData() {
+  if(!confirm('Sostituire con dati REV 03/2026?')) return;
+  DB.trasporti = DB.trasporti.filter(function(t){ return t.rev === 'Manuale'; });
+  var b = PDF_DATA.map(function(r){ return Object.assign({},r); });
+  DB.trasporti = b.concat(DB.trasporti);
+  save(); refreshAll(); showToast('✅ ' + b.length + ' prezzi REV 03', 'ok');
+}
+function loadKarmaData() {
+  var added=0, updated=0;
+  KARMA_DATA.forEach(function(rec){
+    var ex=DB.prodotti.find(function(p){return p.prodotto===rec.prodotto&&p.tipo===rec.tipo&&p.entity===rec.entity&&p.luogo===rec.luogo;});
+    if(ex){Object.assign(ex,rec);updated++;}else{DB.prodotti.push(Object.assign({},rec));added++;}
+  });
+  save(); refreshAll(); showToast('✅ KarMa: '+added+' aggiunti','ok');
+}
+function openImportProdottiModal(){document.getElementById('fileInputProdotti').click();}
+function saveAndSync(){ save(); }
+
 // ─── RENDER PATCHES (must run before init) ───
+// PATCH: renderRapida e refreshProdotti completi
 window.renderRapida = function(routes, filterCarrier) {
   var container = document.getElementById('resultsContainer');
   if (!container) return;
   if (DB.trasporti.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.<br>Vai su <strong>Import</strong>.</div></div>';
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.</div></div>';
     return;
   }
   if (routes.length === 0) {
     container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Nessuna tratta trovata.</div></div>';
     return;
   }
-  var html = '<div style="font-size:11px;color:var(--t2);margin-bottom:8px;">' + routes.length + ' tratt' + (routes.length === 1 ? 'a' : 'e') + '</div>';
+
+  var html = '<div style="font-size:11px;color:var(--t2);margin-bottom:8px;">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
+
   routes.forEach(function(route) {
     var prices = route.prices;
-    if (filterCarrier) prices = prices.filter(function(p) { return p.carrier === filterCarrier; });
-    var vg = prices.filter(function(p) { return p.unit === '€/vg'; }).sort(function(a,b) { return a.price - b.price; });
-    var ton = prices.filter(function(p) { return p.unit === '€/ton'; }).sort(function(a,b) { return a.price - b.price; });
-    var best = vg[0] || null;
+    if (filterCarrier) prices = prices.filter(function(p){ return p.carrier === filterCarrier; });
+
+    var vg  = prices.filter(function(p){ return p.unit === '€/vg';  }).sort(function(a,b){ return a.price-b.price; });
+    var ton = prices.filter(function(p){ return p.unit === '€/ton'; }).sort(function(a,b){ return a.price-b.price; });
+    var best = vg[0] || ton[0] || null;
+
+    // Best pill header
     var bestHtml = '';
     if (best) {
-      var ab = abbrev(best.carrier);
-      bestHtml = '<div class="rrow-best"><div class="rrow-best-who">' + ab + '</div>' +
-        '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT', {minimumFractionDigits:0}) + '€</div>' +
-        '<div class="rrow-best-unit">' + best.unit + '</div></div>';
+      bestHtml = '<div class="rrow-best">' +
+        '<div class="rrow-best-who">' + abbrev(best.carrier) + '</div>' +
+        '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT',{minimumFractionDigits:0}) + '€</div>' +
+        '<div class="rrow-best-unit">' + best.unit + '</div>' +
+        '</div>';
     }
+
+    // Build section rows — VG e TON separati
+    function buildRows(list, isBestFn) {
+      var rows = '';
+      list.forEach(function(p) {
+        var isBest = isBestFn(p);
+        rows += '<div class="chip' + (isBest ? ' best' : '') + '">' +
+          '<div class="chip-who">' + p.carrier + '</div>' +
+          '<div class="chip-price-row">' +
+            '<span class="chip-val">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '</span>' +
+            '<span class="chip-unit">' + p.unit + '</span>' +
+          '</div>' +
+          (p.provisional ? '<div class="chip-prov">⚠ da conf.</div>' : '') +
+          (p.conditions   ? '<div class="chip-cond">' + p.conditions + '</div>' : '')
+          '</div>';
+      });
+      return rows;
+    }
+
+    var vgBest = vg[0] || null;
+    var tonBest = ton[0] || null;
+    var vgRows  = buildRows(vg,  function(p){ return vgBest  && p.carrier===vgBest.carrier; });
+    var tonRows = buildRows(ton, function(p){ return tonBest && p.carrier===tonBest.carrier; });
+
     var chipsHtml = '';
-    vg.concat(ton).forEach(function(p) {
-      var isBest = best && p.carrier === best.carrier && p.unit === '€/vg';
-      var prov = p.provisional ? '<div class="chip-prov">da conf.</div>' : '';
-      chipsHtml += '<div class="chip' + (isBest ? ' best' : '') + '">' +
-        '<div class="chip-who">' + p.carrier + '</div>' +
-        '<div class="chip-val">' + p.price.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + '</div>' +
-        '<div class="chip-unit">' + p.unit + '</div>' + prov + '</div>';
-    });
+    if (vgRows)  chipsHtml += '<div class="chip-section-label">💰 €/viaggio</div><div class="chips">' + vgRows  + '</div>';
+    if (tonRows) chipsHtml += '<div class="chip-section-label">⚖️ €/ton</div><div class="chips">'     + tonRows + '</div>';
+
     var key = route.from + '||' + route.to;
-    var safeKey = key.replace(/"/g, '&quot;');
-    var sf = route.from.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    var st = route.to.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="' + safeKey + '">' +
+    var sf = route.from.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    var st = route.to.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+
+    html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="' + key.replace(/"/g,'&quot;') + '">' +
       '<div class="rrow-head">' +
         '<div class="rrow-route">' +
           '<div class="rrow-from">' + route.from + '</div>' +
           '<div class="rrow-to-line"><span class="rrow-arrow">→</span><span class="rrow-to">' + route.to + '</span></div>' +
         '</div>' + bestHtml +
       '</div>' +
-      '<div class="chips">' + chipsHtml + '</div>' +
+      chipsHtml +
       '<div class="rrow-acts">' +
         '<button class="act act-edit" onclick="event.stopPropagation();openEditTratta(\'' + sf + '\',\'' + st + '\')">✏️ Modifica</button>' +
-        '<button class="act act-del" onclick="event.stopPropagation();editingTratta={from:\'' + sf + '\',to:\'' + st + '\'};deleteTratta()">🗑</button>' +
-      '</div></div>';
+        '<button class="act act-del"  onclick="event.stopPropagation();editingTratta={from:\'' + sf + '\',to:\'' + st + '\'};deleteTratta()">🗑</button>' +
+      '</div>' +
+    '</div>';
   });
+
   container.innerHTML = html;
 };
+
 
 window.renderConfronto = function() {
   var val = document.getElementById('confrontoSelect').value;
@@ -2164,19 +2216,6 @@ window.renderCarrierPills = function() {
 
 init();
 window.addEventListener("load", function() {
-  // Aspetta che Google Identity Services sia caricato, poi auto-riconnetti
-  function waitForGoogleAndReconnect(attempts) {
-    if(typeof google !== "undefined" && google.accounts && google.accounts.oauth2) {
-      if(localStorage.getItem('driveConnected')) tryAutoReconnect();
-    } else if(attempts > 0) {
-      setTimeout(function(){ waitForGoogleAndReconnect(attempts - 1); }, 500);
-    }
-  }
-  setTimeout(function(){ waitForGoogleAndReconnect(10); }, 800);
-});
-
-
-window.addEventListener("load", function() {
   function waitForGoogle(n) {
     if(typeof google!=="undefined"&&google.accounts&&google.accounts.oauth2) {
       if(localStorage.getItem('driveConnected')) tryAutoReconnect();
@@ -2184,19 +2223,18 @@ window.addEventListener("load", function() {
   }
   setTimeout(function(){waitForGoogle(12);},800);
 });
-
-// Drag & drop
-['dropZoneTrasporti','dropZoneProdotti'].forEach(function(id){
-  const el=document.getElementById(id); if(!el)return;
-  el.addEventListener('dragover',function(e){e.preventDefault();el.classList.add('drag');});
-  el.addEventListener('dragleave',function(){el.classList.remove('drag');});
-  el.addEventListener('drop',function(e){
-    e.preventDefault();el.classList.remove('drag');
-    const file=e.dataTransfer.files[0]; if(!file)return;
-    const type=id.includes('Prodotti')?'prodotti':'trasporti';
-    handleFileImport({target:{files:[file],value:''}},type);
+["dropZoneTrasporti","dropZoneProdotti"].forEach(function(id){
+  var el=document.getElementById(id);if(!el)return;
+  el.addEventListener("dragover",function(e){e.preventDefault();el.classList.add("drag");});
+  el.addEventListener("dragleave",function(){el.classList.remove("drag");});
+  el.addEventListener("drop",function(e){
+    e.preventDefault();el.classList.remove("drag");
+    var file=e.dataTransfer.files[0];if(!file)return;
+    var type=id.includes("Prodotti")?"prodotti":"trasporti";
+    handleFileImport({target:{files:[file],value:""}},type);
   });
 });
+
 </script>
 </body>
 </html>
