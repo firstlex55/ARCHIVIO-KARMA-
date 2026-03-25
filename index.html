@@ -511,9 +511,8 @@ select.inp{cursor:pointer;}
 
 /* Edit/delete on hover */
 .rrow-acts {
-  display: none; gap: 5px; padding: 4px 14px 10px; justify-content: flex-end;
+  display: flex; gap: 5px; padding: 2px 14px 10px; justify-content: flex-end;
 }
-.rrow:hover .rrow-acts, .rrow:active .rrow-acts { display: flex; }
 .act {
   padding: 5px 12px; border-radius: 7px; font-size: 11px;
   font-weight: 700; cursor: pointer; border: none;
@@ -533,6 +532,145 @@ select.inp{cursor:pointer;}
   font-size: 9px; font-weight: 500; color: #3a5068;
   padding: 1px 0 3px 14px;
 }
+
+
+/* ═══ DRIVE PANEL ══════════════════════════════════════ */
+.drive-panel {
+  background: linear-gradient(160deg, var(--s1) 0%, var(--s2) 100%);
+  border-bottom: 1px solid var(--b1);
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  overflow: hidden; transition: max-height .35s cubic-bezier(.4,0,.2,1);
+  max-height: 240px;
+}
+.drive-panel.hidden { max-height: 0; box-shadow: none; }
+.drive-panel-inner { padding: 14px 16px 16px; }
+.dp-status-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--b1);
+}
+.dp-buttons { display: flex; gap: 8px; margin-bottom: 8px; }
+.dp-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 7px; padding: 11px 12px; border-radius: 11px;
+  border: none; cursor: pointer;
+  font-size: 13px; font-weight: 700; transition: all .15s;
+}
+.dp-save {
+  background: rgba(52,211,153,.13); color: var(--green);
+  border: 1.5px solid rgba(52,211,153,.35);
+}
+.dp-save:active { background: rgba(52,211,153,.22); }
+.dp-load {
+  background: rgba(96,165,250,.10); color: #7cb9ff;
+  border: 1.5px solid rgba(96,165,250,.3);
+}
+.dp-load:active { background: rgba(96,165,250,.2); }
+.dp-connect-row { display: none; margin-top: 4px; }
+.dp-connect-row.show { display: block; }
+.dp-connect {
+  width: 100%; background: rgba(251,146,60,.10); color: var(--amber);
+  border: 1.5px solid rgba(251,146,60,.3); border-radius: 11px;
+  padding: 10px; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  cursor: pointer; transition: all .15s;
+}
+.dp-connect:active { background: rgba(251,146,60,.2); }
+
+/* ═══ UNSAVED BANNER ════════════════════════════════════ */
+.unsaved-banner {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(90deg, rgba(251,146,60,.10) 0%, rgba(251,146,60,.04) 100%);
+  border-bottom: 1.5px solid rgba(251,146,60,.3);
+  padding: 10px 16px;
+}
+.unsaved-banner.hidden { display: none; }
+.unsaved-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--amber); flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(251,146,60,.6);
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.unsaved-text { font-size: 12px; font-weight: 600; color: var(--amber); flex: 1; }
+.unsaved-save {
+  padding: 5px 12px; border-radius: 7px; font-size: 11px; font-weight: 800;
+  background: linear-gradient(135deg, var(--green), var(--green2));
+  color: #0b0f16; border: none; cursor: pointer; flex-shrink: 0;
+}
+.unsaved-dismiss {
+  background: none; border: none; color: var(--t3);
+  font-size: 14px; cursor: pointer; padding: 2px 4px; flex-shrink: 0;
+}
+
+
+/* ═══ EDIT PRICE ROW — RICH ═══════════════════════════ */
+.erow {
+  background: var(--s3); border: 1px solid var(--b2);
+  border-radius: 10px; padding: 11px 12px;
+  margin-bottom: 8px; display: flex; flex-direction: column; gap: 8px;
+}
+.erow-head {
+  display: flex; align-items: center; gap: 8px;
+}
+.erow-carrier {
+  font-size: 13px; font-weight: 800; color: #dce8ff; flex: 1;
+}
+.erow-del {
+  background: none; border: none; color: var(--t3); font-size: 16px;
+  cursor: pointer; padding: 2px 4px; flex-shrink: 0; line-height: 1;
+}
+.erow-del:hover { color: var(--red); }
+.erow-fields {
+  display: flex; gap: 8px;
+}
+.erow-field-group {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.erow-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--t2);
+}
+.erow-input {
+  background: var(--s2); border: 1.5px solid var(--b1);
+  border-radius: 8px; padding: 8px 10px; color: var(--t1);
+  font-size: 13px; font-weight: 700; outline: none; width: 100%;
+  transition: border-color .15s;
+}
+.erow-input:focus { border-color: var(--green); }
+.erow-select {
+  background: var(--s2); border: 1.5px solid var(--b1);
+  border-radius: 8px; padding: 8px 10px; color: var(--t1);
+  font-size: 12px; font-weight: 700; outline: none; width: 100%;
+  cursor: pointer;
+}
+.erow-prov-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; color: var(--amber);
+  background: var(--amberdim); border: 1px solid rgba(251,146,60,.2);
+  border-radius: 7px; padding: 7px 10px; cursor: pointer;
+}
+.erow-prov-label input { accent-color: var(--amber); cursor: pointer; }
+
+
+/* ═══ AUTOCOMPLETE DROPDOWN ════════════════════════════ */
+.ac-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--s1); border: 1.5px solid var(--green);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  z-index: 500; max-height: 220px; overflow-y: auto;
+  scrollbar-width: none;
+}
+.ac-dropdown::-webkit-scrollbar { display: none; }
+.ac-dropdown.hidden { display: none; }
+.ac-item {
+  padding: 11px 14px; font-size: 13px; font-weight: 600; color: #dce8ff;
+  cursor: pointer; border-bottom: 1px solid rgba(255,255,255,.05);
+  transition: background .1s;
+}
+.ac-item:last-child { border-bottom: none; }
+.ac-item:active, .ac-item.selected { background: rgba(52,211,153,.12); color: var(--green); }
+.ac-item mark { background: none; color: var(--green); font-weight: 900; }
 
 </style>
 </head>
@@ -587,14 +725,16 @@ select.inp{cursor:pointer;}
   </div>
   <div class="search-card">
     <div class="search-card-top">
-      <div class="sf">
+      <div class="sf" style="position:relative;overflow:visible;">
         <span class="sf-icon">📍</span><span class="sf-label">Da</span>
-        <input class="sf-input" id="searchFrom" placeholder="Base di carico..." oninput="filterRoutes()" list="listFrom" autocomplete="off">
+        <input class="sf-input" id="searchFrom" placeholder="Scrivi partenza..." oninput="acSearch('From')" onfocus="acOpen('From')" onblur="setTimeout(function(){acClose('From')},200)" autocomplete="off">
+        <div class="ac-dropdown hidden" id="acFrom"></div>
       </div>
       <div class="sf-connector"><div class="sf-arrow">↓</div></div>
-      <div class="sf">
+      <div class="sf" style="position:relative;overflow:visible;">
         <span class="sf-icon">🎯</span><span class="sf-label">A</span>
-        <input class="sf-input" id="searchTo" placeholder="Destinazione..." oninput="filterRoutes()" list="listTo" autocomplete="off">
+        <input class="sf-input" id="searchTo" placeholder="Scrivi destinazione..." oninput="acSearch('To')" onfocus="acOpen('To')" onblur="setTimeout(function(){acClose('To')},200)" autocomplete="off">
+        <div class="ac-dropdown hidden" id="acTo"></div>
       </div>
     </div>
     <datalist id="listFrom"></datalist><datalist id="listTo"></datalist>
@@ -733,10 +873,10 @@ select.inp{cursor:pointer;}
       <div class="form-group"><label class="form-label">Prezzo</label><input class="inp" id="mtPrice" type="number" step="0.01" placeholder="0.00"></div>
       <div class="form-group"><label class="form-label">Unità</label><select class="inp" id="mtUnit"><option value="€/vg">€/viaggio</option><option value="€/ton">€/ton</option></select></div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;margin-top:6px;padding:10px 12px;background:var(--amberdim);border:1px solid rgba(251,146,60,.3);border-radius:9px;cursor:pointer;" onclick="document.getElementById('mtProvisional').click()">
+    <label for="mtProvisional" style="display:flex;align-items:center;gap:10px;margin-top:6px;padding:10px 12px;background:var(--amberdim);border:1px solid rgba(251,146,60,.3);border-radius:9px;cursor:pointer;">
       <input type="checkbox" id="mtProvisional" style="width:16px;height:16px;accent-color:var(--amber);cursor:pointer;flex-shrink:0;">
       <div><div style="font-size:12px;font-weight:700;color:var(--amber);">⚠️ Prezzo da confermare</div><div style="font-size:10px;color:var(--t2);margin-top:1px;">Il prezzo è provvisorio</div></div>
-    </div>
+    </label>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('modalTariffa')">Annulla</button>
       <button class="btn btn-primary" onclick="saveTariffa()">💾 Salva</button>
@@ -878,6 +1018,17 @@ function init() {
   }
   // Normalizza destinazioni sinonime già in archivio
   DB.trasporti.forEach(function(t){ t.to = normalizeDest(t.to); });
+  // ── Migrazione automatica prezzi errati ──
+  var migrateNeeded = false;
+  DB.trasporti.forEach(function(t) {
+    if (t.carrier==='COAP' && t.from==='Bientina (PI)' && t.to==='Verolavecchia (BS)' && t.unit==='€/vg' && t.price < 100) {
+      t.price = 32.5; t.unit = '€/ton'; migrateNeeded = true;
+    }
+    if (t.carrier==='COAP' && t.from==='Mercatino Conca (PU)' && (t.to==='Ponzano R. (RM)'||t.to==='Ponzano R.(RM)') && t.unit==='€/vg' && t.price < 100) {
+      t.unit = '€/ton'; migrateNeeded = true;
+    }
+  });
+  if (migrateNeeded) save();
   // Precarica dati Excel REV 03/2026 se archivio vuoto
   if (DB.trasporti.length === 0) {
     DB.trasporti = PDF_DATA.map(function(r){ return Object.assign({}, r); });
@@ -973,7 +1124,35 @@ function setView(v) {
   document.getElementById('viewConfronto').style.display = v==='confronto' ? '' : 'none';
   document.getElementById('btnViewRapida').classList.toggle('active', v==='rapida');
   document.getElementById('btnViewConfronto').classList.toggle('active', v==='confronto');
-  if(v==='confronto') populateConfrontoSelect();
+  if(v==='confronto') {
+    populateConfrontoSelect();
+    // Auto-select route if From+To are already filled
+    var fromQ = (document.getElementById('searchFrom').value||'').trim().toLowerCase();
+    var toQ   = (document.getElementById('searchTo').value||'').trim().toLowerCase();
+    if (fromQ || toQ) {
+      var routes = getUniqueRoutes().filter(function(r) {
+        return (!fromQ || r.from.toLowerCase().includes(fromQ)) &&
+               (!toQ   || r.to.toLowerCase().includes(toQ));
+      });
+      if (routes.length === 1) {
+        // Exact single match — select it immediately
+        var sel = document.getElementById('confrontoSelect');
+        var key = routes[0].from + '||' + routes[0].to;
+        sel.value = key;
+        renderConfronto();
+      } else if (routes.length > 1 && fromQ && toQ) {
+        // Try exact match
+        var exact = routes.find(function(r) {
+          return r.from.toLowerCase() === fromQ && r.to.toLowerCase() === toQ;
+        });
+        if (exact) {
+          var sel2 = document.getElementById('confrontoSelect');
+          sel2.value = exact.from + '||' + exact.to;
+          renderConfronto();
+        }
+      }
+    }
+  }
 }
 
 function filterRoutes() {
@@ -1167,6 +1346,7 @@ function clearSearch() {
   document.getElementById('searchFrom').value = '';
   document.getElementById('searchTo').value = '';
   document.getElementById('searchCarrier').value = '';
+  acClose('From'); acClose('To');
   activePill = '';
   renderCarrierPills();
   filterRoutes();
@@ -1412,7 +1592,7 @@ function renderViewFornitore(data) {
       html += '<div class="entity-row">' +
         '<div class="entity-prod">' + p.prodotto.trim() + '</div>' +
         '<div class="entity-price buy">' + p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '<span class="entity-unit"> ' + (p.unita||'€/ton') + '</span></div>' +
-        '<div class="entity-loc">' + (p.luogo||'') + '</div>' +
+        '<div class="entity-loc">' + (p.luogo ? '→ ' + p.luogo : '') + '</div>' +
         '</div>';
     });
     html += '</div>';
@@ -1431,19 +1611,55 @@ function renderViewCliente(data) {
 
   var html = '';
   Object.keys(byCli).sort().forEach(function(cli) {
-    var rows = byCli[cli].sort(function(a,b){ return b.prezzo - a.prezzo; });
-    var nProd = [...new Set(rows.map(function(r){ return r.prodotto.trim(); }))].length;
+    var allRows = byCli[cli].sort(function(a,b){ return b.prezzo - a.prezzo; });
+    // Group by prodotto
+    var byProd = {};
+    allRows.forEach(function(p) {
+      var k = p.prodotto.trim();
+      if (!byProd[k]) byProd[k] = [];
+      byProd[k].push(p);
+    });
+    var nProd = Object.keys(byProd).length;
     html += '<div class="entity-card" style="border-left-color:var(--green);">';
     html += '<div class="entity-head">' +
       '<div class="entity-name">🏢 ' + cli + '</div>' +
       '<div class="entity-meta">' + nProd + ' prodott' + (nProd===1?'o':'i') + '</div>' +
       '</div>';
-    rows.forEach(function(p) {
-      html += '<div class="entity-row">' +
-        '<div class="entity-prod">' + p.prodotto.trim() + '</div>' +
-        '<div class="entity-price sell">' + p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '<span class="entity-unit"> ' + (p.unita||'€/ton') + '</span></div>' +
-        '<div class="entity-loc">' + (p.luogo||'') + '</div>' +
-        '</div>';
+    Object.keys(byProd).sort().forEach(function(prod) {
+      var recs = byProd[prod].sort(function(a,b){ return b.prezzo - a.prezzo; });
+      // Group by unit
+      var byUnit = {};
+      recs.forEach(function(r) { var u = r.unita||'€/ton'; if (!byUnit[u]) byUnit[u]=[]; byUnit[u].push(r); });
+      Object.keys(byUnit).forEach(function(unit) {
+        var list = byUnit[unit];
+        if (list.length === 1) {
+          // Single price — show normally
+          var p = list[0];
+          html += '<div class="entity-row">' +
+            '<div class="entity-prod">' + prod + '</div>' +
+            '<div class="entity-price sell">' + p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '<span class="entity-unit"> ' + unit + '</span></div>' +
+            '<div class="entity-loc">' + (p.luogo||'') + '</div>' +
+            '</div>';
+        } else {
+          // Multiple prices — show range with details
+          var best = list[0].prezzo;
+          var worst = list[list.length-1].prezzo;
+          html += '<div class="entity-row" style="flex-direction:column;align-items:flex-start;gap:4px;">' +
+            '<div style="display:flex;align-items:center;gap:8px;width:100%;">' +
+              '<div class="entity-prod">' + prod + '</div>' +
+              '<div class="entity-price sell" style="font-size:13px;">' + worst.toLocaleString('it-IT',{minimumFractionDigits:0}) + '–' + best.toLocaleString('it-IT',{minimumFractionDigits:0}) + '<span class="entity-unit"> ' + unit + '</span></div>' +
+            '</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:4px;padding-left:2px;">' +
+            list.map(function(r) {
+              return '<span style="font-size:10px;background:rgba(134,239,172,.08);border:1px solid rgba(134,239,172,.2);border-radius:5px;padding:2px 7px;color:#86efac;">' +
+                r.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + ' ' + unit +
+                (r.note ? ' <span style="color:#5a7898">' + r.note.replace('da ','') + '</span>' : '') +
+              '</span>';
+            }).join('') +
+            '</div>' +
+          '</div>';
+        }
+      });
     });
     html += '</div>';
   });
@@ -2136,15 +2352,41 @@ function openEditTratta(from, to) {
 }
 
 function renderEditPricesList(prices) {
-  let html = '';
-  prices.forEach(function(p, idx) {
-    const globalIdx = DB.trasporti.indexOf(p);
-    html += '<div class="edit-price-row" data-idx="' + globalIdx + '">' +
-      '<div class="edit-price-carrier">' + p.carrier + '<div style="font-size:9px;color:var(--text3);margin-top:1px;">' + (p.conditions||'') + '</div></div>' +
-      '<input class="edit-price-input" type="number" step="0.01" value="' + p.price + '" data-idx="' + globalIdx + '">' +
-      '<div class="edit-price-unit">' + p.unit + '</div>' +
-      '<div class="edit-price-del" onclick="removePriceRow(this,' + globalIdx + ')" title="Elimina">✕</div>' +
-      '</div>';
+  var html = '';
+  prices.forEach(function(p) {
+    var globalIdx = DB.trasporti.indexOf(p);
+    var provChecked = p.provisional ? 'checked' : '';
+    html += '<div class="erow" data-idx="' + globalIdx + '">' +
+      // Carrier name
+      '<div class="erow-head">' +
+        '<div class="erow-carrier">' + p.carrier + '</div>' +
+        '<button class="erow-del" onclick="removePriceRow(this,' + globalIdx + ')" title="Elimina">✕</button>' +
+      '</div>' +
+      // Price + unit on same row
+      '<div class="erow-fields">' +
+        '<div class="erow-field-group" style="flex:1;">' +
+          '<div class="erow-label">Prezzo</div>' +
+          '<input class="erow-input" type="number" step="0.01" value="' + p.price + '" data-idx="' + globalIdx + '" placeholder="0.00">' +
+        '</div>' +
+        '<div class="erow-field-group" style="width:100px;">' +
+          '<div class="erow-label">Unità</div>' +
+          '<select class="erow-select erow-unit">' +
+            '<option value="€/vg"' + (p.unit==='€/vg'?' selected':'') + '>€/viaggio</option>' +
+            '<option value="€/ton"' + (p.unit==='€/ton'?' selected':'') + '>€/ton</option>' +
+          '</select>' +
+        '</div>' +
+      '</div>' +
+      // Conditions
+      '<div class="erow-field-group">' +
+        '<div class="erow-label">Condizioni pagamento</div>' +
+        '<input class="erow-input erow-cond" type="text" value="' + (p.conditions||'') + '" placeholder="es. BB 60 gg FM">' +
+      '</div>' +
+      // Provisional flag
+      '<label class="erow-prov-label">' +
+        '<input type="checkbox" ' + provChecked + ' class="erow-prov"> ' +
+        '<span>⚠️ Prezzo da confermare</span>' +
+      '</label>' +
+    '</div>';
   });
   document.getElementById('editPricesList').innerHTML = html;
 }
@@ -2156,50 +2398,79 @@ function removePriceRow(el, globalIdx) {
 }
 
 function addPriceRowInEdit() {
-  const carriers = [...new Set(DB.trasporti.map(r=>r.carrier))].sort();
-  let html = '<div class="edit-price-row" data-new="1">' +
-    '<select style="flex:1;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);font-size:11px;">' +
-    carriers.map(function(c){ return '<option>' + c + '</option>'; }).join('') +
-    '<option value="__new__">+ Nuovo...</option>' +
-    '</select>' +
-    '<input class="edit-price-input" type="number" step="0.01" placeholder="0.00">' +
-    '<select style="width:55px;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);font-size:11px;"><option>€/vg</option><option>€/ton</option></select>' +
-    '<div class="edit-price-del" onclick="this.closest(\'.edit-price-row\').remove()" title="Rimuovi">✕</div>' +
-    '</div>';
+  var carriers = [...new Set(DB.trasporti.map(function(r){return r.carrier;}))].sort();
+  var html = '<div class="erow" data-new="1">' +
+    '<div class="erow-head">' +
+      '<select class="erow-select" style="flex:1;">' +
+        carriers.map(function(cc){ return '<option value="'+cc+'">'+cc+'</option>'; }).join('') +
+      '</select>' +
+      '<button class="erow-del" onclick="this.closest(\'.erow\').remove()">✕</button>' +
+    '</div>' +
+    '<div class="erow-fields">' +
+      '<div class="erow-field-group" style="flex:1;">' +
+        '<div class="erow-label">Prezzo</div>' +
+        '<input class="erow-input" type="number" step="0.01" placeholder="0.00">' +
+      '</div>' +
+      '<div class="erow-field-group" style="width:100px;">' +
+        '<div class="erow-label">Unità</div>' +
+        '<select class="erow-select erow-unit">' +
+          '<option value="€/vg">€/viaggio</option>' +
+          '<option value="€/ton">€/ton</option>' +
+        '</select>' +
+      '</div>' +
+    '</div>' +
+    '<div class="erow-field-group">' +
+      '<div class="erow-label">Condizioni pagamento</div>' +
+      '<input class="erow-input erow-cond" type="text" placeholder="es. BB 60 gg FM">' +
+    '</div>' +
+    '<label class="erow-prov-label">' +
+      '<input type="checkbox" class="erow-prov"> <span>⚠️ Prezzo da confermare</span>' +
+    '</label>' +
+  '</div>';
   document.getElementById('editPricesList').insertAdjacentHTML('beforeend', html);
 }
 
 function saveEditTratta() {
-  const rows = document.querySelectorAll('#editPricesList .edit-price-row');
+  var rows = document.querySelectorAll('#editPricesList .erow');
   rows.forEach(function(row) {
-    if(row.dataset.deleted) {
-      const idx = parseInt(row.dataset.idx);
-      if(!isNaN(idx)) DB.trasporti[idx] = null;
-    } else if(row.dataset.new) {
-      const sel = row.querySelector('select');
-      const inp = row.querySelector('input');
-      const unitSel = row.querySelectorAll('select')[1];
-      const price = parseFloat(inp ? inp.value : 0);
-      if(!isNaN(price) && price > 0 && sel) {
+    if (row.dataset.deleted) {
+      var idx = parseInt(row.dataset.idx);
+      if (!isNaN(idx)) DB.trasporti[idx] = null;
+    } else if (row.dataset.new) {
+      var sel     = row.querySelector('select');
+      var inp     = row.querySelector('input[type="number"]');
+      var unitSel = row.querySelector('.erow-unit');
+      var condInp = row.querySelector('.erow-cond');
+      var provChk = row.querySelector('.erow-prov');
+      var price   = parseFloat(inp ? inp.value : 0);
+      if (!isNaN(price) && price > 0 && sel && sel.value) {
         DB.trasporti.push({
           from: editingTratta.from, to: editingTratta.to,
           carrier: sel.value, price: price,
           unit: unitSel ? unitSel.value : '€/vg',
-          conditions: '', rev: 'Manuale'
+          conditions: condInp ? condInp.value.trim() : '',
+          provisional: provChk ? provChk.checked : false,
+          rev: 'Manuale'
         });
       }
     } else {
-      const idx = parseInt(row.dataset.idx);
-      const inp = row.querySelector('input');
-      if(!isNaN(idx) && inp) {
-        const v = parseFloat(inp.value);
-        if(!isNaN(v) && v > 0) DB.trasporti[idx].price = v;
+      var idx2    = parseInt(row.dataset.idx);
+      var inp2    = row.querySelector('input[type="number"]');
+      var unitSel2 = row.querySelector('.erow-unit');
+      var condInp2 = row.querySelector('.erow-cond');
+      var provChk2 = row.querySelector('.erow-prov');
+      if (!isNaN(idx2) && DB.trasporti[idx2]) {
+        if (inp2)     DB.trasporti[idx2].price      = parseFloat(inp2.value) || DB.trasporti[idx2].price;
+        if (unitSel2) DB.trasporti[idx2].unit       = unitSel2.value;
+        if (condInp2) DB.trasporti[idx2].conditions = condInp2.value.trim();
+        if (provChk2) DB.trasporti[idx2].provisional = provChk2.checked;
       }
     }
   });
-  DB.trasporti = DB.trasporti.filter(Boolean);
-  saveAndSync(); refreshAll();
+  DB.trasporti = DB.trasporti.filter(function(r){ return r !== null; });
   closeModal('modalEditTratta');
+  saveAndSync();
+  refreshAll();
   showToast('✅ Tratta aggiornata', 'ok');
 }
 
@@ -2477,6 +2748,62 @@ function printA3(rows, selectedCarriers) {
   setTimeout(function(){ w.print(); }, 500);
 }
 
+
+// ═══ AUTOCOMPLETE ═════════════════════════════════════
+function acGetList(field) {
+  if (field === 'From') return [...new Set(DB.trasporti.map(function(r){return r.from;}))].sort();
+  return [...new Set(DB.trasporti.map(function(r){return r.to;}))].sort();
+}
+
+function acRender(field, items, q) {
+  var dropdown = document.getElementById('ac' + field);
+  dropdown.innerHTML = '';
+  items.slice(0, 14).forEach(function(v) {
+    var div = document.createElement('div');
+    div.className = 'ac-item';
+    if (q) {
+      var re = new RegExp('(' + q.replace(/[-[\]{}()*+?.,\\^$|#]/g, '\\$&') + ')', 'gi');
+      div.innerHTML = v.replace(re, '<mark>$1</mark>');
+    } else {
+      div.textContent = v;
+    }
+    div.addEventListener('mousedown', function(e) { e.preventDefault(); acSelect(field, v); });
+    div.addEventListener('touchstart', function(e) { e.preventDefault(); acSelect(field, v); }, {passive:false});
+    dropdown.appendChild(div);
+  });
+  dropdown.classList.remove('hidden');
+}
+
+function acSearch(field) {
+  var input = document.getElementById('search' + field);
+  var q = input.value.trim().toLowerCase();
+  filterRoutes();
+  var items = acGetList(field).filter(function(v){ return !q || v.toLowerCase().includes(q); });
+  if (!items.length) { acClose(field); return; }
+  acRender(field, items, q);
+}
+
+function acOpen(field) {
+  var items = acGetList(field);
+  acRender(field, items, '');
+}
+function acSelect(field, value) {
+  document.getElementById('search' + field).value = value;
+  acClose(field);
+  filterRoutes();
+}
+
+function acClose(field) {
+  var d = document.getElementById('ac' + field);
+  if (d) d.classList.add('hidden');
+}
+
+// Close dropdowns on click outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#acFrom') && !e.target.closest('#searchFrom')) acClose('From');
+  if (!e.target.closest('#acTo')   && !e.target.closest('#searchTo'))   acClose('To');
+});
+
 // ─── RENDER PATCHES (must run before init) ───
 // PATCH: renderRapida e refreshProdotti completi
 window.renderRapida = function(routes, filterCarrier) {
@@ -2491,7 +2818,13 @@ window.renderRapida = function(routes, filterCarrier) {
     return;
   }
 
-  var html = '<div class="results-count">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
+  var carrierHeader = filterCarrier
+    ? '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 12px;background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.25);border-radius:10px;">' +
+        '<span style="font-size:20px;">🚛</span>' +
+        '<div><div style="font-size:13px;font-weight:900;color:#fbbf24;">' + filterCarrier + '</div>' +
+        '<div style="font-size:10px;color:var(--t2);">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + ' disponibili</div></div></div>'
+    : '';
+  var html = carrierHeader + '<div class="results-count"' + (filterCarrier?'style="display:none"':'') + '>' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
 
   routes.forEach(function(route) {
     var prices = route.prices;
