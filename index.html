@@ -2,6 +2,8 @@
 <html lang="it" style="background:#0b0f16;">
 <head>
 <meta charset="UTF-8">
+  <meta name="app-version" content="1.0.0">
+  <meta name="app-name" content="Archivio Tariffe">
 <meta name="theme-color" content="#0b0f16">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -759,7 +761,7 @@ select.inp{cursor:pointer;}
   <div class="h-logo">🚛</div>
   <div class="h-text">
     <div class="h-title">TARIFFE</div>
-    <div class="h-sub">Trasporti &amp; Prodotti</div>
+    <div class="h-sub">Trasporti &amp; Prodotti <span style="opacity:.45;font-size:9px;letter-spacing:.05em;">v1.0.0</span></div>
   </div>
   <div class="h-badge" id="headerBadge">0 tratte</div>
   <div class="h-drive" id="driveStatus" onclick="toggleDrivePanel()">☁️ Drive</div>
@@ -1021,6 +1023,13 @@ select.inp{cursor:pointer;}
 
 <script>
 
+
+
+
+
+// ── Versione app ──
+var APP_VERSION = "1.0.0";
+
 // ── Variabili di stato globali ──
 var activePill = '';
 var editingTratta = null;
@@ -1042,11 +1051,8 @@ const KARMA_DATA = [{"prodotto": "Cippato", "tipo": "acquisto", "entity": "Arden
 
 // ===================== INIT =====================
 function init() {
-  // Se esiste vecchia cache v2, mostra avviso reset
-  if(localStorage.getItem('archivio-tariffe-v3')) {
-    document.getElementById('resetNotice').style.display = 'block';
-    localStorage.removeItem('archivio-tariffe-old');
-  }
+  // Pulizia vecchia cache v2 (migrazione silenziosa)
+  localStorage.removeItem('archivio-tariffe-old');
   const saved = localStorage.getItem('archivio-tariffe-v3');
   if (saved) {
     try { DB = JSON.parse(saved); } catch(e) {}
@@ -1136,12 +1142,10 @@ function getUniqueRoutes() {
     if(!map[key]) map[key] = [];
     map[key].push(r);
   });
-  return Object.entries(map).map(([k,v]) => ({
-    key: k,
-    from: v[0].from,
-    to: v[0].to,
-    prices: v
-  }));
+  return Object.keys(map).map(function(k) {
+    var v = map[k];
+    return { key: k, from: v[0].from, to: v[0].to, prices: v };
+  });
 }
 
 // ===================== RICERCA TRASPORTI =====================
@@ -1366,7 +1370,7 @@ function handleFileImport(event, type) {
       if(type === 'trasporti') importTrasporti(data, file.name);
       else importProdotti(data, file.name);
     } catch(err) {
-      showLog(type, `❌ Errore lettura file: ${err.message}`, 'err');
+      showLog(type, '❌ Errore lettura file: ' + (err.message), 'err');
     }
   };
   reader.readAsBinaryString(file);
@@ -1378,7 +1382,7 @@ function importTrasporti(data, filename) {
   const log = document.getElementById('logTrasporti');
   log.classList.remove('hidden');
   log.innerHTML = '';
-  addLog(log, `📂 File: ${filename}`, 'ok');
+  addLog(log, '📂 File: ' + (filename), 'ok');
 
   if(data.length < 2) { addLog(log, '⚠️ File vuoto o formato non riconosciuto','warn'); return; }
 
@@ -1396,13 +1400,13 @@ function importTrasporti(data, filename) {
       if(headerRow[c]) conditions[c] = condRow[c] || '';
     }
     dataStart = 2;
-    addLog(log, `ℹ️ Rilevata riga condizioni pagamento`, '');
+    addLog(log, 'ℹ️ Rilevata riga condizioni pagamento', '');
   }
 
   for(let c = 2; c < headerRow.length; c++) {
     if(headerRow[c]) carriers.push({col: c, name: String(headerRow[c]).trim(), cond: conditions[c]||''});
   }
-  addLog(log, `👥 Trasportatori: ${carriers.map(c=>c.name).join(', ')}`, 'ok');
+  addLog(log, '👥 Trasportatori: ' + (carriers.map(c=>c.name).join(', ')), 'ok');
 
   let added = 0, skipped = 0, updated = 0;
 
@@ -1412,11 +1416,11 @@ function importTrasporti(data, filename) {
     const to = String(row[1]||'').trim();
     if(!from || !to) continue;
 
-    carriers.forEach(({col, name, cond}) => {
+    carriers.forEach(function(item) { var col=item.col, name=item.name, cond=item.cond;
       const raw = String(row[col]||'').trim();
       if(!raw || raw === '') return;
 
-      const {price, unit} = parsePrice(raw);
+      var _parsed = parsePrice(raw); var price = _parsed.price; var unit = _parsed.unit;
       if(price === null) { skipped++; return; }
 
       if(importMode === 'replace') {
@@ -1451,10 +1455,10 @@ function importTrasporti(data, filename) {
       const from = String(row[0]||'').trim();
       const to = String(row[1]||'').trim();
       if(!from || !to) continue;
-      carriers.forEach(({col, name, cond}) => {
+      carriers.forEach(function(item) { var col=item.col, name=item.name, cond=item.cond;
         const raw = String(row[col]||'').trim();
         if(!raw) return;
-        const {price, unit} = parsePrice(raw);
+        var _parsed = parsePrice(raw); var price = _parsed.price; var unit = _parsed.unit;
         if(price !== null) newData.push({from, to, carrier: name, price, unit, conditions: cond, rev: filename});
       });
     }
@@ -1463,10 +1467,10 @@ function importTrasporti(data, filename) {
     updated = 0;
   }
 
-  addLog(log, `✅ Aggiunti: ${added} | Aggiornati: ${updated} | Saltati: ${skipped}`, 'ok');
+  addLog(log, '✅ Aggiunti: ' + (added) + ' | Aggiornati: ' + (updated) + ' | Saltati: ' + (skipped), 'ok');
   save();
   refreshAll();
-  showToast(`✅ Import completato: ${added+updated} prezzi`, 'ok');
+  showToast('✅ Import completato: ' + (added+updated) + ' prezzi', 'ok');
 }
 
 function parsePrice(raw) {
@@ -1486,7 +1490,7 @@ function importProdotti(data, filename) {
   const log = document.getElementById('logProdotti');
   log.classList.remove('hidden');
   log.innerHTML = '';
-  addLog(log, `📂 File: ${filename}`, 'ok');
+  addLog(log, '📂 File: ' + (filename), 'ok');
 
   if(data.length < 2) { addLog(log, '⚠️ File vuoto','warn'); return; }
 
@@ -1531,9 +1535,9 @@ function importProdotti(data, filename) {
     else { DB.prodotti.push({prodotto,tipo,entity,luogo,prezzo,unita,data:dataVal,note}); added++; }
   }
 
-  addLog(log, `✅ Aggiunti: ${added} | Aggiornati: ${updated}`, 'ok');
+  addLog(log, '✅ Aggiunti: ' + (added) + ' | Aggiornati: ' + (updated), 'ok');
   save(); refreshAll();
-  showToast(`✅ Prodotti importati: ${added+updated}`, 'ok');
+  showToast('✅ Prodotti importati: ' + (added+updated), 'ok');
 }
 
 // ===================== PRODOTTI =====================
@@ -1613,9 +1617,9 @@ function openAddTariffaModal() {
   const froms = [...new Set(DB.trasporti.map(r=>r.from))].sort();
   const tos = [...new Set(DB.trasporti.map(r=>r.to))].sort();
   const carriers = [...new Set(DB.trasporti.map(r=>r.carrier))].sort();
-  document.getElementById('listFromModal').innerHTML = froms.map(f=>`<option value="${f}">`).join('');
-  document.getElementById('listToModal').innerHTML = tos.map(t=>`<option value="${t}">`).join('');
-  document.getElementById('listCarrierModal').innerHTML = carriers.map(c=>`<option value="${c}">`).join('');
+  document.getElementById('listFromModal').innerHTML = froms.map(f=>'<option value="' + (f) + '">').join('');
+  document.getElementById('listToModal').innerHTML = tos.map(t=>'<option value="' + (t) + '">').join('');
+  document.getElementById('listCarrierModal').innerHTML = carriers.map(c=>'<option value="' + (c) + '">').join('');
   // Reset form
   document.getElementById('mtFrom').value = '';
   document.getElementById('mtTo').value = '';
@@ -1841,14 +1845,14 @@ function renderEditPricesList(prices) {
           '<input class="erow-input" type="number" step="0.01" value="' + p.price + '" data-idx="' + globalIdx + '"></div>' +
         '<div class="erow-field-group" style="width:100px;"><div class="erow-label">Unità</div>' +
           '<select class="erow-select erow-unit">' +
-            '<option value="\u20ac/vg"' + (p.unit==='€/vg'?' selected':'') + '>\u20ac/viaggio</option>' +
-            '<option value="\u20ac/ton"' + (p.unit==='€/ton'?' selected':'') + '>\u20ac/ton</option>' +
+            '<option value="€/vg"' + (p.unit==='€/vg'?' selected':'') + '>€/viaggio</option>' +
+            '<option value="€/ton"' + (p.unit==='€/ton'?' selected':'') + '>€/ton</option>' +
           '</select></div>' +
       '</div>' +
       '<div class="erow-field-group"><div class="erow-label">Condizioni pagamento</div>' +
         '<input class="erow-input erow-cond" type="text" value="' + (p.conditions||'').replace(/"/g,'&quot;') + '" placeholder="es. BB 60 gg FM"></div>' +
-      '<label class="erow-prov-label"><input type="checkbox" class="erow-prov" ' + provCh + '> <span>\u26a0\ufe0f Prezzo da confermare</span></label>' +
-      '<label class="erow-prov-label" style="background:rgba(96,165,250,.10);border-color:rgba(96,165,250,.25);"><input type="checkbox" class="erow-neg" ' + negCh + '> <span style="color:#7cb9ff;">\ud83e\udd1d Prezzo trattabile</span></label>' +
+      '<label class="erow-prov-label"><input type="checkbox" class="erow-prov" ' + provCh + '> <span>⚠️ Prezzo da confermare</span></label>' +
+      '<label class="erow-prov-label" style="background:rgba(96,165,250,.10);border-color:rgba(96,165,250,.25);"><input type="checkbox" class="erow-neg" ' + negCh + '> <span style="color:#7cb9ff;">🤝 Prezzo trattabile</span></label>' +
     '</div>';
   });
   document.getElementById('editPricesList').innerHTML = html;
@@ -2432,7 +2436,6 @@ window.addEventListener("load", function() {
   setTimeout(function(){ waitForGoogleAndReconnect(10); }, 800);
 });
 
-// ── Patch resetNotice reference removed ──
 function forceReload() {
   DB.trasporti = PDF_DATA.map(function(r){ return Object.assign({},r); });
   DB.pdfLoaded = true; DB.pdfRev = 'REV 03/2026';
@@ -2547,11 +2550,11 @@ function addPriceRowInEdit() {
     '<div class="erow-fields">' +
       '<div class="erow-field-group" style="flex:1;"><div class="erow-label">Prezzo</div><input class="erow-input" type="number" step="0.01" placeholder="0.00"></div>' +
       '<div class="erow-field-group" style="width:100px;"><div class="erow-label">Unità</div>' +
-        '<select class="erow-select erow-unit"><option value="\u20ac/vg">\u20ac/viaggio</option><option value="\u20ac/ton">\u20ac/ton</option></select>' +
+        '<select class="erow-select erow-unit"><option value="€/vg">€/viaggio</option><option value="€/ton">€/ton</option></select>' +
       '</div>' +
     '</div>' +
     '<div class="erow-field-group"><div class="erow-label">Condizioni</div><input class="erow-input erow-cond" type="text" placeholder="es. BB 60 gg FM"></div>' +
-    '<label class="erow-prov-label"><input type="checkbox" class="erow-prov"> <span>\u26a0\ufe0f Da confermare</span></label>';
+    '<label class="erow-prov-label"><input type="checkbox" class="erow-prov"> <span>⚠️ Da confermare</span></label>';
   document.getElementById('editPricesList').appendChild(div);
 }
 
