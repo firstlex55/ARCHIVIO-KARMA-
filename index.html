@@ -1079,7 +1079,7 @@ select.inp{cursor:pointer;}
         <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇️ JSON</button>
         <button class="btn btn-secondary btn-sm" onclick="importDataJSON()">📥 JSON</button>
         <input type="file" id="jsonImportInput" accept=".json" class="hidden" onchange="loadJSON(event)">
-        <button class="btn btn-secondary btn-sm" onclick="reloadBuiltinData()" style="border-color:var(--green);color:var(--green);">🔄 REV 03</button>
+        <button class="btn btn-primary" onclick="reloadBuiltinData()" style="width:100%;margin-top:8px;background:linear-gradient(135deg,#059669,#34d399);color:#0b0f16;font-weight:900;">🔄 Carica Tariffe REV 03/2026 (incorporato)</button>
         <button class="btn btn-secondary btn-sm" onclick="exportFilteredExcel()">⬇️ Excel</button>
         <button class="btn btn-danger btn-sm" onclick="confirmClear()">🗑 Svuota</button>
       </div>
@@ -1714,83 +1714,120 @@ function handleFileImport(event, type) {
 function importTrasporti(data, filename) {
   var log = document.getElementById('logTrasporti');
   if (log) { log.classList.remove('hidden'); log.innerHTML = ''; }
-  addLog(log, '📂 File: ' + filename, 'ok');
+  addLog(log, '📂 ' + filename, 'ok');
+  addLog(log, '📊 Righe ricevute: ' + data.length, 'ok');
 
-  if (!data || data.length < 4) {
-    addLog(log, '⚠️ File vuoto o formato non riconosciuto (serve almeno 4 righe)', 'warn'); return;
+  if (!data || data.length < 2) {
+    addLog(log, '❌ File troppo corto', 'err'); return;
   }
 
-  // Struttura: R0=date+carriers, R1=labels, R2=conditions, R3+=dati
-  var carrierRow = data[0];
-  var condRow    = data[2];
-  var dataStart  = 3;
+  // Debug: stampa prime 2 righe
+  addLog(log, '🔍 R1: ' + JSON.stringify((data[0]||[]).slice(0,5)), 'ok');
+  addLog(log, '🔍 R2: ' + JSON.stringify((data[1]||[]).slice(0,5)), 'ok');
 
-  // Trova i trasportatori (colonne 2+)
-  var carriers = [];
-  for (var ci = 2; ci < carrierRow.length; ci++) {
-    if (carrierRow[ci] && String(carrierRow[ci]).trim()) {
-      carriers.push({
-        col: ci,
-        name: String(carrierRow[ci]).trim(),
-        cond: condRow && condRow[ci] ? String(condRow[ci]).trim() : ''
-      });
+  // Trova riga carrier: quella che ha più di 3 valori non vuoti
+  // e il cui primo valore è una data o testo (non "Base di Carico")
+  var carrierRowIdx = -1;
+  var condRowIdx = -1;
+  var dataStartIdx = -1;
+
+  for (var ri = 0; ri < Math.min(5, data.length); ri++) {
+    var row = data[ri] || [];
+    var nonEmpty = row.filter(function(v){ return v !== '' && v !== null && v !== undefined; });
+    var rowStr = String(row[0] || '').toLowerCase();
+    // Riga carrier: ha molti valori E il primo NON è "base di carico"
+    if (nonEmpty.length > 3 && rowStr !== 'base di carico' && carrierRowIdx < 0) {
+      carrierRowIdx = ri;
+      addLog(log, '✅ Riga carrier trovata: R' + (ri+1) + ' (' + nonEmpty.length + ' valori)', 'ok');
+    }
+    // Riga condizioni: contiene "pagamento" o "bb" o "rib"
+    if (rowStr.includes('pagamento') || rowStr.includes('condizioni') ||
+        row.some(function(v){ var s=String(v||'').toLowerCase(); return s.includes('bb ') || s.includes('rib ') || s.includes('riba'); })) {
+      condRowIdx = ri;
+    }
+    // Riga dati: prima riga dopo carrier che inizia con un luogo
+    if (carrierRowIdx >= 0 && condRowIdx >= 0 && ri > condRowIdx && dataStartIdx < 0) {
+      var v0 = String(row[0]||'');
+      if (v0.length > 3 && !v0.includes('pagamento')) {
+        dataStartIdx = ri;
+      }
     }
   }
 
-  addLog(log, '👥 Trasportatori trovati: ' + carriers.map(function(c){return c.name;}).join(', '), 'ok');
+  if (carrierRowIdx < 0) {
+    addLog(log, '❌ Impossibile trovare riga trasportatori', 'err');
+    addLog(log, '   Prova il pulsante "🔄 REV 03" per caricare i dati incorporati', 'warn');
+    return;
+  }
+
+  if (dataStartIdx < 0) dataStartIdx = (condRowIdx >= 0 ? condRowIdx : carrierRowIdx) + 1;
+
+  var carrierRow = data[carrierRowIdx] || [];
+  var condRow    = condRowIdx >= 0 ? (data[condRowIdx] || []) : [];
+
+  // Estrai carrier da col 2 in poi
+  var carriers = [];
+  for (var ci = 2; ci < carrierRow.length; ci++) {
+    var cv = carrierRow[ci];
+    if (cv !== '' && cv !== null && cv !== undefined) {
+      var name = String(cv).trim();
+      if (name && name.length > 1) {
+        carriers.push({
+          col: ci,
+          name: name,
+          cond: condRow[ci] ? String(condRow[ci]).trim() : ''
+        });
+      }
+    }
+  }
+
+  addLog(log, '👥 Trasportatori: ' + carriers.map(function(x){return x.name;}).join(', '), 'ok');
+  addLog(log, '📋 Dati da riga: ' + (dataStartIdx+1), 'ok');
 
   if (!carriers.length) {
-    addLog(log, '❌ Nessun trasportatore trovato nella riga 1', 'err'); return;
+    addLog(log, '❌ Nessun trasportatore trovato. Usa "🔄 REV 03" per caricare i dati integrati.', 'err');
+    return;
   }
 
   var added = 0, updated = 0, skipped = 0;
 
-  for (var ri = dataStart; ri < data.length; ri++) {
-    var row = data[ri];
-    if (!row || !row[0] || !row[1]) continue;
+  for (var ri2 = dataStartIdx; ri2 < data.length; ri2++) {
+    var row = data[ri2] || [];
+    if (!row[0] || !row[1]) continue;
     var from = String(row[0]).trim();
     var to   = String(row[1]).trim();
-    if (!from || !to) continue;
+    if (!from || !to || from.toLowerCase().includes('base')) continue;
 
     for (var k = 0; k < carriers.length; k++) {
       var carrier = carriers[k];
       var raw = row[carrier.col];
-      if (raw === null || raw === undefined || raw === '') continue;
+      if (raw === '' || raw === null || raw === undefined) continue;
 
       var rawStr = String(raw).trim();
       if (!rawStr) continue;
 
-      // Parsa prezzo e unità — es: "31,00 €/ton" o "550" o "32.5"
-      var price = null;
-      var unit = '€/vg';
-
-      if (rawStr.includes('€/ton') || rawStr.includes('/ton')) {
+      var price = null, unit = '€/vg';
+      if (rawStr.toLowerCase().includes('ton')) {
         unit = '€/ton';
-        price = parseFloat(rawStr.replace(/[^0-9.,]/g, '').replace(',', '.'));
-      } else if (rawStr.includes('€/mc') || rawStr.includes('/mc')) {
+        price = parseFloat(rawStr.replace(',', '.').replace(/[^0-9.]/g, ''));
+      } else if (rawStr.toLowerCase().includes('mc')) {
         unit = '€/mc';
-        price = parseFloat(rawStr.replace(/[^0-9.,]/g, '').replace(',', '.'));
+        price = parseFloat(rawStr.replace(',', '.').replace(/[^0-9.]/g, ''));
       } else {
         price = parseFloat(String(rawStr).replace(',', '.'));
-        unit = '€/vg';
       }
 
       if (isNaN(price) || price <= 0) continue;
 
-      var newRec = {
-        from: from, to: to,
-        carrier: carrier.name, price: price, unit: unit,
-        conditions: carrier.cond, rev: 'REV 03/2026'
-      };
+      var newRec = { from: from, to: to, carrier: carrier.name,
+                     price: price, unit: unit, conditions: carrier.cond, rev: 'REV 03/2026' };
 
-      // Cerca esistente
       var found = false;
       for (var di = 0; di < DB.trasporti.length; di++) {
         var ex = DB.trasporti[di];
         if (ex.from === from && ex.to === to && ex.carrier === carrier.name && ex.unit === unit) {
-          if (importMode === 'replace' || ex.price !== price) {
-            DB.trasporti[di] = newRec; updated++;
-          } else { skipped++; }
+          if (importMode === 'replace') { DB.trasporti[di] = newRec; updated++; }
+          else { skipped++; }
           found = true; break;
         }
       }
@@ -1798,10 +1835,9 @@ function importTrasporti(data, filename) {
     }
   }
 
-  save();
-  refreshAll();
+  save(); refreshAll();
   addLog(log, '✅ Aggiunti: ' + added + ' | Aggiornati: ' + updated + ' | Saltati: ' + skipped, 'ok');
-  showToast('✅ Import completato: ' + (added+updated) + ' prezzi', 'ok');
+  showToast('✅ Import: ' + (added+updated) + ' tariffe', 'ok');
 }
 
 function parsePrice(raw) {
