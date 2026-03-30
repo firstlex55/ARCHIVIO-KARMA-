@@ -1650,40 +1650,62 @@ function handleFileImport(event, type) {
   var file = event.target.files[0];
   if (!file) return;
   event.target.value = '';
+  showLog(type, '⏳ Lettura file: ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)', 'ok');
+
   var reader = new FileReader();
   reader.onload = function(e) {
     try {
+      showLog(type, '⏳ File letto, parsing XLSX...', 'ok');
+
+      if (typeof XLSX === 'undefined') {
+        showLog(type, '❌ XLSX non caricato — verifica connessione internet', 'err'); return;
+      }
+
       var arr = new Uint8Array(e.target.result);
-      var wb = XLSX.read(arr, { type: 'array', cellDates: false, raw: false });
+      showLog(type, '⏳ Array: ' + arr.length + ' bytes', 'ok');
+
+      var wb = XLSX.read(arr, { type: 'array' });
+      showLog(type, '⏳ Workbook: ' + wb.SheetNames.length + ' fogli — [' + wb.SheetNames.join(', ') + ']', 'ok');
+
       var ws = wb.Sheets[wb.SheetNames[0]];
+      var ref = ws['!ref'];
+      showLog(type, '⏳ Sheet ref: ' + (ref || 'MANCANTE'), 'ok');
 
-      // Leggi il range del foglio
-      var range = XLSX.utils.decode_range(ws['!ref'] || 'A1:A1');
-      var nRows = range.e.r - range.s.r + 1;
-      var nCols = range.e.c - range.s.c + 1;
+      if (!ref) { showLog(type, '❌ Foglio vuoto', 'err'); return; }
 
-      // Costruisci matrice completa con tutte le celle (anche vuote)
+      var range = XLSX.utils.decode_range(ref);
+      var nRows = range.e.r + 1;
+      var nCols = range.e.c + 1;
+      showLog(type, '📊 ' + nRows + ' righe × ' + nCols + ' colonne', 'ok');
+
+      // Costruisci matrice completa
       var data = [];
       for (var r = 0; r <= range.e.r; r++) {
         var row = [];
         for (var col = 0; col <= range.e.c; col++) {
-          var cellAddr = XLSX.utils.encode_cell({ r: r, c: col });
-          var cell = ws[cellAddr];
-          row.push(cell ? (cell.v !== undefined ? cell.v : '') : '');
+          var ca = XLSX.utils.encode_cell({ r: r, c: col });
+          var cell = ws[ca];
+          row.push(cell && cell.v !== undefined ? cell.v : '');
         }
         data.push(row);
       }
 
-      showLog(type, '📊 ' + nRows + ' righe × ' + nCols + ' colonne lette', 'ok');
+      showLog(type, '✅ Matrice pronta: ' + data.length + ' righe', 'ok');
+
+      // Debug riga 0
+      var r0 = data[0] || [];
+      showLog(type, '🔍 Riga1[0..4]: ' + JSON.stringify(r0.slice(0,5)), 'ok');
 
       if (type === 'trasporti') importTrasporti(data, file.name);
       else importProdotti(data, file.name);
+
     } catch(err) {
-      showLog(type, '❌ Errore: ' + err.message, 'err');
+      showLog(type, '❌ Errore parsing: ' + err.message, 'err');
+      showLog(type, '   Stack: ' + (err.stack||'').split('\n')[0], 'err');
     }
   };
-  reader.onerror = function() {
-    showLog(type, '❌ Impossibile leggere il file', 'err');
+  reader.onerror = function(ev) {
+    showLog(type, '❌ FileReader errore: ' + ev.target.error, 'err');
   };
   reader.readAsArrayBuffer(file);
 }
