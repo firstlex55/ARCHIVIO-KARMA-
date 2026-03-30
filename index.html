@@ -1250,6 +1250,8 @@ select.inp{cursor:pointer;}
 
 
 
+
+
 // ── Versione app ──
 var APP_VERSION = "1.0.0";
 
@@ -1279,7 +1281,7 @@ const KARMA_DATA = [{"prodotto": "Cippato", "tipo": "acquisto", "entity": "Arden
 function init() {
   // Pulizia vecchia cache v2 (migrazione silenziosa)
   localStorage.removeItem('archivio-tariffe-old');
-  const saved = localStorage.getItem('archivio-tariffe-v3');
+  var saved = localStorage.getItem('archivio-tariffe-v3');
   if (saved) {
     try { DB = JSON.parse(saved); } catch(e) {}
   }
@@ -1329,7 +1331,7 @@ function save() {
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const tabs = ['trasporti','prodotti','import'];
+  var tabs = ['trasporti','prodotti','import'];
   document.querySelectorAll('.tab')[tabs.indexOf(tab)].classList.add('active');
   document.getElementById('page-' + tab).classList.add('active');
 }
@@ -1371,9 +1373,9 @@ function refreshStats() {
 }
 
 function getUniqueRoutes() {
-  const map = {};
+  var map = {};
   DB.trasporti.forEach(r => {
-    const key = r.from + '||' + r.to;
+    var key = r.from + '||' + r.to;
     if(!map[key]) map[key] = [];
     map[key].push(r);
   });
@@ -1396,10 +1398,10 @@ function setView(v) {
 }
 
 function filterRoutes() {
-  const fromQ = document.getElementById('searchFrom').value.trim().toLowerCase();
-  const toQ = document.getElementById('searchTo').value.trim().toLowerCase();
-  const carrier = activePill || document.getElementById('searchCarrier').value;
-  let routes = getUniqueRoutes();
+  var fromQ = document.getElementById('searchFrom').value.trim().toLowerCase();
+  var toQ = document.getElementById('searchTo').value.trim().toLowerCase();
+  var carrier = activePill || document.getElementById('searchCarrier').value;
+  var routes = getUniqueRoutes();
   if(fromQ) routes = routes.filter(r => r.from.toLowerCase().includes(fromQ));
   if(toQ) routes = routes.filter(r => r.to.toLowerCase().includes(toQ));
   if(carrier) routes = routes.filter(r => r.prices.some(p => p.carrier === carrier));
@@ -1411,7 +1413,7 @@ function refreshSearch() { filterRoutes(); }
 
 
 function renderRapida(routes, filterCarrier) {
-  const container = document.getElementById('resultsContainer');
+  var container = document.getElementById('resultsContainer');
   if(DB.trasporti.length === 0) {
     container.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.</div></div>';
     return;
@@ -1420,20 +1422,20 @@ function renderRapida(routes, filterCarrier) {
     container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Nessuna tratta trovata.</div></div>';
     return;
   }
-  let html = '<div style="font-size:11px; color:var(--text2); margin-bottom:8px; padding-left:2px;">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
+  var html = '<div style="font-size:11px; color:var(--text2); margin-bottom:8px; padding-left:2px;">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
 
   routes.forEach(function(route) {
-    let prices = route.prices;
+    var prices = route.prices;
     if(filterCarrier) prices = prices.filter(function(p){ return p.carrier === filterCarrier; });
 
-    const vgPrices = prices.filter(function(p){ return p.unit==='€/vg'; }).sort(function(a,b){ return a.price-b.price; });
-    const tonPrices = prices.filter(function(p){ return p.unit==='€/ton'; }).sort(function(a,b){ return a.price-b.price; });
-    const sorted = vgPrices.concat(tonPrices);
-    const best = vgPrices[0] || null;
+    var vgPrices = prices.filter(function(p){ return p.unit==='€/vg'; }).sort(function(a,b){ return a.price-b.price; });
+    var tonPrices = prices.filter(function(p){ return p.unit==='€/ton'; }).sort(function(a,b){ return a.price-b.price; });
+    var sorted = vgPrices.concat(tonPrices);
+    var best = vgPrices[0] || null;
 
-    let bestPill = '';
+    var bestPill = '';
     if(best) {
-      const provMark = best.provisional ? ' ~' : '';
+      var provMark = best.provisional ? ' ~' : '';
       bestPill = '<div class="rapid-best-pill">' +
         '<div class="rapid-best-name">' + abbrev(best.carrier) + '</div>' +
         '<div class="rapid-best-price">' + best.price.toLocaleString('it-IT',{minimumFractionDigits:0}) + '€' + provMark + '</div>' +
@@ -1441,10 +1443,10 @@ function renderRapida(routes, filterCarrier) {
         '</div>';
     }
 
-    let chips = '';
+    var chips = '';
     sorted.forEach(function(p) {
-      const isBest = best && p.carrier===best.carrier && p.unit==='€/vg';
-      const provBadge = p.provisional ? '<div style="font-size:8px;color:var(--gold);opacity:.8;margin-top:1px;">da conf.</div>' : '';
+      var isBest = best && p.carrier===best.carrier && p.unit==='€/vg';
+      var provBadge = p.provisional ? '<div style="font-size:8px;color:var(--gold);opacity:.8;margin-top:1px;">da conf.</div>' : '';
       chips += '<div class="price-chip' + (isBest?' best':'') + '">' +
         '<div class="price-chip-name">' + p.carrier + '</div>' +
         '<div class="price-chip-val">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '</div>' +
@@ -1453,7 +1455,7 @@ function renderRapida(routes, filterCarrier) {
         '</div>';
     });
 
-    const routeKey = route.from + '||' + route.to;
+    var routeKey = route.from + '||' + route.to;
     html += '<div class="rapid-row" onclick="jumpToConfronto(this)"' +
       ' data-key="' + routeKey.replace(/"/g,'&quot;') + '">' +
       '<div class="rapid-header">' +
@@ -1482,12 +1484,12 @@ function renderRapida(routes, filterCarrier) {
 // ===== VISTA CONFRONTO =====
 function populateConfrontoSelect(routes) {
   routes = routes || getUniqueRoutes();
-  const sel = document.getElementById('confrontoSelect');
-  const cur = sel.value;
+  var sel = document.getElementById('confrontoSelect');
+  var cur = sel.value;
   sel.innerHTML = '<option value="">— Seleziona una tratta —</option>';
   routes.forEach(function(r) {
-    const key = r.from + '||' + r.to;
-    const opt = document.createElement('option');
+    var key = r.from + '||' + r.to;
+    var opt = document.createElement('option');
     opt.value = key;
     opt.textContent = r.from + ' → ' + r.to;
     sel.appendChild(opt);
@@ -1496,36 +1498,36 @@ function populateConfrontoSelect(routes) {
 }
 
 function jumpToConfronto(el) {
-  const key = el.getAttribute('data-key');
+  var key = el.getAttribute('data-key');
   setView('confronto');
   setTimeout(function() {
     populateConfrontoSelect();
-    const sel = document.getElementById('confrontoSelect');
+    var sel = document.getElementById('confrontoSelect');
     sel.value = key;
     renderConfronto();
   }, 30);
 }
 
 function renderConfronto() {
-  const val = document.getElementById('confrontoSelect').value;
-  const container = document.getElementById('confrontoContainer');
+  var val = document.getElementById('confrontoSelect').value;
+  var container = document.getElementById('confrontoContainer');
   if(!val) {
     container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta.</div></div>';
     return;
   }
-  const sep = val.indexOf('||');
-  const from = val.substring(0, sep);
-  const to = val.substring(sep+2);
-  const prices = DB.trasporti.filter(function(r){ return r.from===from && r.to===to; });
+  var sep = val.indexOf('||');
+  var from = val.substring(0, sep);
+  var to = val.substring(sep+2);
+  var prices = DB.trasporti.filter(function(r){ return r.from===from && r.to===to; });
   if(!prices.length) {
     container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Nessun prezzo trovato.</div></div>';
     return;
   }
 
-  const vgPrices = prices.filter(function(p){ return p.unit==='€/vg'; }).sort(function(a,b){ return a.price-b.price; });
-  const tonPrices = prices.filter(function(p){ return p.unit==='€/ton'; }).sort(function(a,b){ return a.price-b.price; });
+  var vgPrices = prices.filter(function(p){ return p.unit==='€/vg'; }).sort(function(a,b){ return a.price-b.price; });
+  var tonPrices = prices.filter(function(p){ return p.unit==='€/ton'; }).sort(function(a,b){ return a.price-b.price; });
 
-  let html = '<div class="confronto-card">' +
+  var html = '<div class="confronto-card">' +
     '<div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">' +
       '<div style="font-size:14px; font-weight:900; color:#ffffff;">' + from + '</div>' +
       '<div style="color:var(--text3); font-size:12px;">→</div>' +
@@ -1535,15 +1537,15 @@ function renderConfronto() {
 
   function renderBars(list, label, unitLabel) {
     if(!list.length) return '';
-    let out = '<div class="confronto-group-label">' + label + '</div>';
-    const maxVal = Math.max.apply(null, list.map(function(p){return p.price;}));
-    const minVal = list[0].price;
+    var out = '<div class="confronto-group-label">' + label + '</div>';
+    var maxVal = Math.max.apply(null, list.map(function(p){return p.price;}));
+    var minVal = list[0].price;
     list.forEach(function(p, i) {
-      const pct = Math.max(32, Math.round((p.price/maxVal)*100));
-      const isBest = i===0;
-      const delta = p.price - minVal;
-      const deltaStr = delta===0 ? '⭐ min' : '+' + delta.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '€';
-      const provTag = p.provisional ? ' <span style="font-size:9px;background:rgba(245,200,66,.2);color:var(--gold);border-radius:3px;padding:1px 4px;">da conf.</span>' : '';
+      var pct = Math.max(32, Math.round((p.price/maxVal)*100));
+      var isBest = i===0;
+      var delta = p.price - minVal;
+      var deltaStr = delta===0 ? '⭐ min' : '+' + delta.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '€';
+      var provTag = p.provisional ? ' <span style="font-size:9px;background:rgba(245,200,66,.2);color:var(--gold);border-radius:3px;padding:1px 4px;">da conf.</span>' : '';
       out += '<div class="confront-bar-row">' +
         '<div class="confront-bar-name" title="' + p.carrier + '">' + p.carrier + '</div>' +
         '<div class="confront-bar-wrap">' +
@@ -1593,28 +1595,50 @@ function selectImportMode(el, mode) {
   importMode = mode;
 }
 
+
+function reloadBuiltinData() {
+  if (!confirm('Ricaricare i dati REV 03/2026 incorporati? I dati attuali verranno sostituiti.')) return;
+  DB.trasporti = PDF_DATA.map(function(r){ return Object.assign({}, r); });
+  DB.pdfLoaded = true;
+  DB.pdfRev = 'REV 03/2026';
+  // Applica migrazioni
+  DB.trasporti.forEach(function(t) {
+    t.to = normalizeDest(t.to);
+    if (t.carrier==='COAP' && t.from==='Bientina (PI)' && t.to==='Verolavecchia (BS)' && t.unit==='€/vg' && t.price<100) {
+      t.price=32.5; t.unit='€/ton';
+    }
+  });
+  save();
+  refreshAll();
+  showToast('✅ Tariffe REV 03/2026 ricaricate (' + DB.trasporti.length + ' prezzi)', 'ok');
+}
+
 function handleFileImport(event, type) {
-  const file = event.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
+  var file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+  var reader = new FileReader();
+  reader.onload = function(e) {
     try {
-      const wb = XLSX.read(e.target.result, {type:'binary'});
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const data = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
-      if(type === 'trasporti') importTrasporti(data, file.name);
+      var arr = new Uint8Array(e.target.result);
+      var wb = XLSX.read(arr, { type: 'array' });
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      if (type === 'trasporti') importTrasporti(data, file.name);
       else importProdotti(data, file.name);
     } catch(err) {
-      showLog(type, '❌ Errore lettura file: ' + (err.message), 'err');
+      showLog(type, '❌ Errore lettura file: ' + err.message, 'err');
     }
   };
-  reader.readAsBinaryString(file);
-  event.target.value = '';
+  reader.onerror = function() {
+    showLog(type, '❌ Impossibile leggere il file', 'err');
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 // ===================== IMPORT TRASPORTI =====================
 function importTrasporti(data, filename) {
-  const log = document.getElementById('logTrasporti');
+  var log = document.getElementById('logTrasporti');
   log.classList.remove('hidden');
   log.innerHTML = '';
   addLog(log, '📂 File: ' + (filename), 'ok');
@@ -1622,14 +1646,14 @@ function importTrasporti(data, filename) {
   if(data.length < 2) { addLog(log, '⚠️ File vuoto o formato non riconosciuto','warn'); return; }
 
   // Riga 0 = intestazioni. Col 0 = Base, Col 1 = Destinazione, Col 2+ = trasportatori
-  const headerRow = data[0];
-  const carriers = [];
-  const condRow = data[1]; // Eventuale riga condizioni pagamento (se contiene "pagamento" o simile)
+  var headerRow = data[0];
+  var carriers = [];
+  var condRow = data[1]; // Eventuale riga condizioni pagamento (se contiene "pagamento" o simile)
 
-  let dataStart = 1;
+  var dataStart = 1;
   // Controlla se riga 1 è condizioni pagamento
-  const row1str = condRow.join(' ').toLowerCase();
-  let conditions = {};
+  var row1str = condRow.join(' ').toLowerCase();
+  var conditions = {};
   if(row1str.includes('pagamento') || row1str.includes('bb') || row1str.includes('rib')) {
     for(let c = 2; c < headerRow.length; c++) {
       if(headerRow[c]) conditions[c] = condRow[c] || '';
@@ -1643,16 +1667,16 @@ function importTrasporti(data, filename) {
   }
   addLog(log, '👥 Trasportatori: ' + (carriers.map(c=>c.name).join(', ')), 'ok');
 
-  let added = 0, skipped = 0, updated = 0;
+  var added = 0, skipped = 0, updated = 0;
 
   for(let r = dataStart; r < data.length; r++) {
-    const row = data[r];
-    const from = String(row[0]||'').trim();
-    const to = String(row[1]||'').trim();
+    var row = data[r];
+    var from = String(row[0]||'').trim();
+    var to = String(row[1]||'').trim();
     if(!from || !to) continue;
 
     carriers.forEach(function(item) { var col=item.col, name=item.name, cond=item.cond;
-      const raw = String(row[col]||'').trim();
+      var raw = String(row[col]||'').trim();
       if(!raw || raw === '') return;
 
       var _parsed = parsePrice(raw); var price = _parsed.price; var unit = _parsed.unit;
@@ -1664,7 +1688,7 @@ function importTrasporti(data, filename) {
         added++;
       } else {
         // Modalità ADD: cerca se esiste già
-        const existing = DB.trasporti.find(t =>
+        var existing = DB.trasporti.find(t =>
           t.from === from && t.to === to && t.carrier === name
         );
         if(existing) {
@@ -1684,14 +1708,14 @@ function importTrasporti(data, filename) {
   if(importMode === 'replace') {
     // Rimuovi le voci pre-esistenti (quelle aggiunte sopra sono già DB.trasporti)
     // Reset e ri-importa
-    const newData = [];
+    var newData = [];
     for(let r = dataStart; r < data.length; r++) {
-      const row = data[r];
-      const from = String(row[0]||'').trim();
-      const to = String(row[1]||'').trim();
+      var row = data[r];
+      var from = String(row[0]||'').trim();
+      var to = String(row[1]||'').trim();
       if(!from || !to) continue;
       carriers.forEach(function(item) { var col=item.col, name=item.name, cond=item.cond;
-        const raw = String(row[col]||'').trim();
+        var raw = String(row[col]||'').trim();
         if(!raw) return;
         var _parsed = parsePrice(raw); var price = _parsed.price; var unit = _parsed.unit;
         if(price !== null) newData.push({from, to, carrier: name, price, unit, conditions: cond, rev: filename});
@@ -1710,62 +1734,62 @@ function importTrasporti(data, filename) {
 
 function parsePrice(raw) {
   // Gestisce: "500,00 €", "31,00 €/ton", "500.00", "500", "18,00 €/ton", "32,50 €/ton"
-  const s = raw.replace(/\s/g,'').replace(',','.');
+  var s = raw.replace(/\s/g,'').replace(',','.');
   // Check se è €/ton
-  const tonMatch = s.match(/([\d.]+)[€]?\/ton/i);
+  var tonMatch = s.match(/([\d.]+)[€]?\/ton/i);
   if(tonMatch) return {price: parseFloat(tonMatch[1]), unit: '€/ton'};
   // Numerico puro o con €
-  const numMatch = s.match(/([\d.]+)/);
+  var numMatch = s.match(/([\d.]+)/);
   if(numMatch) return {price: parseFloat(numMatch[1]), unit: '€/vg'};
   return {price: null, unit: ''};
 }
 
 // ===================== IMPORT PRODOTTI =====================
 function importProdotti(data, filename) {
-  const log = document.getElementById('logProdotti');
+  var log = document.getElementById('logProdotti');
   log.classList.remove('hidden');
   log.innerHTML = '';
   addLog(log, '📂 File: ' + (filename), 'ok');
 
   if(data.length < 2) { addLog(log, '⚠️ File vuoto','warn'); return; }
 
-  const header = data[0].map(h => String(h).toLowerCase().trim());
-  const getCol = (...names) => {
-    for(const n of names) {
-      const i = header.findIndex(h => h.includes(n));
+  var header = data[0].map(h => String(h).toLowerCase().trim());
+  var getCol = (...names) => {
+    for(var n of names) {
+      var i = header.findIndex(h => h.includes(n));
       if(i>=0) return i;
     }
     return -1;
   };
 
-  const colProdotto = getCol('prodotto','product','desc');
-  const colEntity = getCol('fornitore','cliente','entity','partner','controparte');
-  const colTipo = getCol('tipo','type');
-  const colPrezzo = getCol('prezzo','price','tariffa','valore');
-  const colUnita = getCol('unita','unità','unit','um');
-  const colData = getCol('data','date','periodo');
-  const colNote = getCol('note','notes','commento');
+  var colProdotto = getCol('prodotto','product','desc');
+  var colEntity = getCol('fornitore','cliente','entity','partner','controparte');
+  var colTipo = getCol('tipo','type');
+  var colPrezzo = getCol('prezzo','price','tariffa','valore');
+  var colUnita = getCol('unita','unità','unit','um');
+  var colData = getCol('data','date','periodo');
+  var colNote = getCol('note','notes','commento');
 
   if(colProdotto<0 || colPrezzo<0) {
     addLog(log,'❌ Colonne "Prodotto" e "Prezzo" obbligatorie non trovate','err');
     return;
   }
 
-  let added=0, updated=0;
-  for(let r=1; r<data.length; r++) {
-    const row = data[r];
-    const prodotto = String(row[colProdotto]||'').trim();
+  var added=0, updated=0;
+  for(var r=1; r<data.length; r++) {
+    var row = data[r];
+    var prodotto = String(row[colProdotto]||'').trim();
     if(!prodotto) continue;
-    const entity = colEntity>=0 ? String(row[colEntity]||'').trim() : '';
-    const tipo = colTipo>=0 ? String(row[colTipo]||'acquisto').trim().toLowerCase() : 'acquisto';
-    const prezzo = parseFloat(String(row[colPrezzo]||'').replace(',','.'));
+    var entity = colEntity>=0 ? String(row[colEntity]||'').trim() : '';
+    var tipo = colTipo>=0 ? String(row[colTipo]||'acquisto').trim().toLowerCase() : 'acquisto';
+    var prezzo = parseFloat(String(row[colPrezzo]||'').replace(',','.'));
     if(isNaN(prezzo)) continue;
-    const unita = colUnita>=0 ? String(row[colUnita]||'€/ton').trim() : '€/ton';
-    const dataVal = colData>=0 ? String(row[colData]||'').trim() : '';
-    const note = colNote>=0 ? String(row[colNote]||'').trim() : '';
-    const luogo = '';
+    var unita = colUnita>=0 ? String(row[colUnita]||'€/ton').trim() : '€/ton';
+    var dataVal = colData>=0 ? String(row[colData]||'').trim() : '';
+    var note = colNote>=0 ? String(row[colNote]||'').trim() : '';
+    var luogo = '';
 
-    const existing = DB.prodotti.find(p => p.prodotto===prodotto && p.entity===entity && p.tipo===tipo);
+    var existing = DB.prodotti.find(p => p.prodotto===prodotto && p.entity===entity && p.tipo===tipo);
     if(existing) { existing.prezzo=prezzo; existing.unita=unita; existing.data=dataVal; existing.note=note; updated++; }
     else { DB.prodotti.push({prodotto,tipo,entity,luogo,prezzo,unita,data:dataVal,note}); added++; }
   }
@@ -1893,9 +1917,9 @@ function refreshProdotti() {
 
 function openAddTariffaModal() {
   // Popola datalist con valori esistenti
-  const froms = [...new Set(DB.trasporti.map(r=>r.from))].sort();
-  const tos = [...new Set(DB.trasporti.map(r=>r.to))].sort();
-  const carriers = [...new Set(DB.trasporti.map(r=>r.carrier))].sort();
+  var froms = [...new Set(DB.trasporti.map(r=>r.from))].sort();
+  var tos = [...new Set(DB.trasporti.map(r=>r.to))].sort();
+  var carriers = [...new Set(DB.trasporti.map(r=>r.carrier))].sort();
   document.getElementById('listFromModal').innerHTML = froms.map(f=>'<option value="' + (f) + '">').join('');
   document.getElementById('listToModal').innerHTML = tos.map(t=>'<option value="' + (t) + '">').join('');
   document.getElementById('listCarrierModal').innerHTML = carriers.map(c=>'<option value="' + (c) + '">').join('');
@@ -1911,20 +1935,20 @@ function openAddTariffaModal() {
 }
 
 function saveTariffa() {
-  const from = document.getElementById('mtFrom').value.trim();
-  const to = normalizeDest(document.getElementById('mtTo').value.trim());
-  const carrier = document.getElementById('mtCarrier').value.trim();
-  const price = parseFloat(document.getElementById('mtPrice').value);
-  const unit = document.getElementById('mtUnit').value;
-  const conditions = document.getElementById('mtConditions').value.trim();
-  const provisional = document.getElementById('mtProvisional').checked;
+  var from = document.getElementById('mtFrom').value.trim();
+  var to = normalizeDest(document.getElementById('mtTo').value.trim());
+  var carrier = document.getElementById('mtCarrier').value.trim();
+  var price = parseFloat(document.getElementById('mtPrice').value);
+  var unit = document.getElementById('mtUnit').value;
+  var conditions = document.getElementById('mtConditions').value.trim();
+  var provisional = document.getElementById('mtProvisional').checked;
 
   if(!from || !to || !carrier || isNaN(price)) {
     showToast('⚠️ Compila Base, Destinazione, Trasportatore e Prezzo', 'warn');
     return;
   }
 
-  const existing = DB.trasporti.find(t => t.from===from && t.to===to && t.carrier===carrier);
+  var existing = DB.trasporti.find(t => t.from===from && t.to===to && t.carrier===carrier);
   if(existing) {
     existing.price = price;
     existing.unit = unit;
@@ -2100,15 +2124,15 @@ function openAddProdottoModal(prodotto) {
 }
 
 function saveProdotto() {
-  const prodotto = document.getElementById('mpProdotto').value.trim();
+  var prodotto = document.getElementById('mpProdotto').value.trim();
   var _tipoR = document.querySelector('input[name="mpTipoR"]:checked');
   var tipo = _tipoR ? _tipoR.value : (document.getElementById('mpTipo') ? document.getElementById('mpTipo').value : 'acquisto');
-  const entity = document.getElementById('mpEntity').value.trim();
-  const luogo = document.getElementById('mpLuogo').value.trim();
-  const prezzo = parseFloat(document.getElementById('mpPrezzo').value);
-  const unita = document.getElementById('mpUnita').value;
-  const data = document.getElementById('mpData').value;
-  const note = document.getElementById('mpNote').value.trim();
+  var entity = document.getElementById('mpEntity').value.trim();
+  var luogo = document.getElementById('mpLuogo').value.trim();
+  var prezzo = parseFloat(document.getElementById('mpPrezzo').value);
+  var unita = document.getElementById('mpUnita').value;
+  var data = document.getElementById('mpData').value;
+  var note = document.getElementById('mpNote').value.trim();
 
   if(!prodotto || isNaN(prezzo)) { showToast('⚠️ Compila Prodotto e Prezzo','warn'); return; }
 
@@ -2124,8 +2148,8 @@ function deleteProdotto(idx) {
 }
 
 function exportData() {
-  const blob = new Blob([JSON.stringify(DB,null,2)], {type:'application/json'});
-  const a = document.createElement('a');
+  var blob = new Blob([JSON.stringify(DB,null,2)], {type:'application/json'});
+  var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'archivio-tariffe-' + new Date().toISOString().split('T')[0] + '.json';
   a.click();
@@ -2134,9 +2158,9 @@ function exportData() {
 function importDataJSON() { document.getElementById('jsonImportInput').click(); }
 
 function loadJSON(event) {
-  const file = event.target.files[0];
+  var file = event.target.files[0];
   if(!file) return;
-  const reader = new FileReader();
+  var reader = new FileReader();
   reader.onload = e => {
     try {
       DB = JSON.parse(e.target.result);
@@ -2163,14 +2187,14 @@ function clearAll() {
 function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
 function showToast(msg, type='ok') {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast ' + type + ' show';
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function addLog(el, msg, type) {
-  const div = document.createElement('div');
+  var div = document.createElement('div');
   div.className = 'log-line ' + (type==='ok'?'log-ok':type==='warn'?'log-warn':type==='err'?'log-err':'');
   div.textContent = msg;
   el.appendChild(div);
@@ -2179,16 +2203,16 @@ function addLog(el, msg, type) {
 
 // Drag & Drop
 ['dropZoneTrasporti','dropZoneProdotti'].forEach(id => {
-  const el = document.getElementById(id);
+  var el = document.getElementById(id);
   if(!el) return;
   el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag'); });
   el.addEventListener('dragleave', () => el.classList.remove('drag'));
   el.addEventListener('drop', e => {
     e.preventDefault(); el.classList.remove('drag');
-    const file = e.dataTransfer.files[0];
+    var file = e.dataTransfer.files[0];
     if(!file) return;
-    const type = id.includes('Prodotti') ? 'prodotti' : 'trasporti';
-    const fakeEvent = {target:{files:[file],value:''}};
+    var type = id.includes('Prodotti') ? 'prodotti' : 'trasporti';
+    var fakeEvent = {target:{files:[file],value:''}};
     handleFileImport(fakeEvent, type);
   });
 });
@@ -2207,9 +2231,9 @@ let _conflictDriveData = null;
 
 function _showConflictModal(driveData) {
   _conflictDriveData = driveData;
-  const localTime = _driveLastKnownSavedAt ? new Date(_driveLastKnownSavedAt).toLocaleString('it-IT') : '—';
-  const driveTime = driveData && driveData.savedAt ? new Date(driveData.savedAt).toLocaleString('it-IT') : '—';
-  const drivePrezzi = driveData && driveData.trasporti ? driveData.trasporti.length : '?';
+  var localTime = _driveLastKnownSavedAt ? new Date(_driveLastKnownSavedAt).toLocaleString('it-IT') : '—';
+  var driveTime = driveData && driveData.savedAt ? new Date(driveData.savedAt).toLocaleString('it-IT') : '—';
+  var drivePrezzi = driveData && driveData.trasporti ? driveData.trasporti.length : '?';
   document.getElementById('conflictLocalInfo').textContent = localTime + ' · ' + DB.trasporti.length + ' prezzi';
   document.getElementById('conflictDriveInfo').textContent = driveTime + ' · ' + drivePrezzi + ' prezzi';
   document.getElementById('modalDriveConflict').classList.remove('hidden');
