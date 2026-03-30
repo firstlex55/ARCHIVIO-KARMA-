@@ -1312,6 +1312,9 @@ select.inp{cursor:pointer;}
 
 
 
+
+
+
 // ── Versione app ──
 var APP_VERSION = "1.0.0";
 
@@ -1492,75 +1495,32 @@ function refreshSearch() { filterRoutes(); }
 
 
 function renderRapida(routes, filterCarrier) {
-  var container = document.getElementById('resultsContainer');
-  if(DB.trasporti.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.</div></div>';
+  if (typeof _renderRapidaPremium === 'function') {
+    _renderRapidaPremium(routes, filterCarrier);
     return;
   }
-  if(routes.length === 0) {
+  // Fallback minimo
+  var container = document.getElementById('resultsContainer');
+  if (!container) return;
+  if (!routes || routes.length === 0) {
     container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Nessuna tratta trovata.</div></div>';
     return;
   }
-  var html = '<div style="font-size:11px; color:var(--text2); margin-bottom:8px; padding-left:2px;">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
-
-  routes.forEach(function(route) {
-    var prices = route.prices;
-    if(filterCarrier) prices = prices.filter(function(p){ return p.carrier === filterCarrier; });
-
-    var vgPrices = prices.filter(function(p){ return p.unit==='€/vg'; }).sort(function(a,b){ return a.price-b.price; });
-    var tonPrices = prices.filter(function(p){ return p.unit==='€/ton'; }).sort(function(a,b){ return a.price-b.price; });
-    var sorted = vgPrices.concat(tonPrices);
-    var best = vgPrices[0] || null;
-
-    var bestPill = '';
-    if(best) {
-      var provMark = best.provisional ? ' ~' : '';
-      bestPill = '<div class="rapid-best-pill">' +
-        '<div class="rapid-best-name">' + abbrev(best.carrier) + '</div>' +
-        '<div class="rapid-best-price">' + best.price.toLocaleString('it-IT',{minimumFractionDigits:0}) + '€' + provMark + '</div>' +
-        '<div class="rapid-best-unit">' + best.unit + '</div>' +
-        '</div>';
-    }
-
-    var chips = '';
-    sorted.forEach(function(p) {
-      var isBest = best && p.carrier===best.carrier && p.unit==='€/vg';
-      var provBadge = p.provisional ? '<div style="font-size:8px;color:var(--gold);opacity:.8;margin-top:1px;">da conf.</div>' : '';
-      chips += '<div class="price-chip' + (isBest?' best':'') + '">' +
-        '<div class="price-chip-name">' + p.carrier + '</div>' +
-        '<div class="price-chip-val">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '</div>' +
-        '<div class="price-chip-unit">' + p.unit + '</div>' +
-        provBadge +
-        '</div>';
+  var html = '<div class="results-count">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
+  routes.forEach(function(r) {
+    html += '<div class="rrow"><div class="rrow-head"><div class="rrow-left">';
+    html += '<div class="rrow-from">' + r.from + '</div>';
+    html += '<div class="rrow-to">→ ' + r.to + '</div></div></div>';
+    (r.prices||[]).forEach(function(p) {
+      html += '<div class="price-row"><div class="price-row-who">' + p.carrier + '</div>';
+      html += '<div class="price-row-right"><span class="price-row-val">' + p.price + '</span>';
+      html += '<span class="price-row-unit">' + p.unit + '</span></div></div>';
     });
-
-    var routeKey = route.from + '||' + route.to;
-    html += '<div class="rapid-row" onclick="jumpToConfronto(this)"' +
-      ' data-key="' + routeKey.replace(/"/g,'&quot;') + '">' +
-      '<div class="rapid-header">' +
-        '<div class="rapid-route">' +
-          '<div class="rapid-from">' + route.from + '</div>' +
-          '<div class="rapid-route-line2">' +
-            '<span class="rapid-arrow">→</span>' +
-            '<span class="rapid-to">' + route.to + '</span>' +
-          '</div>' +
-        '</div>' +
-        bestPill +
-      '</div>' +
-      '<div class="rapid-prices">' + chips + '</div>' +
-      '<div class="rapid-actions">' +
-        '<button class="btn-icon btn-edit" onclick="event.stopPropagation();openEditTratta(\''+route.from.replace(/'/g,"\\'\'")+'\',' +
-          '\''+route.to.replace(/'/g,"\\'\'")+'\')" >✏️ Modifica</button>' +
-        '<button class="btn-icon btn-delete" onclick="event.stopPropagation();editingTratta={from:\''+route.from.replace(/'/g,"\\'\'")+'\',' +
-          'to:\''+route.to.replace(/'/g,"\\'\'")+'\'};deleteTratta()">🗑 Elimina</button>' +
-      '</div>' +
-      '</div>';
+    html += '</div>';
   });
-
   container.innerHTML = html;
 }
 
-// ===== VISTA CONFRONTO =====
 function populateConfrontoSelect(routes) {
   routes = routes || getUniqueRoutes();
   var sel = document.getElementById('confrontoSelect');
@@ -2471,6 +2431,7 @@ async function resolveConflict(choice) {
 }
 
 function renderCarrierPills() {
+  if (typeof _renderCarrierPillsPremium === 'function') { _renderCarrierPillsPremium(); return; }
   var carriers = [...new Set(DB.trasporti.map(function(r){ return r.carrier; }))].sort();
   var el = document.getElementById('carrierPills');
   if (!el || typeof el.appendChild !== 'function') return;
@@ -3433,10 +3394,8 @@ function driveLoad() {
     });
 }
 
-init();
 
-// ─── RENDER PATCHES (must run before init) ───
-window.renderRapida = function(routes, filterCarrier) {
+var _renderRapidaPremium = function(routes, filterCarrier) {
   var container = document.getElementById('resultsContainer');
   if (!container) return;
   if (DB.trasporti.length === 0) {
@@ -3490,7 +3449,7 @@ window.renderRapida = function(routes, filterCarrier) {
   container.innerHTML = html;
 };
 
-window.renderConfronto = function() {
+var _renderConfronto = function() {
   var val = document.getElementById('confrontoSelect').value;
   var container = document.getElementById('confrontoContainer');
   if (!val) { container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta.</div></div>'; return; }
@@ -3524,7 +3483,7 @@ window.renderConfronto = function() {
   container.innerHTML = html;
 };
 
-window.renderCarrierPills = function() {
+var _renderCarrierPillsPremium = function() {
   var carriers = [...new Set(DB.trasporti.map(function(r) { return r.carrier; }))].sort();
   var el = document.getElementById('carrierPills');
   if (!el) return;
@@ -3547,6 +3506,10 @@ window.addEventListener("load", function() {
     var btn = document.getElementById('driveStatus');
     if (btn) btn.textContent = '☁️ Drive';
   }
-});</script>
+})
+init();
+
+// ─── RENDER PATCHES (must run before init) ───
+;</script>
 </body>
 </html>
