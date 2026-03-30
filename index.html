@@ -1654,13 +1654,32 @@ function handleFileImport(event, type) {
   reader.onload = function(e) {
     try {
       var arr = new Uint8Array(e.target.result);
-      var wb = XLSX.read(arr, { type: 'array' });
+      var wb = XLSX.read(arr, { type: 'array', cellDates: false, raw: false });
       var ws = wb.Sheets[wb.SheetNames[0]];
-      var data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+      // Leggi il range del foglio
+      var range = XLSX.utils.decode_range(ws['!ref'] || 'A1:A1');
+      var nRows = range.e.r - range.s.r + 1;
+      var nCols = range.e.c - range.s.c + 1;
+
+      // Costruisci matrice completa con tutte le celle (anche vuote)
+      var data = [];
+      for (var r = 0; r <= range.e.r; r++) {
+        var row = [];
+        for (var col = 0; col <= range.e.c; col++) {
+          var cellAddr = XLSX.utils.encode_cell({ r: r, c: col });
+          var cell = ws[cellAddr];
+          row.push(cell ? (cell.v !== undefined ? cell.v : '') : '');
+        }
+        data.push(row);
+      }
+
+      showLog(type, '📊 ' + nRows + ' righe × ' + nCols + ' colonne lette', 'ok');
+
       if (type === 'trasporti') importTrasporti(data, file.name);
       else importProdotti(data, file.name);
     } catch(err) {
-      showLog(type, '❌ Errore lettura file: ' + err.message, 'err');
+      showLog(type, '❌ Errore: ' + err.message, 'err');
     }
   };
   reader.onerror = function() {
