@@ -905,6 +905,39 @@ select.inp{cursor:pointer;}
   color: var(--green);
 }
 
+
+/* ═══ RROW CARD LAYOUT ════════════════════════════════ */
+.rrow-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 11px 14px 4px; gap: 8px;
+}
+.rrow-left { flex: 1; min-width: 0; }
+.rrow-from {
+  font-size: 13px; font-weight: 800; color: #f0f6ff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rrow-to {
+  font-size: 12px; font-weight: 600; color: var(--green);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-top: 1px;
+}
+.rrow-r {
+  display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0;
+}
+.rrow-best-carrier {
+  font-size: 9px; font-weight: 800; color: var(--amber);
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.rrow-best-price {
+  font-size: 20px; font-weight: 900; color: var(--amber); line-height: 1;
+}
+.rrow-best-unit {
+  font-size: 9px; color: rgba(251,146,60,.6); font-weight: 600;
+}
+.rrow-acts {
+  display: flex; gap: 5px; padding: 2px 14px 10px; justify-content: flex-end;
+}
+
 </style>
 </head>
 <body style="background:#0b0f16;">
@@ -1241,6 +1274,10 @@ select.inp{cursor:pointer;}
 </div>
 
 <script>
+
+
+
+
 
 
 
@@ -2480,11 +2517,6 @@ function renderEditPricesList(prices) {
 }
 
 
-function removePriceRow(el, globalIdx) {
-  el.closest('.edit-price-row').style.opacity = '0.3';
-  el.closest('.edit-price-row').style.textDecoration = 'line-through';
-  el.closest('.edit-price-row').dataset.deleted = '1';
-}
 
 function loadGISandRun(fn) {
   if (typeof google !== 'undefined' && google.accounts) { fn(); return; }
@@ -2746,6 +2778,99 @@ function openEntityModal(entityName, tipo) {
   });
 
   document.getElementById('modalEntity').classList.remove('hidden');
+}
+
+
+function saveEditTratta() {
+  // Modalità singola riga (da openEditSingle)
+  if (editingTratta && editingTratta.singleIdx !== undefined) {
+    var idx = editingTratta.singleIdx;
+    var p = DB.trasporti[idx];
+    if (p) {
+      var pe = document.getElementById('singlePrice');
+      var ue = document.getElementById('singleUnit');
+      var ce = document.getElementById('singleCond');
+      var pv = document.getElementById('singleProvisional');
+      var ng = document.getElementById('singleNegotiable');
+      if (pe) p.price = parseFloat(pe.value) || p.price;
+      if (ue) p.unit = ue.value;
+      if (ce) p.conditions = ce.value.trim();
+      if (pv) p.provisional = pv.checked;
+      if (ng) p.negotiable = ng.checked;
+    }
+    closeModal('modalEditTratta');
+    var ab = document.querySelector('#modalEditTratta .btn-secondary.btn-sm');
+    if (ab) ab.style.display = '';
+    saveAndSync();
+    refreshAll();
+    showToast('✅ Prezzo aggiornato', 'ok');
+    return;
+  }
+  // Modalità multi (da openEditTratta)
+  var rows = document.querySelectorAll('#editPricesList .erow');
+  rows.forEach(function(row) {
+    if (row.dataset.deleted) {
+      var idx2 = parseInt(row.dataset.idx);
+      if (!isNaN(idx2)) DB.trasporti[idx2] = null;
+    } else if (row.dataset.new) {
+      var sel = row.querySelector('select');
+      var inp = row.querySelector('input[type="number"]');
+      var unitSel = row.querySelector('.erow-unit');
+      var condInp = row.querySelector('.erow-cond');
+      var provChk = row.querySelector('.erow-prov');
+      var price = parseFloat(inp ? inp.value : 0);
+      if (!isNaN(price) && price > 0 && sel && sel.value) {
+        DB.trasporti.push({
+          from: editingTratta.from, to: editingTratta.to,
+          carrier: sel.value, price: price,
+          unit: unitSel ? unitSel.value : '€/vg',
+          conditions: condInp ? condInp.value.trim() : '',
+          provisional: provChk ? provChk.checked : false,
+          rev: 'Manuale'
+        });
+      }
+    } else {
+      var idx3 = parseInt(row.dataset.idx);
+      var inp2 = row.querySelector('input[type="number"]');
+      var unitSel2 = row.querySelector('.erow-unit');
+      var condInp2 = row.querySelector('.erow-cond');
+      var provChk2 = row.querySelector('.erow-prov');
+      var negChk2  = row.querySelector('.erow-neg');
+      if (!isNaN(idx3) && DB.trasporti[idx3]) {
+        if (inp2)     DB.trasporti[idx3].price       = parseFloat(inp2.value) || DB.trasporti[idx3].price;
+        if (unitSel2) DB.trasporti[idx3].unit        = unitSel2.value;
+        if (condInp2) DB.trasporti[idx3].conditions  = condInp2.value.trim();
+        if (provChk2) DB.trasporti[idx3].provisional = provChk2.checked;
+        if (negChk2)  DB.trasporti[idx3].negotiable  = negChk2.checked;
+      }
+    }
+  });
+  DB.trasporti = DB.trasporti.filter(function(r){ return r !== null; });
+  closeModal('modalEditTratta');
+  saveAndSync();
+  refreshAll();
+  showToast('✅ Tratta aggiornata', 'ok');
+}
+
+function deleteTratta() {
+  if (!editingTratta) return;
+  if (!confirm('Eliminare tutti i prezzi per questa tratta?')) return;
+  DB.trasporti = DB.trasporti.filter(function(r){
+    return !(r.from === editingTratta.from && r.to === editingTratta.to);
+  });
+  closeModal('modalEditTratta');
+  saveAndSync();
+  refreshAll();
+  showToast('🗑 Tratta eliminata', 'ok');
+}
+
+function removePriceRow(el, globalIdx) {
+  var row = el.closest('.erow');
+  if (row) {
+    row.style.opacity = '0.4';
+    row.dataset.deleted = '1';
+    el.disabled = true;
+  }
 }
 
 function openEditSingle(globalIdx) {
@@ -3195,6 +3320,70 @@ function printA3(rows, selectedCarriers) {
 // ===================== START =====================
 // init() called below
 
+
+function driveSave(silent) {
+  if (!driveAccessToken) {
+    if (!silent) showToast('⚠️ Drive non connesso', 'warn');
+    return;
+  }
+  setDriveStatus('syncing');
+  var payload = JSON.stringify({
+    trasporti: DB.trasporti,
+    prodotti: DB.prodotti,
+    lastUpdate: DB.lastUpdate
+  });
+  var authHeader = { 'Authorization': 'Bearer ' + driveAccessToken };
+
+  // Cerca file esistente
+  fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D'" + DRIVE_FILENAME + "'&fields=files(id)", {
+    headers: authHeader
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var fileId = data.files && data.files.length ? data.files[0].id : null;
+    if (fileId) {
+      // Aggiorna file esistente
+      return fetch('https://www.googleapis.com/upload/drive/v3/files/' + fileId + '?uploadType=media', {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + driveAccessToken, 'Content-Type': 'application/json' },
+        body: payload
+      });
+    } else {
+      // Crea nuovo file in appDataFolder
+      return fetch('https://www.googleapis.com/drive/v3/files', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + driveAccessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: DRIVE_FILENAME, parents: ['appDataFolder'] })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(f) {
+        return fetch('https://www.googleapis.com/upload/drive/v3/files/' + f.id + '?uploadType=media', {
+          method: 'PATCH',
+          headers: { 'Authorization': 'Bearer ' + driveAccessToken, 'Content-Type': 'application/json' },
+          body: payload
+        });
+      });
+    }
+  })
+  .then(function() {
+    setDriveStatus('connected');
+    if (!silent) {
+      showToast('✅ Salvato su Drive', 'ok');
+    } else {
+      var btn = document.getElementById('driveStatus');
+      if (btn) {
+        btn.textContent = '✅ Salvato';
+        setTimeout(function() { setDriveStatus('connected'); }, 2000);
+      }
+    }
+    hideUnsavedBanner();
+  })
+  .catch(function(e) {
+    setDriveStatus('error');
+    if (!silent) showToast('❌ Errore salvataggio Drive: ' + e.message, 'warn');
+  });
+}
+
 function driveLoad() {
   if (!driveAccessToken) { showToast('⚠️ Drive non connesso', 'warn'); return; }
   setDriveStatus('syncing');
@@ -3227,6 +3416,111 @@ function driveLoad() {
 }
 
 init();
+
+// ─── RENDER PATCHES (must run before init) ───
+window.renderRapida = function(routes, filterCarrier) {
+  var container = document.getElementById('resultsContainer');
+  if (!container) return;
+  if (DB.trasporti.length === 0) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.<br>Vai su <strong>Import</strong>.</div></div>';
+    return;
+  }
+  if (routes.length === 0) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Nessuna tratta trovata.</div></div>';
+    return;
+  }
+  var html = '<div style="font-size:11px;color:var(--t2);margin-bottom:8px;">' + routes.length + ' tratt' + (routes.length === 1 ? 'a' : 'e') + '</div>';
+  routes.forEach(function(route) {
+    var prices = route.prices;
+    if (filterCarrier) prices = prices.filter(function(p) { return p.carrier === filterCarrier; });
+    var vg = prices.filter(function(p) { return p.unit === '€/vg'; }).sort(function(a,b) { return a.price - b.price; });
+    var ton = prices.filter(function(p) { return p.unit === '€/ton'; }).sort(function(a,b) { return a.price - b.price; });
+    var best = vg[0] || null;
+    var bestHtml = '';
+    if (best) {
+      var ab = abbrev(best.carrier);
+      bestHtml = '<div class="rrow-best"><div class="rrow-best-who">' + ab + '</div>' +
+        '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT', {minimumFractionDigits:0}) + '€</div>' +
+        '<div class="rrow-best-unit">' + best.unit + '</div></div>';
+    }
+    var chipsHtml = '';
+    vg.concat(ton).forEach(function(p) {
+      var isBest = best && p.carrier === best.carrier && p.unit === '€/vg';
+      var prov = p.provisional ? '<div class="chip-prov">da conf.</div>' : '';
+      chipsHtml += '<div class="chip' + (isBest ? ' best' : '') + '">' +
+        '<div class="chip-who">' + p.carrier + '</div>' +
+        '<div class="chip-val">' + p.price.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + '</div>' +
+        '<div class="chip-unit">' + p.unit + '</div>' + prov + '</div>';
+    });
+    var key = route.from + '||' + route.to;
+    var safeKey = key.replace(/"/g, '&quot;');
+    var sf = route.from.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    var st = route.to.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="' + safeKey + '">' +
+      '<div class="rrow-head">' +
+        '<div class="rrow-route">' +
+          '<div class="rrow-from">' + route.from + '</div>' +
+          '<div class="rrow-to-line"><span class="rrow-arrow">→</span><span class="rrow-to">' + route.to + '</span></div>' +
+        '</div>' + bestHtml +
+      '</div>' +
+      '<div class="chips">' + chipsHtml + '</div>' +
+      '<div class="rrow-acts">' +
+        '<button class="act act-edit" onclick="event.stopPropagation();openEditTratta(\'' + sf + '\',\'' + st + '\')">✏️ Modifica</button>' +
+        '<button class="act act-del" onclick="event.stopPropagation();editingTratta={from:\'' + sf + '\',to:\'' + st + '\'};deleteTratta()">🗑</button>' +
+      '</div></div>';
+  });
+  container.innerHTML = html;
+};
+
+window.renderConfronto = function() {
+  var val = document.getElementById('confrontoSelect').value;
+  var container = document.getElementById('confrontoContainer');
+  if (!val) { container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta.</div></div>'; return; }
+  var sep = val.indexOf('||');
+  var from = val.substring(0, sep), to = val.substring(sep + 2);
+  var prices = DB.trasporti.filter(function(r) { return r.from === from && r.to === to; });
+  if (!prices.length) { container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Nessun prezzo trovato.</div></div>'; return; }
+  var vg = prices.filter(function(p) { return p.unit === '€/vg'; }).sort(function(a,b) { return a.price - b.price; });
+  var ton = prices.filter(function(p) { return p.unit === '€/ton'; }).sort(function(a,b) { return a.price - b.price; });
+  var html = '<div class="ccard"><div class="ccard-route"><div class="ccard-from">' + from + '</div><div class="ccard-arrow">→</div><div class="ccard-to">' + to + '</div></div>' +
+    '<div style="font-size:11px;color:var(--t2);margin-bottom:10px;">' + prices.length + ' prezzi disponibili</div>';
+  function bars(list, label, ul) {
+    if (!list.length) return '';
+    var o = '<div class="cgroup-label">' + label + '</div>';
+    var mx = Math.max.apply(null, list.map(function(p) { return p.price; }));
+    var mn = list[0].price;
+    list.forEach(function(p, i) {
+      var pct = Math.max(32, Math.round((p.price / mx) * 100));
+      var isBest = i === 0, d = p.price - mn;
+      var ds = d === 0 ? '⭐ min' : '+' + d.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + '€';
+      o += '<div class="cbar-row"><div class="cbar-name" title="' + p.carrier + '">' + p.carrier + '</div>' +
+        '<div class="cbar-wrap"><div class="cbar ' + (isBest ? 'best' : 'other') + '" style="width:' + pct + '%">' +
+        '<span class="cbar-price">' + p.price.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €' + (ul ? ' ' + ul : '') + '</span></div></div>' +
+        '<div class="cdelta ' + (d > 0 ? 'pos' : '') + '">' + ds + '</div></div>';
+      if (p.provisional) o += '<div class="cinfo" style="color:var(--amber);">⚠️ Da confermare</div>';
+      if (p.conditions) o += '<div class="cinfo">' + p.conditions + '</div>';
+    });
+    return o;
+  }
+  html += bars(vg, '💰 €/viaggio', '') + bars(ton, '⚖️ €/ton', '/t') + '</div>';
+  container.innerHTML = html;
+};
+
+window.renderCarrierPills = function() {
+  var carriers = [...new Set(DB.trasporti.map(function(r) { return r.carrier; }))].sort();
+  var el = document.getElementById('carrierPills');
+  if (!el) return;
+  var h = '<div class="cpill all' + (activePill === '' ? ' on' : '') + '" onclick="setPill(\'\')">' + 'Tutti</div>';
+  carriers.forEach(function(name) {
+    var lbl = abbrev(name);
+    var safe = name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    h += '<div class="cpill' + (activePill === name ? ' on' : '') + '" onclick="setPill(\'' + safe + '\')">' + lbl + '</div>';
+  });
+  el.innerHTML = h;
+};
+
+// ─── START ───
+
 
 window.addEventListener("load", function() {
   // GIS non caricato automaticamente — evita flash bianco su Android
