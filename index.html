@@ -343,22 +343,42 @@ select.inp{cursor:pointer;}
 
 /* ═══ PRODOTTI VIEW SWITCHER ═══════════════ */
 .prod-view-wrap {
-  display: flex; gap: 6px; margin-bottom: 14px;
+  display: flex; gap: 8px; margin-bottom: 16px;
 }
 .prod-view-wrap::-webkit-scrollbar { display: none; }
 .pvbtn {
   flex: 1; display: flex; flex-direction: column; align-items: center;
-  gap: 4px; padding: 11px 8px; border-radius: 12px;
+  gap: 6px; padding: 13px 8px; border-radius: 14px;
   border: 1.5px solid var(--b1); background: var(--s2);
-  cursor: pointer; transition: all .15s; color: var(--t2);
+  cursor: pointer; transition: all .18s; color: var(--t2);
+  -webkit-tap-highlight-color: transparent;
 }
-.pvbtn-icon { font-size: 20px; line-height: 1; }
-.pvbtn-label { font-size: 10px; font-weight: 800; letter-spacing:.04em; text-transform:uppercase; }
-.pvbtn.active {
-  background: linear-gradient(145deg, rgba(52,211,153,.14) 0%, rgba(52,211,153,.06) 100%);
-  border-color: rgba(52,211,153,.5); color: var(--green);
-  box-shadow: 0 2px 12px rgba(52,211,153,.12);
+.pvbtn svg { transition: transform .18s; }
+.pvbtn:active svg { transform: scale(.9); }
+.pvbtn-label {
+  font-size: 9px; font-weight: 900; letter-spacing:.07em; text-transform:uppercase;
 }
+/* Prodotto — verde */
+.pvbtn.pv-prodotto.active {
+  background: linear-gradient(145deg, rgba(52,211,153,.16) 0%, rgba(52,211,153,.06) 100%);
+  border-color: rgba(52,211,153,.45); color: #34d399;
+  box-shadow: 0 3px 14px rgba(52,211,153,.15);
+}
+.pvbtn.pv-prodotto:not(.active):hover { border-color: rgba(52,211,153,.2); }
+/* Fornitore — rosso */
+.pvbtn.pv-fornitore.active {
+  background: linear-gradient(145deg, rgba(248,113,113,.16) 0%, rgba(248,113,113,.06) 100%);
+  border-color: rgba(248,113,113,.45); color: #f87171;
+  box-shadow: 0 3px 14px rgba(248,113,113,.15);
+}
+.pvbtn.pv-fornitore:not(.active):hover { border-color: rgba(248,113,113,.2); }
+/* Cliente — blu */
+.pvbtn.pv-cliente.active {
+  background: linear-gradient(145deg, rgba(96,165,250,.16) 0%, rgba(96,165,250,.06) 100%);
+  border-color: rgba(96,165,250,.45); color: #60a5fa;
+  box-shadow: 0 3px 14px rgba(96,165,250,.15);
+}
+.pvbtn.pv-cliente:not(.active):hover { border-color: rgba(96,165,250,.2); }
 
 /* ═══ VISTA FORNITORE / CLIENTE ═══════════ */
 
@@ -753,6 +773,138 @@ select.inp{cursor:pointer;}
   max-width: 110px;
 }
 
+
+/* ═══ MODAL DETTAGLIO ENTITY ══════════════════════════ */
+.entity-modal-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center; gap: 10px;
+  padding: 13px 18px;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.entity-modal-row:first-child { border-top: none; }
+.entity-modal-row:active { background: rgba(255,255,255,.03); }
+.em-prod {
+  font-size: 14px; font-weight: 700; color: #7dd3fc;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.em-loc {
+  font-size: 11px; color: #4a6080; text-align: right;
+  white-space: nowrap;
+}
+.em-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+}
+.em-price {
+  font-size: 19px; font-weight: 900; line-height: 1;
+}
+.em-price.buy  { color: #fca5a5; }
+.em-price.sell { color: #86efac; }
+.em-unit {
+  font-size: 10px; font-weight: 600; color: #4a6480;
+}
+.em-note {
+  font-size: 10px; color: var(--t2); margin-top: 1px;
+  font-style: italic;
+}
+.em-data {
+  font-size: 10px; color: #3a5060;
+}
+
+
+/* ═══ VISTA PRODOTTO — CARD PREMIUM ══════════════════ */
+.prow {
+  background: linear-gradient(160deg, #111927 0%, #0f1520 100%);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 14px; margin-bottom: 12px; overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+}
+.prow-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 16px 11px;
+  background: rgba(0,0,0,.2);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.prow-title {
+  font-size: 16px; font-weight: 900; color: #f0f6ff;
+  letter-spacing: .01em;
+}
+.prow-badges { display: flex; gap: 5px; }
+.prow-badge {
+  font-size: 9px; font-weight: 800; padding: 3px 8px;
+  border-radius: 20px; letter-spacing: .04em;
+}
+.prow-badge.buy  { background: rgba(248,113,113,.15); color: #fca5a5; border: 1px solid rgba(248,113,113,.25); }
+.prow-badge.sell { background: rgba(52,211,153,.12);  color: #86efac; border: 1px solid rgba(52,211,153,.22); }
+
+.prow-section-hd {
+  font-size: 9px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; padding: 6px 16px 4px;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.prow-section-hd.buy  { color: #f87171; background: rgba(248,113,113,.06); }
+.prow-section-hd.sell { color: #34d399; background: rgba(52,211,153,.06); }
+
+.prow-line {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; border-top: 1px solid rgba(255,255,255,.04);
+  gap: 10px;
+}
+.prow-line.best-buy  { background: rgba(248,113,113,.06); border-left: 2px solid rgba(248,113,113,.4); padding-left: 14px; }
+.prow-line.best-sell { background: rgba(52,211,153,.06);  border-left: 2px solid rgba(52,211,153,.4);  padding-left: 14px; }
+.prow-line-left { flex: 1; min-width: 0; }
+.prow-entity {
+  font-size: 13px; font-weight: 700; color: #dce8ff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.prow-loc {
+  font-size: 11px; color: #4a6080; margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.prow-line-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0;
+}
+.prow-price {
+  font-size: 18px; font-weight: 900; line-height: 1;
+}
+.prow-price.buy  { color: #fca5a5; }
+.prow-price.sell { color: #86efac; }
+.prow-unit { font-size: 10px; font-weight: 600; color: #4a6480; }
+
+
+/* ═══ MODAL PRODOTTO — AUTOCOMPLETE ══════════════════ */
+.mp-ac {
+  position: absolute; top: calc(100% + 2px); left: 0; right: 0;
+  background: var(--s1); border: 1.5px solid var(--green);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  z-index: 600; max-height: 180px; overflow-y: auto; scrollbar-width: none;
+}
+.mp-ac.hidden { display: none; }
+.mp-ac-item {
+  padding: 10px 14px; font-size: 13px; font-weight: 600; color: #dce8ff;
+  cursor: pointer; border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.mp-ac-item:last-child { border-bottom: none; }
+.mp-ac-item:active { background: rgba(52,211,153,.12); color: var(--green); }
+.mp-ac-item mark { background: none; color: var(--green); font-weight: 900; }
+.mp-ac-item.new-item {
+  color: var(--amber); font-style: italic;
+  border-top: 1px solid rgba(251,146,60,.2);
+}
+/* Radio buttons tipo */
+.mp-radio-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 7px; padding: 10px; border-radius: 10px; cursor: pointer;
+  border: 1.5px solid var(--b1); background: var(--s2);
+  font-size: 13px; font-weight: 700; color: var(--t2);
+  transition: all .15s;
+}
+.mp-radio-btn input[type=radio] { display: none; }
+.mp-radio-btn:has(input:checked) {
+  background: rgba(52,211,153,.12); border-color: rgba(52,211,153,.4);
+  color: var(--green);
+}
+
 </style>
 </head>
 <body style="background:#0b0f16;">
@@ -863,16 +1015,28 @@ select.inp{cursor:pointer;}
       <button class="ic-btn primary" onclick="openAddProdottoModal()" title="Aggiungi" style="height:38px;width:38px;font-size:20px;flex-shrink:0;">＋</button>
     </div>
     <div class="prod-view-wrap">
-      <button class="pvbtn active" id="pvbtn-prodotto"  onclick="setProdView('prodotto')">
-        <span class="pvbtn-icon">🌿</span>
+      <button class="pvbtn pv-prodotto active" id="pvbtn-prodotto" onclick="setProdView('prodotto')">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="rgba(52,211,153,.18)" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+          <circle cx="7" cy="7" r="1.3" fill="#34d399" stroke="none"/>
+        </svg>
         <span class="pvbtn-label">Prodotto</span>
       </button>
-      <button class="pvbtn" id="pvbtn-fornitore" onclick="setProdView('fornitore')">
-        <span class="pvbtn-icon">🏭</span>
+      <button class="pvbtn pv-fornitore" id="pvbtn-fornitore" onclick="setProdView('fornitore')">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8ba3c0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="3" width="15" height="13" rx="1" fill="rgba(138,163,192,.08)"/>
+          <path d="M16 8h4l3 4v4h-7V8z" fill="rgba(138,163,192,.06)"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/>
+          <circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
         <span class="pvbtn-label">Fornitore</span>
       </button>
-      <button class="pvbtn" id="pvbtn-cliente" onclick="setProdView('cliente')">
-        <span class="pvbtn-icon">🤝</span>
+      <button class="pvbtn pv-cliente" id="pvbtn-cliente" onclick="setProdView('cliente')">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8ba3c0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4" fill="rgba(138,163,192,.08)"/>
+          <path d="M12 5l.7 2.2H15l-1.9 1.4.7 2.1L12 9.5l-1.8 1.2.7-2.1L9 7.2h2.3z" fill="#8ba3c0" stroke="none"/>
+        </svg>
         <span class="pvbtn-label">Cliente</span>
       </button>
 
@@ -987,24 +1151,79 @@ select.inp{cursor:pointer;}
 
 <!-- MODAL AGGIUNGI PRODOTTO -->
 <div class="modal-backdrop hidden" id="modalProdotto">
-  <div class="modal">
+  <div class="modal" style="max-width:440px;">
     <div class="modal-title">➕ Aggiungi prezzo prodotto</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Prodotto</label><input class="inp" id="mpProdotto" placeholder="es. Cippato"></div>
-      <div class="form-group"><label class="form-label">Tipo</label><select class="inp" id="mpTipo"><option value="acquisto">Acquisto</option><option value="vendita">Vendita</option></select></div>
+
+    <!-- Prodotto con autocomplete -->
+    <div class="form-group" style="position:relative;margin-bottom:10px;">
+      <label class="form-label">Prodotto</label>
+      <input class="inp" id="mpProdotto" placeholder="es. Cippato"
+        oninput="mpAcSearch('Prodotto')" onfocus="mpAcOpen('Prodotto')"
+        onblur="setTimeout(function(){mpAcClose('Prodotto')},200)" autocomplete="off">
+      <div class="mp-ac hidden" id="mpAcProdotto"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label" id="mpEntityLabel">Fornitore</label><input class="inp" id="mpEntity" placeholder="Nome"></div>
-      <div class="form-group"><label class="form-label">Luogo</label><input class="inp" id="mpLuogo" placeholder="es. Ferrara"></div>
+
+    <!-- Tipo -->
+    <div class="form-group" style="margin-bottom:10px;">
+      <label class="form-label">Tipo</label>
+      <div style="display:flex;gap:8px;">
+        <label class="mp-radio-btn" id="mpTipoAcq">
+          <input type="radio" name="mpTipoR" value="acquisto" checked onchange="mpTipoChange()">
+          <span>💰 Acquisto</span>
+        </label>
+        <label class="mp-radio-btn" id="mpTipoVen">
+          <input type="radio" name="mpTipoR" value="vendita" onchange="mpTipoChange()">
+          <span>📈 Vendita</span>
+        </label>
+      </div>
+      <select class="inp" id="mpTipo" style="display:none;"></select>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Prezzo</label><input class="inp" id="mpPrezzo" type="number" placeholder="0.00"></div>
-      <div class="form-group"><label class="form-label">Unità</label><select class="inp" id="mpUnita"><option>€/ton</option><option>€/mc</option><option>€/q</option><option>€/kg</option><option>€/vg</option></select></div>
+
+    <!-- Fornitore/Cliente con autocomplete -->
+    <div class="form-group" style="position:relative;margin-bottom:10px;">
+      <label class="form-label" id="mpEntityLabel">Fornitore</label>
+      <input class="inp" id="mpEntity" placeholder="Nome fornitore"
+        oninput="mpAcSearch('Entity')" onfocus="mpAcOpen('Entity')"
+        onblur="setTimeout(function(){mpAcClose('Entity')},200)" autocomplete="off">
+      <div class="mp-ac hidden" id="mpAcEntity"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Data</label><input class="inp" id="mpData" type="date"></div>
-      <div class="form-group"><label class="form-label">Note</label><input class="inp" id="mpNote" placeholder="opzionale"></div>
+
+    <!-- Luogo con autocomplete -->
+    <div class="form-group" style="position:relative;margin-bottom:10px;">
+      <label class="form-label">Luogo</label>
+      <input class="inp" id="mpLuogo" placeholder="es. Ferrara (FE)"
+        oninput="mpAcSearch('Luogo')" onfocus="mpAcOpen('Luogo')"
+        onblur="setTimeout(function(){mpAcClose('Luogo')},200)" autocomplete="off">
+      <div class="mp-ac hidden" id="mpAcLuogo"></div>
     </div>
+
+    <!-- Prezzo + Unità -->
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <div class="form-group" style="flex:1;">
+        <label class="form-label">Prezzo</label>
+        <input class="inp" id="mpPrezzo" type="number" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-group" style="width:110px;">
+        <label class="form-label">Unità</label>
+        <select class="inp" id="mpUnita">
+          <option>€/ton</option><option>€/mc</option>
+          <option>€/q</option><option>€/kg</option><option>€/vg</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Data + Note -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <div class="form-group" style="flex:1;">
+        <label class="form-label">Data</label>
+        <input class="inp" id="mpData" type="date">
+      </div>
+      <div class="form-group" style="flex:1;">
+        <label class="form-label">Note</label>
+        <input class="inp" id="mpNote" placeholder="opzionale">
+      </div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('modalProdotto')">Annulla</button>
       <button class="btn btn-primary" onclick="saveProdotto()">💾 Salva</button>
@@ -1027,10 +1246,16 @@ select.inp{cursor:pointer;}
 
 
 
+
+
+
 // ── Versione app ──
 var APP_VERSION = "1.0.0";
 
 // ── Variabili di stato globali ──
+var _drivePanel = false;
+var _isDirty = false;
+var _dirtyTimer = null;
 var activePill = '';
 var editingTratta = null;
 
@@ -1084,10 +1309,19 @@ function init() {
   refreshAll();
 }
 
+var _autoSaveTimer = null;
+
 function save() {
   DB.lastUpdate = new Date().toISOString();
   if (typeof markDirty === "function") try { markDirty(); } catch(e) {}
   localStorage.setItem('archivio-tariffe-v3', JSON.stringify(DB));
+  // Auto-save su Drive con debounce 2s (solo se già connesso)
+  if (driveAccessToken) {
+    if (_autoSaveTimer) clearTimeout(_autoSaveTimer);
+    _autoSaveTimer = setTimeout(function() {
+      driveSave(true); // true = silenzioso (no toast)
+    }, 2000);
+  }
 }
 
 // ===================== TABS =====================
@@ -1545,6 +1779,76 @@ function filterProdotti() {
   refreshProdotti();
 }
 
+
+function renderViewProdotto(data) {
+  if (!data.length)
+    return '<div class="empty"><div class="empty-icon">🌾</div><div class="empty-text">Nessun prezzo trovato.</div></div>';
+
+  // Raggruppa per prodotto
+  var byProd = {};
+  data.forEach(function(p) {
+    var k = p.prodotto.trim();
+    if (!byProd[k]) byProd[k] = { acquisto: [], vendita: [] };
+    byProd[k][p.tipo] && byProd[k][p.tipo].push(p);
+  });
+
+  var html = '';
+  Object.keys(byProd).sort().forEach(function(prod) {
+    var buys  = (byProd[prod].acquisto || []).sort(function(a,b){ return a.prezzo - b.prezzo; });
+    var sells = (byProd[prod].vendita  || []).sort(function(a,b){ return b.prezzo - a.prezzo; });
+
+    html += '<div class="prow">';
+    html += '<div class="prow-head">' +
+      '<div class="prow-title">🌿 ' + prod + '</div>' +
+      '<div class="prow-badges">' +
+        (buys.length  ? '<span class="prow-badge buy">'  + buys.length  + ' acquist' + (buys.length===1?'o':'i')  + '</span>' : '') +
+        (sells.length ? '<span class="prow-badge sell">' + sells.length + ' vendit'  + (sells.length===1?'a':'e') + '</span>' : '') +
+      '</div>' +
+    '</div>';
+
+    // Sezione acquisto
+    if (buys.length) {
+      html += '<div class="prow-section-hd buy">💰 ACQUISTO</div>';
+      buys.forEach(function(p, i) {
+        var isBest = i === 0;
+        var prezzo = p.prezzo.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2});
+        html += '<div class="prow-line' + (isBest ? ' best-buy' : '') + '">' +
+          '<div class="prow-line-left">' +
+            '<div class="prow-entity">' + (p.entity || '—') + '</div>' +
+            '<div class="prow-loc">' + (p.luogo || '') + '</div>' +
+          '</div>' +
+          '<div class="prow-line-right">' +
+            '<span class="prow-price buy">' + prezzo + '</span>' +
+            '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
+          '</div>' +
+        '</div>';
+      });
+    }
+
+    // Sezione vendita
+    if (sells.length) {
+      html += '<div class="prow-section-hd sell">📈 VENDITA</div>';
+      sells.forEach(function(p, i) {
+        var isBest = i === 0;
+        var prezzo = p.prezzo.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2});
+        html += '<div class="prow-line' + (isBest ? ' best-sell' : '') + '">' +
+          '<div class="prow-line-left">' +
+            '<div class="prow-entity">' + (p.entity || '—') + '</div>' +
+            '<div class="prow-loc">' + (p.luogo || '') + '</div>' +
+          '</div>' +
+          '<div class="prow-line-right">' +
+            '<span class="prow-price sell">' + prezzo + '</span>' +
+            '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
+          '</div>' +
+        '</div>';
+      });
+    }
+
+    html += '</div>';
+  });
+  return html;
+}
+
 function refreshProdotti() {
   var container = document.getElementById('prodottiContainer');
   if (!container) return; // DOM non pronto
@@ -1579,37 +1883,11 @@ function refreshProdotti() {
 
   // Usa la vista corrente (prodotto/fornitore/cliente)
   // Usa la vista corrente
-  if (currentProdView === 'fornitore' && typeof renderViewFornitore === 'function') {
-    container.innerHTML = renderViewFornitore(data); return;
-  }
-  if (currentProdView === 'cliente' && typeof renderViewCliente === 'function') {
-    container.innerHTML = renderViewCliente(data); return;
-  }
+  if (currentProdView === 'fornitore') { container.innerHTML = renderViewFornitore(data); return; }
+  if (currentProdView === 'cliente')   { container.innerHTML = renderViewCliente(data);   return; }
 
-  if (data.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🌾</div><div class="empty-text">Nessun prezzo trovato.</div></div>';
-    return;
-  }
-
-  // Fallback: tabella semplice
-  var html = '';
-  var byProd = {};
-  data.forEach(function(p){ if(!byProd[p.prodotto]) byProd[p.prodotto]=[]; byProd[p.prodotto].push(p); });
-  Object.keys(byProd).sort().forEach(function(prod) {
-    var items = byProd[prod];
-    html += '<div class="prow"><div class="prow-title">' + prod + '</div>';
-    items.forEach(function(item) {
-      html += '<div class="prow-line">' +
-        '<span class="prow-entity">' + (item.entity||'—') + '</span>' +
-        '<span class="prow-price ' + (item.tipo==='acquisto'?'buy':'sell') + '">' +
-          (item.prezzo||0).toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) +
-          ' <span class="prow-unit">' + (item.unita||'€/ton') + '</span></span>' +
-        '<span class="prow-loc">' + (item.luogo||'') + '</span>' +
-      '</div>';
-    });
-    html += '</div>';
-  });
-  container.innerHTML = html;
+  // Vista prodotto
+  container.innerHTML = renderViewProdotto(data);
 }
 
 function openAddTariffaModal() {
@@ -1662,19 +1940,168 @@ function saveTariffa() {
 }
 
 // ===================== MODAL PRODOTTO =====================
-function openAddProdottoModal(prodotto='') {
-  document.getElementById('mpProdotto').value = prodotto;
-  document.getElementById('mpEntity').value = '';
-  document.getElementById('mpLuogo').value = '';
-  document.getElementById('mpPrezzo').value = '';
-  document.getElementById('mpNote').value = '';
-  document.getElementById('mpData').value = new Date().toISOString().split('T')[0];
-  document.getElementById('modalProdotto').classList.remove('hidden');
+
+// ═══ AUTOCOMPLETE MODAL PRODOTTO ═══════════════════
+function mpGetList(field) {
+  var tipo = document.querySelector('input[name="mpTipoR"]:checked');
+  var tipoVal = tipo ? tipo.value : 'acquisto';
+  if (field === 'Prodotto') {
+    return [...new Set(DB.prodotti.map(function(p){ return p.prodotto.trim(); }))].sort();
+  }
+  if (field === 'Entity') {
+    return [...new Set(DB.prodotti
+      .filter(function(p){ return p.tipo === tipoVal; })
+      .map(function(p){ return (p.entity||'').trim(); })
+      .filter(Boolean))].sort();
+  }
+  if (field === 'Luogo') {
+    // Sia da prodotti che da trasporti
+    var fromProd = DB.prodotti.map(function(p){ return (p.luogo||'').trim(); });
+    var fromTras = DB.trasporti.map(function(r){ return r.from; })
+      .concat(DB.trasporti.map(function(r){ return r.to; }));
+    return [...new Set(fromProd.concat(fromTras).filter(Boolean))].sort();
+  }
+  return [];
+}
+
+function mpAcRender(field, items, q) {
+  var dd = document.getElementById('mpAc' + field);
+  if (!dd) return;
+  dd.innerHTML = '';
+  var filtered = q
+    ? items.filter(function(v){ return v.toLowerCase().includes(q.toLowerCase()); })
+    : items;
+
+  filtered.slice(0, 10).forEach(function(v) {
+    var div = document.createElement('div');
+    div.className = 'mp-ac-item';
+    if (q) {
+      try {
+        var re = new RegExp('(' + q.replace(/[-[\]{}()*+?.,^$|#]/g, '\\$&') + ')', 'gi');
+        div.innerHTML = v.replace(re, '<mark>$1</mark>');
+      } catch(e) { div.textContent = v; }
+    } else {
+      div.textContent = v;
+    }
+    div.addEventListener('mousedown', function(e){ e.preventDefault(); mpAcSelect(field, v); });
+    div.addEventListener('touchstart', function(e){ e.preventDefault(); mpAcSelect(field, v); }, {passive:false});
+    dd.appendChild(div);
+  });
+
+  // Opzione "Aggiungi nuovo" se il testo non corrisponde esattamente
+  var inp = document.getElementById('mp' + field);
+  var cur = inp ? inp.value.trim() : '';
+  if (cur && !items.some(function(v){ return v.toLowerCase() === cur.toLowerCase(); })) {
+    var newDiv = document.createElement('div');
+    newDiv.className = 'mp-ac-item new-item';
+    newDiv.textContent = '+ Aggiungi "' + cur + '"';
+    newDiv.addEventListener('mousedown', function(e){ e.preventDefault(); mpAcSelect(field, cur); });
+    newDiv.addEventListener('touchstart', function(e){ e.preventDefault(); mpAcSelect(field, cur); }, {passive:false});
+    dd.appendChild(newDiv);
+  }
+
+  if (dd.children.length > 0) dd.classList.remove('hidden');
+  else dd.classList.add('hidden');
+}
+
+function mpAcSearch(field) {
+  var inp = document.getElementById('mp' + field);
+  var q = inp ? inp.value.trim() : '';
+  // Auto-fill luogo quando si seleziona entity
+  if (field === 'Entity' && q.length > 1) mpAutoFillFromEntity(q);
+  mpAcRender(field, mpGetList(field), q);
+}
+
+function mpAcOpen(field) {
+  mpAcRender(field, mpGetList(field), '');
+}
+
+function mpAcSelect(field, value) {
+  var inp = document.getElementById('mp' + field);
+  if (inp) inp.value = value;
+  mpAcClose(field);
+  // Se si seleziona Prodotto, auto-fill tipo e unità dai dati esistenti
+  if (field === 'Prodotto') mpAutoFillFromProdotto(value);
+  // Se si seleziona Entity, auto-fill luogo
+  if (field === 'Entity') mpAutoFillFromEntity(value);
+}
+
+function mpAcClose(field) {
+  var dd = document.getElementById('mpAc' + field);
+  if (dd) dd.classList.add('hidden');
+}
+
+function mpAutoFillFromProdotto(prod) {
+  // Cerca record esistenti per questo prodotto e pre-popola unità
+  var existing = DB.prodotti.filter(function(p){ return p.prodotto.trim() === prod; });
+  if (existing.length) {
+    var unitEl = document.getElementById('mpUnita');
+    if (unitEl && existing[0].unita) {
+      for (var i=0; i<unitEl.options.length; i++) {
+        if (unitEl.options[i].value === existing[0].unita) { unitEl.selectedIndex = i; break; }
+      }
+    }
+  }
+}
+
+function mpAutoFillFromEntity(entity) {
+  // Cerca il luogo tipico di questa entity
+  var tipo = document.querySelector('input[name="mpTipoR"]:checked');
+  var tipoVal = tipo ? tipo.value : 'acquisto';
+  var existing = DB.prodotti.filter(function(p){
+    return (p.entity||'').trim().toLowerCase() === entity.toLowerCase() && p.tipo === tipoVal;
+  });
+  if (existing.length && existing[0].luogo) {
+    var luogoEl = document.getElementById('mpLuogo');
+    if (luogoEl && !luogoEl.value) luogoEl.value = existing[0].luogo;
+  }
+}
+
+function mpTipoChange() {
+  var tipo = document.querySelector('input[name="mpTipoR"]:checked');
+  var tipoVal = tipo ? tipo.value : 'acquisto';
+  // Aggiorna il select nascosto mpTipo per compatibilità con saveProdotto
+  var sel = document.getElementById('mpTipo');
+  if (sel) sel.value = tipoVal;
+  // Aggiorna label
+  var lbl = document.getElementById('mpEntityLabel');
+  if (lbl) lbl.textContent = tipoVal === 'acquisto' ? 'Fornitore' : 'Cliente';
+  // Svuota entity per rifiltrarla
+  var entityEl = document.getElementById('mpEntity');
+  if (entityEl) entityEl.value = '';
+}
+
+// Chiudi dropdown cliccando fuori
+document.addEventListener('click', function(e) {
+  ['Prodotto','Entity','Luogo'].forEach(function(f) {
+    var dd = document.getElementById('mpAc' + f);
+    var inp = document.getElementById('mp' + f);
+    if (dd && inp && !dd.contains(e.target) && e.target !== inp) dd.classList.add('hidden');
+  });
+});
+
+function openAddProdottoModal(prodotto) {
+  prodotto = prodotto || '';
+  var mpP = document.getElementById('mpProdotto'); if(mpP) mpP.value = prodotto;
+  var mpE = document.getElementById('mpEntity');   if(mpE) mpE.value = '';
+  var mpL = document.getElementById('mpLuogo');    if(mpL) mpL.value = '';
+  var mpPr= document.getElementById('mpPrezzo');   if(mpPr) mpPr.value = '';
+  var mpN = document.getElementById('mpNote');     if(mpN) mpN.value = '';
+  var mpD = document.getElementById('mpData');     if(mpD) mpD.value = new Date().toISOString().split('T')[0];
+  // Reset radio a Acquisto
+  var radios = document.querySelectorAll('input[name="mpTipoR"]');
+  radios.forEach(function(r){ r.checked = r.value === 'acquisto'; });
+  var sel = document.getElementById('mpTipo'); if(sel) sel.value = 'acquisto';
+  var lbl = document.getElementById('mpEntityLabel'); if(lbl) lbl.textContent = 'Fornitore';
+  // Se prodotto passato, auto-fill unità
+  if (prodotto) mpAutoFillFromProdotto(prodotto);
+  var m = document.getElementById('modalProdotto'); if(m) m.classList.remove('hidden');
 }
 
 function saveProdotto() {
   const prodotto = document.getElementById('mpProdotto').value.trim();
-  const tipo = document.getElementById('mpTipo').value;
+  var _tipoR = document.querySelector('input[name="mpTipoR"]:checked');
+  var tipo = _tipoR ? _tipoR.value : (document.getElementById('mpTipo') ? document.getElementById('mpTipo').value : 'acquisto');
   const entity = document.getElementById('mpEntity').value.trim();
   const luogo = document.getElementById('mpLuogo').value.trim();
   const prezzo = parseFloat(document.getElementById('mpPrezzo').value);
@@ -1980,6 +2407,83 @@ document.addEventListener('click', function(e) {
 });
 
 // Open edit for a SINGLE carrier price record
+
+function openEntityModal(entityName, tipo) {
+  // Filtra i record di questo entity
+  var records = DB.prodotti.filter(function(p) {
+    return (p.entity || '').trim() === entityName &&
+           (tipo === 'both' || p.tipo === tipo);
+  }).sort(function(a, b) {
+    return a.prodotto.localeCompare(b.prodotto) || b.prezzo - a.prezzo;
+  });
+
+  var isForn = tipo === 'acquisto';
+  var colorBorder = isForn ? 'var(--red)' : 'var(--green)';
+  var colorPrice  = isForn ? 'buy' : 'sell';
+  var avatarBg    = isForn ? 'rgba(248,113,113,.12)' : 'rgba(52,211,153,.12)';
+  var avatarBorder= isForn ? 'rgba(248,113,113,.25)' : 'rgba(52,211,153,.25)';
+  var avatarIcon  = isForn ? '🏭' : '🤝';
+
+  // Header
+  var header = document.getElementById('modalEntityHeader');
+  if (header) header.style.borderLeft = '3px solid ' + colorBorder;
+
+  var avatar = document.getElementById('modalEntityAvatar');
+  if (avatar) {
+    avatar.textContent = avatarIcon;
+    avatar.style.background = avatarBg;
+    avatar.style.border = '1px solid ' + avatarBorder;
+  }
+
+  var nameEl = document.getElementById('modalEntityName');
+  if (nameEl) nameEl.textContent = entityName;
+
+  var nProd = new Set(records.map(function(r){ return r.prodotto.trim(); })).size;
+  var metaEl = document.getElementById('modalEntityMeta');
+  if (metaEl) metaEl.textContent = nProd + ' prodott' + (nProd===1?'o':'i') + ' · ' + records.length + ' prezz' + (records.length===1?'o':'i');
+
+  // Body — raggruppa per prodotto
+  var byProd = {};
+  records.forEach(function(r) {
+    var k = r.prodotto.trim();
+    if (!byProd[k]) byProd[k] = [];
+    byProd[k].push(r);
+  });
+
+  var body = document.getElementById('modalEntityBody');
+  if (!body) return;
+  body.innerHTML = '';
+
+  Object.keys(byProd).sort().forEach(function(prod) {
+    var items = byProd[prod];
+
+    // Sezione prodotto
+    var sect = document.createElement('div');
+    sect.style.cssText = 'background:rgba(0,0,0,.15);padding:8px 18px 5px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--t2);border-top:1px solid rgba(255,255,255,.06);';
+    sect.textContent = prod;
+    body.appendChild(sect);
+
+    items.forEach(function(p) {
+      var prezzo = p.prezzo.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2});
+      var row = document.createElement('div');
+      row.className = 'entity-modal-row';
+      row.innerHTML =
+        '<div>' +
+          '<div class="em-prod">' + (p.luogo || '—') + '</div>' +
+          (p.data ? '<div class="em-data">' + p.data + '</div>' : '') +
+          (p.note ? '<div class="em-note">' + p.note + '</div>' : '') +
+        '</div>' +
+        '<div class="em-right">' +
+          '<span class="em-price ' + colorPrice + '">' + prezzo + '</span>' +
+          '<span class="em-unit">' + (p.unita || '€/ton') + '</span>' +
+        '</div>';
+      body.appendChild(row);
+    });
+  });
+
+  document.getElementById('modalEntity').classList.remove('hidden');
+}
+
 function openEditSingle(globalIdx) {
   var p = DB.trasporti[globalIdx];
   if (!p) return;
@@ -2042,12 +2546,13 @@ function renderViewFornitore(data) {
   Object.keys(byForn).sort().forEach(function(forn) {
     var rows = byForn[forn].sort(function(a,b){ return a.prodotto.localeCompare(b.prodotto); });
     var nProd = [...new Set(rows.map(function(r){ return r.prodotto.trim(); }))].length;
-    html += '<div class="entity-card forn">';
+    var safeForn = forn.replace(/'/g, "\\'");
+    html += '<div class="entity-card forn" onclick="openEntityModal(\'' + safeForn + '\', \'acquisto\')" style="cursor:pointer;">';
     html += '<div class="entity-head">' +
       '<div class="entity-avatar">🏭</div>' +
       '<div class="entity-info">' +
         '<div class="entity-name">' + forn + '</div>' +
-        '<div class="entity-meta">📦 ' + nProd + ' prodott' + (nProd===1?'o':'i') + '</div>' +
+        '<div class="entity-meta">📦 ' + nProd + ' prodott' + (nProd===1?'o':'i') + ' — tocca per dettaglio →</div>' +
       '</div>' +
     '</div>';
     rows.forEach(function(p) {
@@ -2088,12 +2593,13 @@ function renderViewCliente(data) {
       byProd[k].push(p);
     });
     var nProd = Object.keys(byProd).length;
-    html += '<div class="entity-card clie">';
+    var safeCli = cli.replace(/'/g, "\\'");
+    html += '<div class="entity-card clie" onclick="openEntityModal(\'' + safeCli + '\', \'vendita\')" style="cursor:pointer;">';
     html += '<div class="entity-head">' +
       '<div class="entity-avatar">🤝</div>' +
       '<div class="entity-info">' +
         '<div class="entity-name">' + cli + '</div>' +
-        '<div class="entity-meta">📦 ' + nProd + ' prodott' + (nProd===1?'o':'i') + '</div>' +
+        '<div class="entity-meta">📦 ' + nProd + ' prodott' + (nProd===1?'o':'i') + ' — tocca per dettaglio →</div>' +
       '</div>' +
     '</div>';
     Object.keys(byProd).sort().forEach(function(prod) {
@@ -2424,412 +2930,45 @@ function printA3(rows, selectedCarriers) {
 
 // ===================== START =====================
 // init() called below
+
+function driveLoad() {
+  if (!driveAccessToken) { showToast('⚠️ Drive non connesso', 'warn'); return; }
+  setDriveStatus('syncing');
+  var headers = { 'Authorization': 'Bearer ' + driveAccessToken };
+  fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='" + DRIVE_FILENAME + "'&fields=files(id,name,modifiedTime)", { headers: headers })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (!data.files || !data.files.length) {
+        showToast('☁️ Nessun backup trovato', 'warn');
+        setDriveStatus('connected'); return;
+      }
+      var fileId = data.files[0].id;
+      return fetch('https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media', { headers: headers });
+    })
+    .then(function(r){ if(r) return r.json(); })
+    .then(function(loaded) {
+      if (!loaded) return;
+      if (loaded.trasporti) DB.trasporti = loaded.trasporti;
+      if (loaded.prodotti)  DB.prodotti  = loaded.prodotti;
+      if (loaded.lastUpdate) DB.lastUpdate = loaded.lastUpdate;
+      localStorage.setItem('archivio-tariffe-v3', JSON.stringify(DB));
+      refreshAll();
+      setDriveStatus('connected');
+      showToast('📥 Dati caricati da Drive', 'ok');
+    })
+    .catch(function(e) {
+      setDriveStatus('error');
+      showToast('❌ Errore Drive: ' + e.message, 'warn');
+    });
+}
+
 window.addEventListener("load", function() {
-  // Aspetta che Google Identity Services sia caricato, poi auto-riconnetti
-  function waitForGoogleAndReconnect(attempts) {
-    if(typeof google !== "undefined" && google.accounts && google.accounts.oauth2) {
-      if(localStorage.getItem('driveConnected')) tryAutoReconnect();
-    } else if(attempts > 0) {
-      setTimeout(function(){ waitForGoogleAndReconnect(attempts - 1); }, 500);
-    }
+  // GIS non caricato automaticamente — evita flash bianco su Android
+  // Connessione Drive ripristinata solo su richiesta utente
+  if (localStorage.getItem('driveConnected')) {
+    var btn = document.getElementById('driveStatus');
+    if (btn) btn.textContent = '☁️ Drive';
   }
-  setTimeout(function(){ waitForGoogleAndReconnect(10); }, 800);
-});
-
-function forceReload() {
-  DB.trasporti = PDF_DATA.map(function(r){ return Object.assign({},r); });
-  DB.pdfLoaded = true; DB.pdfRev = 'REV 03/2026';
-  save(); refreshAll();
-  showToast('✅ ' + DB.trasporti.length + ' prezzi caricati', 'ok');
-}
-
-function reloadBuiltinData() {
-  if(!confirm('Sostituire i prezzi Excel con i dati REV 03/2026?')) return;
-  DB.trasporti = DB.trasporti.filter(function(t){ return t.rev === 'Manuale'; });
-  var b = PDF_DATA.map(function(r){ return Object.assign({},r); });
-  DB.trasporti = b.concat(DB.trasporti);
-  DB.pdfLoaded = true; DB.pdfRev = 'REV 03/2026';
-  save(); refreshAll();
-  showToast('✅ REV 03/2026: ' + b.length + ' prezzi', 'ok');
-}
-
-function loadKarmaData() {
-  var added=0, updated=0;
-  KARMA_DATA.forEach(function(rec) {
-    var ex = DB.prodotti.find(function(p){ return p.prodotto===rec.prodotto&&p.tipo===rec.tipo&&p.entity===rec.entity&&p.luogo===rec.luogo; });
-    if(ex){ Object.assign(ex,rec); updated++; } else { DB.prodotti.push(Object.assign({},rec)); added++; }
-  });
-  save(); refreshAll();
-  showToast('✅ Listino KarMa: '+added+' aggiunti, '+updated+' aggiornati', 'ok');
-}
-
-// ── Drive ──
-// duplicate removed
-// dup removed
-// dup removed
-// dup removed
-// dup removed
-// dup removed
-// dup removed
-
-function setDriveStatus(state) {
-  var el = document.getElementById('driveStatus'); if(!el) return;
-  el.className = 'h-drive ' + state;
-  var labels = {connected:'☁️ Connesso', syncing:'⏳ Salvo...', saved:'✅ Salvato', error:'⚠️ Errore', '':'☁️ Drive'};
-  el.textContent = labels[state] || '☁️ Drive';
-  if(state==='saved') setTimeout(function(){ if(driveAccessToken) setDriveStatus('connected'); }, 2500);
-}
-function handleDriveClick() {
-  if(typeof google==='undefined'||!google.accounts||!google.accounts.oauth2) { showToast('⚠️ Libreria Google non caricata', 'warn'); return; }
-  if(!driveAccessToken) driveLogin(function(){ driveSave(); });
-  else showDriveMenu();
-}
-function driveLogin(cb) {
-  var cid = localStorage.getItem('drive_client_id')||DRIVE_CLIENT_ID;
-  google.accounts.oauth2.initTokenClient({client_id:cid, scope:DRIVE_SCOPE, callback:function(r){
-    if(r.error){ setDriveStatus('error'); return; }
-    driveAccessToken=r.access_token; localStorage.setItem('driveConnected','1');
-    setDriveStatus('connected'); showToast('✅ Drive connesso','ok'); if(cb) cb();
-  }}).requestAccessToken();
-}
-function driveDisconnect() {
-  if(driveAccessToken) try{google.accounts.oauth2.revoke(driveAccessToken,function(){});}catch(e){}
-  driveAccessToken=null;driveFileId=null;localStorage.removeItem('driveConnected');
-  setDriveStatus(''); showToast('🔓 Drive disconnesso','warn');
-}
-function saveAndSync() { save(); scheduleReminder(); }
-var _reminderTimer=null;
-function scheduleReminder() {
-  if(_reminderTimer) clearTimeout(_reminderTimer);
-  if(!driveAccessToken) return;
-  _reminderTimer=setTimeout(function(){
-    var rem=document.getElementById('driveReminder');
-    if(!rem){rem=document.createElement('div');rem.id='driveReminder';rem.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--s2);border:1.5px solid var(--amber);border-radius:14px;padding:12px 16px;font-size:13px;font-weight:700;z-index:998;display:flex;align-items:center;gap:10px;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.6);';document.body.appendChild(rem);}
-    var sp=document.createElement('span');sp.style.color='var(--amber)';sp.textContent='☁️ Dati non salvati';
-    var b1=document.createElement('button');b1.textContent='Salva';b1.style.cssText='background:var(--green);color:#0b0f16;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer;';
-    b1.onclick=function(){driveSave();var r=document.getElementById('driveReminder');if(r)r.remove();};
-    var b2=document.createElement('button');b2.textContent='✕';b2.style.cssText='background:var(--s3);color:var(--t2);border:1px solid var(--b2);border-radius:7px;padding:5px 8px;font-size:12px;cursor:pointer;';
-    b2.onclick=function(){var r=document.getElementById('driveReminder');if(r)r.remove();};
-    rem.innerHTML='';rem.appendChild(sp);rem.appendChild(b1);rem.appendChild(b2);
-  }, 5*60*1000);
-}
-function tryAutoReconnect() {
-  if(!localStorage.getItem('driveConnected')) return;
-  if(typeof google==='undefined'||!google.accounts||!google.accounts.oauth2) return;
-  try{google.accounts.oauth2.initTokenClient({client_id:DRIVE_CLIENT_ID,scope:DRIVE_SCOPE,prompt:'none',callback:function(r){if(r&&!r.error&&r.access_token){driveAccessToken=r.access_token;setDriveStatus('connected');}}}).requestAccessToken({prompt:'none'});}catch(e){}
-}
-
-// ── Carrier pills ──
-function setPill(carrier) {
-  activePill=carrier;
-  renderCarrierPills();
-  var sel=document.getElementById('searchCarrier');if(sel)sel.value=carrier;
-  filterRoutes();
-}
-function setProdottoFilter(p){activeProdottoFilter=p;refreshProdotti();}
-
-// ── openImportProdottiModal ──
-function openImportProdottiModal(){document.getElementById('fileInputProdotti').click();}
-
-// ── normalizzazione ──
-function normalizeDest(s){s=(s||'').trim();if(s==='Migliaro (FE)'||s==='Fiscaglia (FE)')return'Migliaro / Fiscaglia (FE)';return s;}
-function abbrev(name){return name.replace(/ TRASPORTI/gi,'').replace(/ Trasporti/gi,'').replace(/ SRL/gi,'').replace(/ Srl/gi,'').trim();}
-
-// ── Edit tratta ──
-function addPriceRowInEdit() {
-  var carriers = [...new Set(DB.trasporti.map(function(r){return r.carrier;}))].sort();
-  var div = document.createElement('div');
-  div.className = 'erow';
-  div.dataset.new = '1';
-  div.innerHTML = '<div class="erow-head">' +
-    '<select class="erow-select" style="flex:1;">' +
-      carriers.map(function(c){ return '<option value="' + c.replace(/"/g,'&quot;') + '">' + c + '</option>'; }).join('') +
-    '</select>' +
-    '<button class="erow-del" onclick="this.closest(\'.erow\').remove()">✕</button>' +
-    '</div>' +
-    '<div class="erow-fields">' +
-      '<div class="erow-field-group" style="flex:1;"><div class="erow-label">Prezzo</div><input class="erow-input" type="number" step="0.01" placeholder="0.00"></div>' +
-      '<div class="erow-field-group" style="width:100px;"><div class="erow-label">Unità</div>' +
-        '<select class="erow-select erow-unit"><option value="€/vg">€/viaggio</option><option value="€/ton">€/ton</option></select>' +
-      '</div>' +
-    '</div>' +
-    '<div class="erow-field-group"><div class="erow-label">Condizioni</div><input class="erow-input erow-cond" type="text" placeholder="es. BB 60 gg FM"></div>' +
-    '<label class="erow-prov-label"><input type="checkbox" class="erow-prov"> <span>⚠️ Da confermare</span></label>';
-  document.getElementById('editPricesList').appendChild(div);
-}
-
-
-function saveEditTratta(){
-  document.querySelectorAll('#editPricesList .erow').forEach(function(row){
-    if(row.dataset.deleted){var idx=parseInt(row.dataset.idx);if(!isNaN(idx))DB.trasporti[idx]=null;}
-    else if(row.dataset.new){var sel=row.querySelector('select');var inp=row.querySelector('input');var usel=row.querySelectorAll('select')[1];var price=parseFloat(inp?inp.value:0);if(!isNaN(price)&&price>0&&sel)DB.trasporti.push({from:editingTratta.from,to:editingTratta.to,carrier:sel.value,price:price,unit:usel?usel.value:'€/vg',conditions:'',rev:'Manuale'});}
-    else{var idx2=parseInt(row.dataset.idx);var inp2=row.querySelector('input');if(!isNaN(idx2)&&inp2){var v=parseFloat(inp2.value);if(!isNaN(v)&&v>0)DB.trasporti[idx2].price=v;}}
-  });
-  DB.trasporti=DB.trasporti.filter(Boolean);
-  saveAndSync();refreshAll();closeModal('modalEditTratta');showToast('✅ Tratta aggiornata','ok');
-}
-function deleteTratta(){
-  if(!confirm('Eliminare la tratta '+editingTratta.from+' → '+editingTratta.to+'?'))return;
-  DB.trasporti=DB.trasporti.filter(function(r){return!(r.from===editingTratta.from&&r.to===editingTratta.to);});
-  saveAndSync();refreshAll();closeModal('modalEditTratta');showToast('🗑 Tratta eliminata','warn');
-}
-
-// ── Export Excel ──
-function exportFilteredExcel(){
-  var fromQ=(document.getElementById('searchFrom').value||'').trim().toLowerCase();
-  var toQ=(document.getElementById('searchTo').value||'').trim().toLowerCase();
-  var carrier=activePill||((document.getElementById('searchCarrier')||{}).value||'');
-  var data=DB.trasporti;
-  if(fromQ)data=data.filter(function(r){return r.from.toLowerCase().includes(fromQ);});
-  if(toQ)data=data.filter(function(r){return r.to.toLowerCase().includes(toQ);});
-  if(carrier)data=data.filter(function(r){return r.carrier===carrier;});
-  if(!data.length){showToast('⚠️ Nessun dato','warn');return;}
-  var wsData=[['Base di carico','Destinazione','Trasportatore','Prezzo','Unità','Condizioni','Rev.']];
-  data.forEach(function(r){wsData.push([r.from,r.to,r.carrier,r.price,r.unit,r.conditions||'',r.rev||'']);});
-  var ws=XLSX.utils.aoa_to_sheet(wsData);
-  var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Tariffe');
-  XLSX.writeFile(wb,'Tariffe_'+new Date().toISOString().split('T')[0]+'.xlsx');
-  showToast('⬇️ Excel: '+data.length+' prezzi','ok');
-}
-
-// ─── RENDER PATCHES (must run before init) ───
-window.renderRapida = function(routes, filterCarrier) {
-  var container = document.getElementById('resultsContainer');
-  if (!container) return;
-  if (DB.trasporti.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.<br>Vai su <strong>Import</strong>.</div></div>';
-    return;
-  }
-  if (routes.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Nessuna tratta trovata.</div></div>';
-    return;
-  }
-  var html = '<div style="font-size:11px;color:var(--t2);margin-bottom:8px;">' + routes.length + ' tratt' + (routes.length === 1 ? 'a' : 'e') + '</div>';
-  routes.forEach(function(route) {
-    var prices = route.prices;
-    if (filterCarrier) prices = prices.filter(function(p) { return p.carrier === filterCarrier; });
-    var vg = prices.filter(function(p) { return p.unit === '€/vg'; }).sort(function(a,b) { return a.price - b.price; });
-    var ton = prices.filter(function(p) { return p.unit === '€/ton'; }).sort(function(a,b) { return a.price - b.price; });
-    var best = vg[0] || null;
-    var bestHtml = '';
-    if (best) {
-      var ab = abbrev(best.carrier);
-      bestHtml = '<div class="rrow-best"><div class="rrow-best-who">' + ab + '</div>' +
-        '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT', {minimumFractionDigits:0}) + '€</div>' +
-        '<div class="rrow-best-unit">' + best.unit + '</div></div>';
-    }
-    var chipsHtml = '';
-    vg.concat(ton).forEach(function(p) {
-      var isBest = best && p.carrier === best.carrier && p.unit === '€/vg';
-      var prov = p.provisional ? '<div class="chip-prov">da conf.</div>' : '';
-      chipsHtml += '<div class="chip' + (isBest ? ' best' : '') + '">' +
-        '<div class="chip-who">' + p.carrier + '</div>' +
-        '<div class="chip-val">' + p.price.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + '</div>' +
-        '<div class="chip-unit">' + p.unit + '</div>' + prov + '</div>';
-    });
-    var key = route.from + '||' + route.to;
-    var safeKey = key.replace(/"/g, '&quot;');
-    var sf = route.from.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    var st = route.to.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="' + safeKey + '">' +
-      '<div class="rrow-head">' +
-        '<div class="rrow-route">' +
-          '<div class="rrow-from">' + route.from + '</div>' +
-          '<div class="rrow-to-line"><span class="rrow-arrow">→</span><span class="rrow-to">' + route.to + '</span></div>' +
-        '</div>' + bestHtml +
-      '</div>' +
-      '<div class="chips">' + chipsHtml + '</div>' +
-      '<div class="rrow-acts">' +
-        '<button class="act act-edit" onclick="event.stopPropagation();openEditTratta(\'' + sf + '\',\'' + st + '\')">✏️ Modifica</button>' +
-        '<button class="act act-del" onclick="event.stopPropagation();editingTratta={from:\'' + sf + '\',to:\'' + st + '\'};deleteTratta()">🗑</button>' +
-      '</div></div>';
-  });
-  container.innerHTML = html;
-};
-
-window.renderConfronto = function() {
-  var val = document.getElementById('confrontoSelect').value;
-  var container = document.getElementById('confrontoContainer');
-  if (!val) { container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta.</div></div>'; return; }
-  var sep = val.indexOf('||');
-  var from = val.substring(0, sep), to = val.substring(sep + 2);
-  var prices = DB.trasporti.filter(function(r) { return r.from === from && r.to === to; });
-  if (!prices.length) { container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Nessun prezzo trovato.</div></div>'; return; }
-  var vg = prices.filter(function(p) { return p.unit === '€/vg'; }).sort(function(a,b) { return a.price - b.price; });
-  var ton = prices.filter(function(p) { return p.unit === '€/ton'; }).sort(function(a,b) { return a.price - b.price; });
-  var html = '<div class="ccard"><div class="ccard-route"><div class="ccard-from">' + from + '</div><div class="ccard-arrow">→</div><div class="ccard-to">' + to + '</div></div>' +
-    '<div style="font-size:11px;color:var(--t2);margin-bottom:10px;">' + prices.length + ' prezzi disponibili</div>';
-  function bars(list, label, ul) {
-    if (!list.length) return '';
-    var o = '<div class="cgroup-label">' + label + '</div>';
-    var mx = Math.max.apply(null, list.map(function(p) { return p.price; }));
-    var mn = list[0].price;
-    list.forEach(function(p, i) {
-      var pct = Math.max(32, Math.round((p.price / mx) * 100));
-      var isBest = i === 0, d = p.price - mn;
-      var ds = d === 0 ? '⭐ min' : '+' + d.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + '€';
-      o += '<div class="cbar-row"><div class="cbar-name" title="' + p.carrier + '">' + p.carrier + '</div>' +
-        '<div class="cbar-wrap"><div class="cbar ' + (isBest ? 'best' : 'other') + '" style="width:' + pct + '%">' +
-        '<span class="cbar-price">' + p.price.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €' + (ul ? ' ' + ul : '') + '</span></div></div>' +
-        '<div class="cdelta ' + (d > 0 ? 'pos' : '') + '">' + ds + '</div></div>';
-      if (p.provisional) o += '<div class="cinfo" style="color:var(--amber);">⚠️ Da confermare</div>';
-      if (p.conditions) o += '<div class="cinfo">' + p.conditions + '</div>';
-    });
-    return o;
-  }
-  html += bars(vg, '💰 €/viaggio', '') + bars(ton, '⚖️ €/ton', '/t') + '</div>';
-  container.innerHTML = html;
-};
-
-window.renderCarrierPills = function() {
-  var carriers = [...new Set(DB.trasporti.map(function(r) { return r.carrier; }))].sort();
-  var el = document.getElementById('carrierPills');
-  if (!el) return;
-  var h = '<div class="cpill all' + (activePill === '' ? ' on' : '') + '" onclick="setPill(\'\')">' + 'Tutti</div>';
-  carriers.forEach(function(name) {
-    var lbl = abbrev(name);
-    var safe = name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    h += '<div class="cpill' + (activePill === name ? ' on' : '') + '" onclick="setPill(\'' + safe + '\')">' + lbl + '</div>';
-  });
-  el.innerHTML = h;
-};
-
-// ─── START ───
-
-
-init();
-window.addEventListener("load", function() {
-  function waitForGoogle(n) {
-    if(typeof google!=="undefined"&&google.accounts&&google.accounts.oauth2) {
-      if(localStorage.getItem("driveConnected")) tryAutoReconnect();
-    } else if(n>0) setTimeout(function(){waitForGoogle(n-1);},600);
-  }
-  setTimeout(function(){
-    var s = document.createElement('script');
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.async = true;
-    s.onload = function(){ setTimeout(function(){ if(localStorage.getItem('driveConnected')) tryAutoReconnect(); }, 500); };
-    document.head.appendChild(s);
-  }, 1500);
-});
-
-["dropZoneTrasporti","dropZoneProdotti"].forEach(function(id){
-  var el=document.getElementById(id);if(!el)return;
-  el.addEventListener("dragover",function(e){e.preventDefault();el.classList.add("drag");});
-  el.addEventListener("dragleave",function(){el.classList.remove("drag");});
-  el.addEventListener("drop",function(e){
-    e.preventDefault();el.classList.remove("drag");
-    var file=e.dataTransfer.files[0];if(!file)return;
-    var type=id.includes("Prodotti")?"prodotti":"trasporti";
-    handleFileImport({target:{files:[file],value:""}},type);
-  });
-});
-// ─── RENDER PATCHES (must run before init) ───
-window.renderRapida = function(routes, filterCarrier) {
-  var container = document.getElementById('resultsContainer');
-  if (!container) return;
-  if (DB.trasporti.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.<br>Vai su <strong>Import</strong>.</div></div>';
-    return;
-  }
-  if (routes.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Nessuna tratta trovata.</div></div>';
-    return;
-  }
-  var html = '<div style="font-size:11px;color:var(--t2);margin-bottom:8px;">' + routes.length + ' tratt' + (routes.length === 1 ? 'a' : 'e') + '</div>';
-  routes.forEach(function(route) {
-    var prices = route.prices;
-    if (filterCarrier) prices = prices.filter(function(p) { return p.carrier === filterCarrier; });
-    var vg = prices.filter(function(p) { return p.unit === '€/vg'; }).sort(function(a,b) { return a.price - b.price; });
-    var ton = prices.filter(function(p) { return p.unit === '€/ton'; }).sort(function(a,b) { return a.price - b.price; });
-    var best = vg[0] || null;
-    var bestHtml = '';
-    if (best) {
-      var ab = abbrev(best.carrier);
-      bestHtml = '<div class="rrow-best"><div class="rrow-best-who">' + ab + '</div>' +
-        '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT', {minimumFractionDigits:0}) + '€</div>' +
-        '<div class="rrow-best-unit">' + best.unit + '</div></div>';
-    }
-    var chipsHtml = '';
-    vg.concat(ton).forEach(function(p) {
-      var isBest = best && p.carrier === best.carrier && p.unit === '€/vg';
-      var prov = p.provisional ? '<div class="chip-prov">da conf.</div>' : '';
-      chipsHtml += '<div class="chip' + (isBest ? ' best' : '') + '">' +
-        '<div class="chip-who">' + p.carrier + '</div>' +
-        '<div class="chip-val">' + p.price.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + '</div>' +
-        '<div class="chip-unit">' + p.unit + '</div>' + prov + '</div>';
-    });
-    var key = route.from + '||' + route.to;
-    var safeKey = key.replace(/"/g, '&quot;');
-    var sf = route.from.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    var st = route.to.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="' + safeKey + '">' +
-      '<div class="rrow-head">' +
-        '<div class="rrow-route">' +
-          '<div class="rrow-from">' + route.from + '</div>' +
-          '<div class="rrow-to-line"><span class="rrow-arrow">→</span><span class="rrow-to">' + route.to + '</span></div>' +
-        '</div>' + bestHtml +
-      '</div>' +
-      '<div class="chips">' + chipsHtml + '</div>' +
-      '<div class="rrow-acts">' +
-        '<button class="act act-edit" onclick="event.stopPropagation();openEditTratta(\'' + sf + '\',\'' + st + '\')">✏️ Modifica</button>' +
-        '<button class="act act-del" onclick="event.stopPropagation();editingTratta={from:\'' + sf + '\',to:\'' + st + '\'};deleteTratta()">🗑</button>' +
-      '</div></div>';
-  });
-  container.innerHTML = html;
-};
-
-window.renderConfronto = function() {
-  var val = document.getElementById('confrontoSelect').value;
-  var container = document.getElementById('confrontoContainer');
-  if (!val) { container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta.</div></div>'; return; }
-  var sep = val.indexOf('||');
-  var from = val.substring(0, sep), to = val.substring(sep + 2);
-  var prices = DB.trasporti.filter(function(r) { return r.from === from && r.to === to; });
-  if (!prices.length) { container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Nessun prezzo trovato.</div></div>'; return; }
-  var vg = prices.filter(function(p) { return p.unit === '€/vg'; }).sort(function(a,b) { return a.price - b.price; });
-  var ton = prices.filter(function(p) { return p.unit === '€/ton'; }).sort(function(a,b) { return a.price - b.price; });
-  var html = '<div class="ccard"><div class="ccard-route"><div class="ccard-from">' + from + '</div><div class="ccard-arrow">→</div><div class="ccard-to">' + to + '</div></div>' +
-    '<div style="font-size:11px;color:var(--t2);margin-bottom:10px;">' + prices.length + ' prezzi disponibili</div>';
-  function bars(list, label, ul) {
-    if (!list.length) return '';
-    var o = '<div class="cgroup-label">' + label + '</div>';
-    var mx = Math.max.apply(null, list.map(function(p) { return p.price; }));
-    var mn = list[0].price;
-    list.forEach(function(p, i) {
-      var pct = Math.max(32, Math.round((p.price / mx) * 100));
-      var isBest = i === 0, d = p.price - mn;
-      var ds = d === 0 ? '⭐ min' : '+' + d.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + '€';
-      o += '<div class="cbar-row"><div class="cbar-name" title="' + p.carrier + '">' + p.carrier + '</div>' +
-        '<div class="cbar-wrap"><div class="cbar ' + (isBest ? 'best' : 'other') + '" style="width:' + pct + '%">' +
-        '<span class="cbar-price">' + p.price.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €' + (ul ? ' ' + ul : '') + '</span></div></div>' +
-        '<div class="cdelta ' + (d > 0 ? 'pos' : '') + '">' + ds + '</div></div>';
-      if (p.provisional) o += '<div class="cinfo" style="color:var(--amber);">⚠️ Da confermare</div>';
-      if (p.conditions) o += '<div class="cinfo">' + p.conditions + '</div>';
-    });
-    return o;
-  }
-  html += bars(vg, '💰 €/viaggio', '') + bars(ton, '⚖️ €/ton', '/t') + '</div>';
-  container.innerHTML = html;
-};
-
-window.renderCarrierPills = function() {
-  var carriers = [...new Set(DB.trasporti.map(function(r) { return r.carrier; }))].sort();
-  var el = document.getElementById('carrierPills');
-  if (!el) return;
-  var h = '<div class="cpill all' + (activePill === '' ? ' on' : '') + '" onclick="setPill(\'\')">' + 'Tutti</div>';
-  carriers.forEach(function(name) {
-    var lbl = abbrev(name);
-    var safe = name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    h += '<div class="cpill' + (activePill === name ? ' on' : '') + '" onclick="setPill(\'' + safe + '\')">' + lbl + '</div>';
-  });
-  el.innerHTML = h;
-};
-
-// ─── START ───
-
-function showDriveMenu() { toggleDrivePanel(); }
-
-</script>
+});</script>
 </body>
 </html>
