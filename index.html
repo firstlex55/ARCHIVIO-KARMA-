@@ -1254,6 +1254,9 @@ select.inp{cursor:pointer;}
 
 
 
+
+
+
 // ── Versione app ──
 var APP_VERSION = "1.0.0";
 
@@ -1265,7 +1268,7 @@ var activePill = '';
 var editingTratta = null;
 
 // ===================== DATA STORE =====================
-let DB = {
+var DB = {
   trasporti: [],   // [{from, to, carrier, price, unit, conditions, rev}]
   prodotti: [],    // [{prodotto, tipo, entity, luogo, prezzo, unita, data, note}]
   lastUpdate: null
@@ -1280,6 +1283,25 @@ var PDF_DATA = [{"from": "Andalo Valtellino (SO)", "to": "Verolavecchia (BS)", "
 var KARMA_DATA = [{"prodotto": "Cippato", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 38.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 38.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da Ardenghi (Dosolo (MN))"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 65.0, "unita": "€/ton", "data": "", "note": "→ Bagnolo di Po (RO)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 65.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Carnovale", "luogo": "Colle Val d'Elsa (SI)", "prezzo": 50.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da Carnovale (Colle Val d'Elsa (SI))"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 55.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 55.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 95.0, "unita": "€/ton", "data": "", "note": "da Incontrato (Bientina (PI))"}, {"prodotto": "Lolla di Farro", "tipo": "acquisto", "entity": "Poggio al Farro", "luogo": "Firenzuola (FI)", "prezzo": 1.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Lolla di Farro", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 80.0, "unita": "€/ton", "data": "", "note": "da Poggio al Farro (Firenzuola (FI))"}, {"prodotto": "Lolla di Riso", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "Jolanda di Savoia (FE)", "prezzo": 30.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Lolla di Riso", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 70.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (Jolanda di Savoia (FE))"}, {"prodotto": "Pula/lolla mix cereali", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "S. Felice sul P.ro (MO)", "prezzo": 50.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Pula/lolla mix cereali", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (S. Felice sul P.ro (MO))"}, {"prodotto": "Sfarinato cereali mix", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "S. Felice sul P.ro (MO)", "prezzo": 130.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Sfarinato cereali mix", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 155.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (S. Felice sul P.ro (MO))"}, {"prodotto": "Sfarinato sorgo/b", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "Jolanda di Savoia (FE)", "prezzo": 75.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Sfarinato sorgo/b", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 100.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (Jolanda di Savoia (FE))"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 55, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 120, "unita": "€/ton", "data": "", "note": ""}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Carnovale", "luogo": "Colle Val d'Elsa (SI)", "prezzo": 60, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Covi Eredi", "luogo": "Pesaro Urbino", "prezzo": 72.5, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 78, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Sicem Saga", "luogo": "Ciano d'Enza (RE)", "prezzo": 17, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Tacchella", "luogo": "Grezzana (VR)", "prezzo": 50, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "ToscoImballaggi", "luogo": "Cetica (AR)", "prezzo": 50, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Ind. L. Tirano", "luogo": "Tirano (SO)", "prezzo": 14, "unita": "€/mc", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Segheria L. Vivo", "luogo": "Vione-Stadolina (BS)", "prezzo": 15, "unita": "€/mc", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Vender Legnami", "luogo": "Mezzocorona (TN)", "prezzo": 17, "unita": "€/mc", "data": "", "note": "→ Tarmassia / Verolavecchia"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 120, "unita": "€/ton", "data": "", "note": "da Incontrato (Bientina)"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 115, "unita": "€/ton", "data": "", "note": "da Covi Eredi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 110, "unita": "€/ton", "data": "", "note": "da Carnovale"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 110, "unita": "€/ton", "data": "", "note": "da Carnovale / Incontrato / ToscoImballaggi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 105, "unita": "€/ton", "data": "", "note": "da Ind.L.Tirano / Segheria / ToscoImballaggi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 90, "unita": "€/ton", "data": "", "note": "da Tacchella"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 85, "unita": "€/ton", "data": "", "note": "da Ardenghi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 70, "unita": "€/ton", "data": "", "note": "da Sicem Saga"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "Trucioli&Derivati", "luogo": "Tarmassia (VR)", "prezzo": 20, "unita": "€/mc", "data": "", "note": "da Vender Legnami"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 19.5, "unita": "€/mc", "data": "", "note": "da Vender Legnami"}];
 
 // ===================== INIT =====================
+
+function abbrev(name) {
+  return name.replace(/ Trasporti/gi,'').replace(/ TRASPORTI/g,'')
+    .replace(/ SRL/gi,'').replace(/ Srl/gi,'')
+    .replace(/ s\.r\.l\./gi,'').trim().substring(0,8).toUpperCase();
+}
+
+function normalizeDest(dest) {
+  if (!dest) return dest;
+  var map = {
+    'Migliaro (FE)': 'Migliaro / Fiscaglia (FE)',
+    'Fiscaglia (FE)': 'Migliaro / Fiscaglia (FE)',
+    'Migliaro\/Fiscaglia (FE)': 'Migliaro / Fiscaglia (FE)',
+    'Ponzano R.(RM)': 'Ponzano R. (RM)',
+    'Ponzano Romano (RM)': 'Ponzano R. (RM)',
+  };
+  return map[dest] || dest;
+}
+
 function init() {
   // Pulizia vecchia cache v2 (migrazione silenziosa)
   localStorage.removeItem('archivio-tariffe-old');
@@ -1402,7 +1424,7 @@ function setView(v) {
 function filterRoutes() {
   var fromQ = document.getElementById('searchFrom').value.trim().toLowerCase();
   var toQ = document.getElementById('searchTo').value.trim().toLowerCase();
-  var carrier = activePill || document.getElementById('searchCarrier').value;
+  var _sc = document.getElementById('searchCarrier'); var carrier = activePill || (_sc ? _sc.value : '');
   var routes = getUniqueRoutes();
   if(fromQ) routes = routes.filter(r => r.from.toLowerCase().includes(fromQ));
   if(toQ) routes = routes.filter(r => r.to.toLowerCase().includes(toQ));
@@ -3203,6 +3225,8 @@ function driveLoad() {
       showToast('❌ Errore Drive: ' + e.message, 'warn');
     });
 }
+
+init();
 
 window.addEventListener("load", function() {
   // GIS non caricato automaticamente — evita flash bianco su Android
