@@ -955,6 +955,69 @@ select.inp{cursor:pointer;}
   background: var(--green); color: #0b0f16;
   border-color: var(--green); font-weight: 900;
 }
+
+/* ═══ RROW BEST PRICE ══════════════════════════════════ */
+.rrow-best {
+  display: flex; flex-direction: column; align-items: flex-end;
+  flex-shrink: 0; gap: 1px;
+}
+.rrow-best-who {
+  font-size: 9px; font-weight: 800; color: var(--amber);
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.rrow-best-price {
+  font-size: 22px; font-weight: 900; color: var(--amber); line-height: 1;
+}
+.rrow-best-unit {
+  font-size: 9px; color: rgba(251,146,60,.65); font-weight: 600;
+}
+
+/* ═══ CHIP ROWS (vista rapida) ══════════════════════════ */
+.chips {
+  padding: 0 12px 10px; display: flex; flex-direction: column; gap: 0;
+}
+.chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 2px; border-bottom: 1px solid rgba(255,255,255,.04);
+  cursor: pointer;
+}
+.chip:last-child { border-bottom: none; }
+.chip.best { background: rgba(251,146,60,.06); margin: 0 -2px; padding: 9px 6px; border-radius: 6px; }
+.chip-who { font-size: 13px; font-weight: 700; color: #dce8ff; flex: 1; }
+.chip.best .chip-who { color: #fbbf24; font-weight: 800; }
+.chip-val { font-size: 15px; font-weight: 800; color: #fff; }
+.chip.best .chip-val { color: #fbbf24; }
+.chip-unit { font-size: 10px; color: #4a6070; font-weight: 600; }
+.chip-section-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .1em; color: #4a6480; padding: 6px 2px 3px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.chip-prov { font-size: 9px; color: var(--amber); }
+
+/* ═══ CONFRONTO BARS ════════════════════════════════════ */
+.confronto-bar, .bar-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+
+
+.pvbtn.pv-prodotto.active {
+  background: linear-gradient(145deg, rgba(52,211,153,.16) 0%, rgba(52,211,153,.06) 100%);
+  border-color: rgba(52,211,153,.45); color: #34d399;
+  box-shadow: 0 3px 14px rgba(52,211,153,.15);
+}
+.pvbtn.pv-fornitore.active {
+  background: linear-gradient(145deg, rgba(248,113,113,.16) 0%, rgba(248,113,113,.06) 100%);
+  border-color: rgba(248,113,113,.45); color: #f87171;
+  box-shadow: 0 3px 14px rgba(248,113,113,.15);
+}
+.pvbtn.pv-cliente.active {
+  background: linear-gradient(145deg, rgba(96,165,250,.16) 0%, rgba(96,165,250,.06) 100%);
+  border-color: rgba(96,165,250,.45); color: #60a5fa;
+  box-shadow: 0 3px 14px rgba(96,165,250,.15);
+}
+
 </style>
 </head>
 <body style="background:#0b0f16;">
@@ -1291,7 +1354,57 @@ select.inp{cursor:pointer;}
   </div>
 </div>
 
+
+<!-- MODAL DETTAGLIO FORNITORE/CLIENTE -->
+<div class="modal-backdrop hidden" id="modalEntity">
+  <div class="modal" style="max-width:480px;padding:0;overflow:hidden;">
+    <div id="modalEntityHeader" style="padding:18px 18px 14px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(255,255,255,.07);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div id="modalEntityAvatar" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div id="modalEntityName" style="font-size:18px;font-weight:900;color:#f0f6ff;"></div>
+          <div id="modalEntityMeta" style="font-size:11px;color:var(--t2);margin-top:3px;"></div>
+        </div>
+        <button onclick="closeModal('modalEntity')" style="background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:4px;">✕</button>
+      </div>
+    </div>
+    <div id="modalEntityBody" style="max-height:65vh;overflow-y:auto;"></div>
+  </div>
+</div>
+<!-- MODAL EXPORT -->
+<div class="modal-backdrop hidden" id="modalExport">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title">🖨️ Esporta Tariffe</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+      <div class="form-group"><label class="form-label">📍 Partenza</label><select class="inp" id="expFrom"><option value="">— Tutte le basi —</option></select></div>
+      <div class="form-group"><label class="form-label">🎯 Destinazione</label><select class="inp" id="expTo"><option value="">— Tutte le destinazioni —</option></select></div>
+      <div class="form-group">
+        <label class="form-label">🚛 Trasportatori</label>
+        <div id="expCarrierList" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:160px;overflow-y:auto;background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px;"></div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn btn-secondary btn-sm" onclick="expSelectAll(true)" style="flex:1;">✅ Tutti</button>
+          <button class="btn btn-secondary btn-sm" onclick="expSelectAll(false)" style="flex:1;">☐ Nessuno</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📄 Formato</label>
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;cursor:pointer;"><input type="radio" name="expFormat" value="excel" checked style="accent-color:var(--green);"> <span style="font-size:13px;font-weight:700;">📊 Excel</span></label>
+          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;cursor:pointer;"><input type="radio" name="expFormat" value="print" style="accent-color:var(--green);"> <span style="font-size:13px;font-weight:700;">🖨️ A3</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modalExport')">Annulla</button>
+      <button class="btn btn-primary" onclick="doExport()">⬇️ Esporta</button>
+    </div>
+  </div>
+</div>
+
 <script>
+
+
+
 
 
 
@@ -1548,70 +1661,14 @@ function jumpToConfronto(el) {
 }
 
 function renderConfronto() {
-  var val = document.getElementById('confrontoSelect').value;
+  if (typeof _renderConfronto === 'function') {
+    _renderConfronto();
+    return;
+  }
+  // Fallback
   var container = document.getElementById('confrontoContainer');
-  if(!val) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta.</div></div>';
-    return;
-  }
-  var sep = val.indexOf('||');
-  var from = val.substring(0, sep);
-  var to = val.substring(sep+2);
-  var prices = DB.trasporti.filter(function(r){ return r.from===from && r.to===to; });
-  if(!prices.length) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Nessun prezzo trovato.</div></div>';
-    return;
-  }
-
-  var vgPrices = prices.filter(function(p){ return p.unit==='€/vg'; }).sort(function(a,b){ return a.price-b.price; });
-  var tonPrices = prices.filter(function(p){ return p.unit==='€/ton'; }).sort(function(a,b){ return a.price-b.price; });
-
-  var html = '<div class="confronto-card">' +
-    '<div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">' +
-      '<div style="font-size:14px; font-weight:900; color:#ffffff;">' + from + '</div>' +
-      '<div style="color:var(--text3); font-size:12px;">→</div>' +
-      '<div style="font-size:14px; font-weight:800; color:var(--accent); text-shadow:0 0 10px rgba(52,211,153,0.25);">' + to + '</div>' +
-    '</div>' +
-    '<div style="font-size:11px; color:var(--text2); margin-bottom:14px;">' + prices.length + ' prezzi disponibili</div>';
-
-  function renderBars(list, label, unitLabel) {
-    if(!list.length) return '';
-    var out = '<div class="confronto-group-label">' + label + '</div>';
-    var maxVal = Math.max.apply(null, list.map(function(p){return p.price;}));
-    var minVal = list[0].price;
-    list.forEach(function(p, i) {
-      var pct = Math.max(32, Math.round((p.price/maxVal)*100));
-      var isBest = i===0;
-      var delta = p.price - minVal;
-      var deltaStr = delta===0 ? '⭐ min' : '+' + delta.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '€';
-      var provTag = p.provisional ? ' <span style="font-size:9px;background:rgba(245,200,66,.2);color:var(--gold);border-radius:3px;padding:1px 4px;">da conf.</span>' : '';
-      out += '<div class="confront-bar-row">' +
-        '<div class="confront-bar-name" title="' + p.carrier + '">' + p.carrier + '</div>' +
-        '<div class="confront-bar-wrap">' +
-          '<div class="confront-bar ' + (isBest?'best':'other') + '" style="width:' + pct + '%">' +
-            '<span class="confront-bar-price">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €' + (unitLabel?' '+unitLabel:'') + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="confront-delta ' + (delta>0?'pos':'') + '">' + deltaStr + '</div>' +
-        '</div>';
-      if(p.provisional) {
-        out += '<div style="font-size:10px;color:var(--gold);opacity:.8;margin:-4px 0 4px 113px;">⚠️ Prezzo da confermare</div>';
-      }
-      if(p.conditions) {
-        out += '<div style="font-size:10px;color:var(--text3);margin:' + (p.provisional?'-2px':'- 4px') + ' 0 6px 113px;">' + p.conditions + '</div>';
-      }
-    });
-    return out;
-  }
-
-  html += renderBars(vgPrices, '💰 Prezzi €/viaggio', '');
-  if(tonPrices.length) {
-    html += renderBars(tonPrices, '⚖️ Prezzi €/ton', '/t');
-  }
-  html += '</div>';
-  container.innerHTML = html;
+  if (container) container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta.</div></div>';
 }
-
 
 function clearSearch() {
   document.getElementById('searchFrom').value = '';
@@ -3287,7 +3344,7 @@ function printA3(rows, selectedCarriers) {
 
   html += '</tbody></table>';
   html += '<div class="footer"><span>Pro Trasporti Srl — Archivio Tariffe REV 03/2026</span><span>Stampato il ' + today + '</span></div>';
-  html += '</body></html>';
+  html += '</div>\n</div>\n\n</body></html>';
 
   var w = window.open('', '_blank', 'width=1200,height=800');
   w.document.write(html);
@@ -3511,5 +3568,53 @@ init();
 
 // ─── RENDER PATCHES (must run before init) ───
 ;</script>
+
+<!-- MODAL DETTAGLIO FORNITORE/CLIENTE -->
+<div class="modal-backdrop hidden" id="modalEntity">
+  <div class="modal" style="max-width:480px;padding:0;overflow:hidden;">
+    <div id="modalEntityHeader" style="padding:18px 18px 14px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(255,255,255,.07);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div id="modalEntityAvatar" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div id="modalEntityName" style="font-size:18px;font-weight:900;color:#f0f6ff;"></div>
+          <div id="modalEntityMeta" style="font-size:11px;color:var(--t2);margin-top:3px;"></div>
+        </div>
+        <button onclick="closeModal('modalEntity')" style="background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:4px;">✕</button>
+      </div>
+    </div>
+    <div id="modalEntityBody" style="max-height:65vh;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- MODAL EXPORT -->
+<div class="modal-backdrop hidden" id="modalExport">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title">🖨️ Esporta Tariffe</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+      <div class="form-group"><label class="form-label">📍 Partenza</label><select class="inp" id="expFrom"><option value="">— Tutte le basi —</option></select></div>
+      <div class="form-group"><label class="form-label">🎯 Destinazione</label><select class="inp" id="expTo"><option value="">— Tutte le destinazioni —</option></select></div>
+      <div class="form-group">
+        <label class="form-label">🚛 Trasportatori</label>
+        <div id="expCarrierList" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:160px;overflow-y:auto;background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px;"></div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn btn-secondary btn-sm" onclick="expSelectAll(true)" style="flex:1;">✅ Tutti</button>
+          <button class="btn btn-secondary btn-sm" onclick="expSelectAll(false)" style="flex:1;">☐ Nessuno</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📄 Formato</label>
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;cursor:pointer;"><input type="radio" name="expFormat" value="excel" checked style="accent-color:var(--green);"> <span style="font-size:13px;font-weight:700;">📊 Excel</span></label>
+          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;cursor:pointer;"><input type="radio" name="expFormat" value="print" style="accent-color:var(--green);"> <span style="font-size:13px;font-weight:700;">🖨️ A3</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modalExport')">Annulla</button>
+      <button class="btn btn-primary" onclick="doExport()">⬇️ Esporta</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
