@@ -1450,6 +1450,8 @@ select.inp{cursor:pointer;}
 
 
 
+
+
 // ── Versione app ──
 var APP_VERSION = "1.0.0";
 
@@ -1723,15 +1725,34 @@ function loadKarmaData() {
     var added = 0;
     for (var i = 0; i < KARMA_DATA.length; i++) {
       var k = KARMA_DATA[i];
-      // Evita duplicati
-      var exists = DB.prodotti.some(function(p) {
-        return p.prodotto === k.prodotto && p.entity === k.entity &&
-               p.tipo === k.tipo && p.prezzo === k.prezzo;
-      });
-      if (!exists) {
+      // Record acquisto
+      if (k.costoAcquisto && k.costoAcquisto > 0) {
         DB.prodotti.push({
-          prodotto: k.prodotto, tipo: k.tipo, entity: k.entity,
-          luogo: k.luogo, prezzo: k.prezzo, unita: k.unita || '€/ton',
+          prodotto: k.prodotto, tipo: 'acquisto',
+          entity: k.fornitore || k.entity || '',
+          luogo: k.provenienza || k.luogo || '',
+          prezzo: k.costoAcquisto, unita: k.unitaAcquisto || '€/ton',
+          note: '', data: ''
+        });
+        added++;
+      }
+      // Record vendita
+      if (k.prezzoVendita && k.prezzoVendita > 0) {
+        DB.prodotti.push({
+          prodotto: k.prodotto, tipo: 'vendita',
+          entity: k.acquirente || k.entity || '',
+          luogo: k.destinazione || k.luogo || '',
+          prezzo: k.prezzoVendita, unita: k.unitaVendita || '€/ton',
+          note: k.fornitore ? 'da ' + k.fornitore : '', data: ''
+        });
+        added++;
+      }
+      // Fallback compatibilità vecchio formato
+      if (!k.costoAcquisto && !k.prezzoVendita && k.prezzo > 0) {
+        DB.prodotti.push({
+          prodotto: k.prodotto, tipo: k.tipo || 'acquisto',
+          entity: k.entity || '', luogo: k.luogo || '',
+          prezzo: k.prezzo, unita: k.unita || '€/ton',
           note: k.note || '', data: ''
         });
         added++;
@@ -1923,6 +1944,10 @@ function importTrasporti(data, filename) {
       if (!rawStr) continue;
 
       var price = null, unit = '€/vg';
+      // Gestisci range "500-550" → prendi il primo valore
+      var rangeMatch = rawStr.match(/^([0-9]+(?:[.,][0-9]+)?)\s*[-–]\s*[0-9]/);
+      if (rangeMatch) rawStr = rangeMatch[1] + ' ' + rawStr.replace(/^[0-9.,\s-–]+/, '').trim();
+
       if (rawStr.toLowerCase().includes('ton')) {
         unit = '€/ton';
         price = parseFloat(rawStr.replace(',', '.').replace(/[^0-9.]/g, ''));
@@ -1972,85 +1997,76 @@ function parsePrice(raw) {
 function importProdotti(data, filename) {
   var log = document.getElementById('logProdotti');
   if (log) { log.classList.remove('hidden'); log.innerHTML = ''; }
-  addLog(log, '📂 File: ' + filename, 'ok');
+  addLog(log, '📂 ' + filename, 'ok');
 
-  if (!data || data.length < 2) {
-    addLog(log, '⚠️ File vuoto', 'warn'); return;
-  }
+  if (!data || data.length < 2) { addLog(log, '⚠️ File vuoto', 'warn'); return; }
 
   var headers = data[0].map(function(h){ return h ? String(h).trim().toLowerCase() : ''; });
-  addLog(log, '📋 Colonne: ' + data[0].filter(Boolean).join(', '), 'ok');
+  addLog(log, '📋 Colonne: ' + data[0].filter(Boolean).slice(0,7).join(', '), 'ok');
 
-  // Trova indici colonne KarMa
   var colProd  = headers.indexOf('prodotto');
-  var colForn  = -1;
-  var colProv  = -1;
-  var colDest  = -1;
-  var colAcq   = -1;
-  var colCosto = -1;
-  var colVend  = -1;
+  var colForn  = -1, colProv = -1, colDest = -1, colAcq = -1, colCosto = -1, colVend = -1;
 
   headers.forEach(function(h, i) {
-    if (h.includes('fornitore'))  colForn = i;
-    if (h.includes('provenienza') || h.includes('origine')) colProv = i;
-    if (h.includes('destinazione') || h.includes('dest')) colDest = i;
-    if (h.includes('acquirente') || h.includes('cliente')) colAcq = i;
-    if (h.includes('costo acquisto') || h.includes('acquisto')) colCosto = i;
-    if (h.includes('prezzo vendita') || h.includes('vendita')) colVend = i;
+    if (h.includes('fornitore'))                             colForn  = i;
+    if (h.includes('provenienza') || h === 'origine')       colProv  = i;
+    if (h.includes('destinazione'))                         colDest  = i;
+    if (h.includes('acquirente') || h.includes('cliente'))  colAcq   = i;
+    if (h.includes('costo acquisto'))                        colCosto = i;
+    if (h.includes('prezzo vendita'))                        colVend  = i;
   });
 
   if (colProd < 0) {
-    addLog(log, '❌ Colonna "Prodotto" non trovata. Intestazioni: ' + data[0].join(', '), 'err'); return;
+    addLog(log, '❌ Colonna "Prodotto" non trovata', 'err'); return;
   }
 
-  addLog(log, '🔍 Prodotto:col'+colProd+' Forn:col'+colForn+' Prov:col'+colProv+' Acq:col'+colAcq+' Costo:col'+colCosto+' Vend:col'+colVend, '');
-
-  var added = 0, skipped = 0;
+  var added = 0;
 
   for (var ri = 1; ri < data.length; ri++) {
     var row = data[ri];
     if (!row || !row[colProd]) continue;
-
     var prodotto = String(row[colProd]).trim();
     if (!prodotto) continue;
 
-    var fornitore = colForn >= 0 && row[colForn] ? String(row[colForn]).trim() : '';
-    var prov      = colProv >= 0 && row[colProv] ? String(row[colProv]).trim() : '';
-    var dest      = colDest >= 0 && row[colDest] ? String(row[colDest]).trim() : '';
-    var acquirente= colAcq  >= 0 && row[colAcq]  ? String(row[colAcq]).trim()  : '';
+    var fornitore  = colForn >= 0 && row[colForn] ? String(row[colForn]).trim() : '';
+    var prov       = colProv >= 0 && row[colProv] ? String(row[colProv]).trim() : '';
+    var dest       = colDest >= 0 && row[colDest] ? String(row[colDest]).trim() : '';
+    var acquirente = colAcq  >= 0 && row[colAcq]  ? String(row[colAcq]).trim()  : '';
 
-    // Acquisto
-    if (colCosto >= 0 && row[colCosto] !== null && row[colCosto] !== undefined && row[colCosto] !== '') {
+    // ── Record ACQUISTO ──
+    if (colCosto >= 0 && row[colCosto] !== '' && row[colCosto] !== null && row[colCosto] !== undefined) {
       var costoRaw = String(row[colCosto]).trim();
+      var unit = costoRaw.toLowerCase().includes('mc') ? '€/mc' : '€/ton';
       var costo = parseFloat(costoRaw.replace(',', '.').replace(/[^0-9.]/g, ''));
       if (!isNaN(costo) && costo > 0) {
         DB.prodotti.push({
           prodotto: prodotto, tipo: 'acquisto',
           entity: fornitore, luogo: prov,
-          prezzo: costo, unita: '€/ton', note: '', data: ''
+          prezzo: costo, unita: unit, note: '', data: ''
         });
         added++;
       }
     }
 
-    // Vendita
-    if (colVend >= 0 && row[colVend] !== null && row[colVend] !== undefined && row[colVend] !== '') {
+    // ── Record VENDITA — uno per riga, anche se stesso acquirente ──
+    if (colVend >= 0 && row[colVend] !== '' && row[colVend] !== null && row[colVend] !== undefined) {
       var vendRaw = String(row[colVend]).trim();
+      var unitV = vendRaw.toLowerCase().includes('mc') ? '€/mc' : '€/ton';
       var vend = parseFloat(vendRaw.replace(',', '.').replace(/[^0-9.]/g, ''));
       if (!isNaN(vend) && vend > 0) {
         DB.prodotti.push({
           prodotto: prodotto, tipo: 'vendita',
           entity: acquirente, luogo: dest,
-          prezzo: vend, unita: '€/ton', note: '', data: ''
+          prezzo: vend, unita: unitV,
+          note: fornitore ? 'da ' + fornitore : '', data: ''
         });
         added++;
       }
     }
   }
 
-  save();
-  refreshAll();
-  addLog(log, '✅ Aggiunti: ' + added + ' prezzi', 'ok');
+  save(); refreshAll();
+  addLog(log, '✅ Aggiunti: ' + added + ' prezzi (acquisti + vendite per riga)', 'ok');
   showToast('✅ Prodotti importati: ' + added, 'ok');
 }
 
