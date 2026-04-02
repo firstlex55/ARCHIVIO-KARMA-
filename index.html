@@ -976,24 +976,41 @@ select.inp{cursor:pointer;}
 .chips {
   padding: 0 12px 10px; display: flex; flex-direction: column; gap: 0;
 }
-.chip {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 2px; border-bottom: 1px solid rgba(255,255,255,.04);
-  cursor: pointer;
+.chips-section-label {
+  font-size: 9px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  padding: 7px 2px 3px; border-top: 1px solid rgba(255,255,255,.06); margin-top: 2px;
 }
+.chip {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 9px 4px; border-bottom: 1px solid rgba(255,255,255,.04);
+  cursor: pointer; border-radius: 6px; transition: background .12s;
+}
+.chip:active { background: rgba(255,255,255,.04); }
 .chip:last-child { border-bottom: none; }
-.chip.best { background: rgba(251,146,60,.06); margin: 0 -2px; padding: 9px 6px; border-radius: 6px; }
-.chip-who { font-size: 13px; font-weight: 700; color: #dce8ff; flex: 1; }
+.chip.best {
+  background: rgba(251,146,60,.07);
+  border-left: 2px solid rgba(251,146,60,.5);
+  padding-left: 8px; margin-left: -4px;
+}
+.chip-left { flex: 1; min-width: 0; }
+.chip-who {
+  font-size: 13px; font-weight: 700; color: #dce8ff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .chip.best .chip-who { color: #fbbf24; font-weight: 800; }
-.chip-val { font-size: 15px; font-weight: 800; color: #fff; }
+.chip-cond {
+  font-size: 10px; color: #4a6480; display: block; margin-top: 1px;
+}
+.chip-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0;
+}
+.chip-val { font-size: 16px; font-weight: 900; color: #fff; line-height: 1; }
 .chip.best .chip-val { color: #fbbf24; }
 .chip-unit { font-size: 10px; color: #4a6070; font-weight: 600; }
-.chip-section-label {
-  font-size: 9px; font-weight: 800; text-transform: uppercase;
-  letter-spacing: .1em; color: #4a6480; padding: 6px 2px 3px;
-  border-top: 1px solid rgba(255,255,255,.06);
-}
-.chip-prov { font-size: 9px; color: var(--amber); }
+.chip-flags { width: 100%; display: flex; gap: 5px; flex-wrap: wrap; padding-top: 2px; }
+.chip-flag { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; }
+.chip-flag.warn { background: rgba(251,146,60,.12); color: var(--amber); }
+.chip-flag.info { background: rgba(96,165,250,.12); color: #60a5fa; }
 
 /* ═══ CONFRONTO BARS ════════════════════════════════════ */
 .confronto-bar, .bar-row {
@@ -1062,6 +1079,15 @@ select.inp{cursor:pointer;}
   color: #f87171; border-radius: 8px; padding: 6px 10px;
   cursor: pointer; font-size: 14px; flex-shrink: 0;
 }
+
+
+.ac-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ac-label { flex: 1; min-width: 0; }
+.ac-info {
+  font-size: 10px; color: var(--t2); font-weight: 600; flex-shrink: 0;
+  white-space: nowrap;
+}
+.ac-info-price { color: var(--amber); }
 
 </style>
 </head>
@@ -1483,6 +1509,9 @@ select.inp{cursor:pointer;}
 
 
 
+
+
+
 // ── Versione app ──
 var APP_VERSION = "1.0.0";
 
@@ -1648,6 +1677,8 @@ function refreshStats() {
   if (elClie) elClie.textContent = clienti.length;
 
   renderCarrierPills();
+  var revEl = document.getElementById('headerRev');
+  if (revEl && DB.pdfRev) revEl.textContent = DB.pdfRev;
 }
 
 function getUniqueRoutes() {
@@ -2780,15 +2811,42 @@ function acRender(field, items, q) {
   var dropdown = document.getElementById('ac' + field);
   if (!dropdown) return;
   dropdown.innerHTML = '';
+
+  // Per il campo From, calcola info per ogni voce
+  var fromVal = document.getElementById('searchFrom') ? document.getElementById('searchFrom').value.trim() : '';
+
   items.slice(0, 14).forEach(function(v) {
     var div = document.createElement('div');
     div.className = 'ac-item';
+
+    // Testo con highlight
+    var label = v;
     if (q) {
       try {
         var re = new RegExp('(' + q.replace(/[-[\]{}()*+?.,\\^$|#]/g, '\\$&') + ')', 'gi');
-        div.innerHTML = v.replace(re, '<mark>$1</mark>');
-      } catch(e) { div.textContent = v; }
-    } else { div.textContent = v; }
+        label = v.replace(re, '<mark>$1</mark>');
+      } catch(e) {}
+    }
+
+    // Info contestuale
+    var info = '';
+    if (field === 'From') {
+      var nDest = (function(){var _s={};DB.trasporti.filter(function(r){return r.from===v;}).forEach(function(r){_s[r.to]=1;});return Object.keys(_s).length;})();
+      if (nDest) info = '<span class="ac-info">' + nDest + ' dest.</span>';
+    }
+    if (field === 'To' && fromVal) {
+      var routes = DB.trasporti.filter(function(r){ return r.from===fromVal && r.to===v; });
+      if (routes.length) {
+        var minVg = routes.filter(function(r){return r.unit==='€/vg';}).sort(function(a,b){return a.price-b.price;})[0];
+        var minTon = routes.filter(function(r){return r.unit==='€/ton';}).sort(function(a,b){return a.price-b.price;})[0];
+        var parts = [];
+        if (minVg)  parts.push(minVg.price.toLocaleString('it-IT',{minimumFractionDigits:0}) + ' €/vg');
+        if (minTon) parts.push(minTon.price.toLocaleString('it-IT',{minimumFractionDigits:0}) + ' €/ton');
+        if (parts.length) info = '<span class="ac-info ac-info-price">da ' + parts.join(' · ') + '</span>';
+      }
+    }
+
+    div.innerHTML = '<span class="ac-label">' + label + '</span>' + info;
     div.addEventListener('mousedown', function(e) { e.preventDefault(); acSelect(field, v); });
     div.addEventListener('touchstart', function(e) { e.preventDefault(); acSelect(field, v); }, {passive:false});
     dropdown.appendChild(div);
@@ -3020,6 +3078,34 @@ function openEditSingle(globalIdx) {
   document.getElementById('editPricesList').innerHTML = html;
   var addBtn = document.querySelector('#modalEditTratta .btn-secondary.btn-sm');
   if (addBtn) addBtn.style.display = 'none';
+  // Mini confronto altri trasportatori stessa tratta
+  var others = DB.trasporti.filter(function(t){
+    return t.from===p.from && t.to===p.to && DB.trasporti.indexOf(t) !== globalIdx;
+  }).sort(function(a,b){ return a.price-b.price; });
+
+  var cmpHtml = '';
+  if (others.length) {
+    cmpHtml = '<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);">' +
+      '<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--t2);margin-bottom:8px;">Altri trasportatori stessa tratta</div>';
+    others.forEach(function(t) {
+      var isCheaper = t.unit === p.unit && t.price < p.price;
+      var isDearer  = t.unit === p.unit && t.price > p.price;
+      var diff = (t.unit === p.unit) ? (t.price - p.price) : null;
+      var diffStr = diff !== null ? (diff > 0 ? '+' : '') + diff.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + ' €' : '';
+      cmpHtml += '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);">' +
+        '<div style="flex:1;font-size:12px;font-weight:700;color:#dce8ff;">' + t.carrier + '</div>' +
+        '<div style="font-size:14px;font-weight:800;color:' + (isCheaper?'#86efac':isDearer?'#fca5a5':'#dce8ff') + ';">' +
+          t.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + ' ' + t.unit +
+        '</div>' +
+        (diffStr ? '<div style="font-size:10px;font-weight:700;color:' + (isCheaper?'#86efac':isDearer?'#fca5a5':'#8ba3c0') + ';">' + diffStr + '</div>' : '') +
+      '</div>';
+    });
+    cmpHtml += '</div>';
+  }
+
+  // Aggiungi confronto dopo le righe
+  var existingHtml = document.getElementById('editPricesList').innerHTML;
+  document.getElementById('editPricesList').innerHTML = existingHtml + cmpHtml;
   document.getElementById('modalEditTratta').classList.remove('hidden');
 }
 
@@ -3583,38 +3669,63 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
     container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Nessuna tratta trovata.</div></div>';
     return;
   }
-  var html = '<div style="font-size:11px;color:var(--t2);margin-bottom:8px;">' + routes.length + ' tratt' + (routes.length === 1 ? 'a' : 'e') + '</div>';
+
+  var html = '<div class="results-count">' + routes.length + ' tratt' + (routes.length===1?'a':'e') + '</div>';
+
   routes.forEach(function(route) {
-    var prices = route.prices;
-    if (filterCarrier) prices = prices.filter(function(p) { return p.carrier === filterCarrier; });
-    var vg = prices.filter(function(p) { return p.unit === '€/vg'; }).sort(function(a,b) { return a.price - b.price; });
-    var ton = prices.filter(function(p) { return p.unit === '€/ton'; }).sort(function(a,b) { return a.price - b.price; });
-    var best = vg[0] || null;
+    var prices = route.prices.slice();
+    if (filterCarrier) prices = prices.filter(function(p){ return p.carrier === filterCarrier; });
+
+    // Separa per unità
+    var vg  = prices.filter(function(p){ return p.unit === '€/vg';  }).sort(function(a,b){ return a.price-b.price; });
+    var ton = prices.filter(function(p){ return p.unit === '€/ton'; }).sort(function(a,b){ return a.price-b.price; });
+    var mc  = prices.filter(function(p){ return p.unit === '€/mc';  }).sort(function(a,b){ return a.price-b.price; });
+
+    var best = vg[0] || ton[0] || null;
     var bestHtml = '';
     if (best) {
-      var ab = abbrev(best.carrier);
-      bestHtml = '<div class="rrow-best"><div class="rrow-best-who">' + ab + '</div>' +
-        '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT', {minimumFractionDigits:0}) + '€</div>' +
-        '<div class="rrow-best-unit">' + best.unit + '</div></div>';
-    }
-    var chipsHtml = '';
-    vg.concat(ton).forEach(function(p) {
-      var isBest = best && p.carrier === best.carrier && p.unit === '€/vg';
-      var prov = p.provisional ? '<div class="chip-prov">da conf.</div>' : '';
-      chipsHtml += '<div class="chip' + (isBest ? ' best' : '') + '" onclick="event.stopPropagation();openEditSingle(' + DB.trasporti.indexOf(p) + ')">' +
-        '<div class="chip-who">' + p.carrier + '</div>' +
-        '<div class="chip-right">' +
-          '<span class="chip-val">' + p.price.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + '</span>' +
-          '<span class="chip-unit">' + p.unit + '</span>' +
-        '</div>' +
-        (p.provisional ? '<div class="chip-prov">⚠️ da conf.</div>' : '') +
-        (p.negotiable  ? '<div class="chip-prov">🤝 tratt.</div>'   : '') +
+      bestHtml = '<div class="rrow-best">' +
+        '<div class="rrow-best-who">' + abbrev(best.carrier) + '</div>' +
+        '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT',{minimumFractionDigits:0}) + '€</div>' +
+        '<div class="rrow-best-unit">' + best.unit + '</div>' +
+        (best.provisional ? '<div class="rrow-best-prov">⚠️</div>' : '') +
       '</div>';
-    });
+    }
+
+    // Funzione per generare sezione chip per una unità
+    function chipSection(list, label, color) {
+      if (!list.length) return '';
+      var out = '<div class="chips-section-label" style="color:' + color + '">' + label + '</div>';
+      list.forEach(function(p) {
+        var gIdx = DB.trasporti.indexOf(p);
+        var isBest = best && p.carrier === best.carrier && p.unit === best.unit;
+        var cond = p.conditions ? '<span class="chip-cond">' + p.conditions + '</span>' : '';
+        var flags = (p.provisional ? '<span class="chip-flag warn">⚠️ da conf.</span>' : '') +
+                    (p.negotiable  ? '<span class="chip-flag info">🤝 tratt.</span>'   : '');
+        out += '<div class="chip' + (isBest ? ' best' : '') + '" onclick="event.stopPropagation();openEditSingle(' + gIdx + ')">' +
+          '<div class="chip-left">' +
+            '<div class="chip-who">' + p.carrier + '</div>' +
+            (cond ? cond : '') +
+          '</div>' +
+          '<div class="chip-right">' +
+            '<span class="chip-val">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '</span>' +
+            '<span class="chip-unit">' + p.unit + '</span>' +
+          '</div>' +
+          (flags ? '<div class="chip-flags">' + flags + '</div>' : '') +
+        '</div>';
+      });
+      return out;
+    }
+
+    var chipsHtml = chipSection(vg, '🚛 €/viaggio', 'var(--amber)') +
+                    chipSection(ton, '⚖️ €/tonnellata', '#7dd3fc') +
+                    chipSection(mc,  '📦 €/metro cubo', '#86efac');
+
     var key = route.from + '||' + route.to;
     var safeKey = key.replace(/"/g, '&quot;');
     var sf = route.from.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     var st = route.to.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
     html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="' + safeKey + '">' +
       '<div class="rrow-head">' +
         '<div class="rrow-route">' +
@@ -3626,10 +3737,12 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
       '<div class="rrow-acts">' +
         '<button class="act act-edit" onclick="event.stopPropagation();openEditTratta(\'' + sf + '\',\'' + st + '\')">✏️ Modifica</button>' +
         '<button class="act act-del" onclick="event.stopPropagation();editingTratta={from:\'' + sf + '\',to:\'' + st + '\'};deleteTratta()">🗑</button>' +
-      '</div></div>';
+      '</div>' +
+    '</div>';
   });
   container.innerHTML = html;
 };
+
 
 var _renderConfronto = function() {
   var val = document.getElementById('confrontoSelect').value;
