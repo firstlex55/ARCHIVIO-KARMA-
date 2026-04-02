@@ -1467,6 +1467,8 @@ select.inp{cursor:pointer;}
   </div>
 </div>
 
+
+<div class="modal-backdrop hidden" id="modalTariffaChoice"><div class="modal" style="max-width:320px;text-align:center;"><div style="font-size:13px;color:var(--t2);margin-bottom:12px;">Esiste gia una tariffa per questo trasportatore</div><div id="choiceCarrier" style="font-size:17px;font-weight:900;color:#f0f6ff;margin-bottom:4px;"></div><div id="choiceRoute" style="font-size:13px;color:var(--green);margin-bottom:6px;"></div><div id="choiceOldPrice" style="font-size:12px;color:var(--t2);margin-bottom:20px;padding:8px;background:rgba(255,255,255,.05);border-radius:8px;"></div><button class="btn btn-primary" id="btnAggiungi" style="width:100%;margin-bottom:10px;padding:14px;font-size:15px;">+ Aggiungi tratta</button><button class="btn" id="btnAggiorna" style="width:100%;margin-bottom:10px;padding:14px;font-size:15px;background:rgba(255,255,255,.08);color:#dce8ff;">Aggiorna tratta</button><button onclick="closeModal('modalTariffaChoice')" style="width:100%;padding:10px;background:none;border:none;color:var(--t2);font-size:13px;cursor:pointer;">Annulla</button></div></div>
 <script>
 
 
@@ -2291,16 +2293,46 @@ function saveTariffa() {
     return;
   }
 
-  var existing = DB.trasporti.find(function(t){ return t.from===from && t.to===to && t.carrier===carrier; });
-  if(existing) {
-    existing.price = price;
-    existing.unit = unit;
-    existing.conditions = conditions;
-    existing.provisional = provisional;
-    existing.rev = 'Manuale';
-    showToast(provisional ? '⚠️ Tariffa aggiornata (da confermare)' : '✏️ Tariffa aggiornata', provisional?'warn':'ok');
+  // Cerca per tratta + trasportatore + unità
+  var existing = null;
+  for (var _si=0; _si<DB.trasporti.length; _si++) {
+    var _t = DB.trasporti[_si];
+    if (_t.from===from && _t.to===to && _t.carrier===carrier && _t.unit===unit) { existing=_t; break; }
+  }
+  var noteVal = document.getElementById('mtNote') ? document.getElementById('mtNote').value.trim() : '';
+  if (existing) {
+    var _ex = existing;
+    var _nr = {from:from,to:to,carrier:carrier,price:price,unit:unit,conditions:conditions,provisional:provisional,note:noteVal,rev:'Manuale'};
+    document.getElementById('choiceCarrier').textContent = carrier;
+    document.getElementById('choiceRoute').textContent = from + ' → ' + to;
+    document.getElementById('choiceOldPrice').textContent = 'Prezzo attuale: ' + _ex.price + ' ' + _ex.unit;
+    document.getElementById('modalTariffaChoice').classList.remove('hidden');
+    document.getElementById('btnAggiungi').onclick = function(){ DB.trasporti.push(_nr); save(); refreshAll(); closeModal('modalTariffaChoice'); closeModal('modalTariffa'); showToast('✅ Tariffa aggiunta', 'ok'); };
+    document.getElementById('btnAggiorna').onclick = function(){ _ex.price=price;_ex.unit=unit;_ex.conditions=conditions;_ex.provisional=provisional;_ex.note=noteVal;_ex.rev='Manuale'; save(); refreshAll(); closeModal('modalTariffaChoice'); closeModal('modalTariffa'); showToast('✏️ Tariffa aggiornata', 'ok'); };
+    return;
+    // Mostra modal scelta
+    var _ex = existing;
+    document.getElementById('choiceCarrier').textContent = carrier;
+    document.getElementById('choiceRoute').textContent = from + ' → ' + to;
+    document.getElementById('choiceOldPrice').textContent = 'Prezzo attuale: ' + _ex.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + ' ' + _ex.unit;
+    document.getElementById('modalTariffaChoice').classList.remove('hidden');
+    document.getElementById('btnAggiungi').onclick = function() {
+      DB.trasporti.push({from:from, to:to, carrier:carrier, price:price, unit:unit, conditions:conditions, provisional:provisional, note:noteVal, rev:'Manuale'});
+      save(); refreshAll();
+      closeModal('modalTariffaChoice'); closeModal('modalTariffa');
+      showToast('✅ Nuova tariffa aggiunta', 'ok');
+    };
+    document.getElementById('btnAggiorna').onclick = function() {
+      _ex.price = price; _ex.unit = unit;
+      _ex.conditions = conditions; _ex.provisional = provisional;
+      _ex.note = noteVal; _ex.rev = 'Manuale';
+      save(); refreshAll();
+      closeModal('modalTariffaChoice'); closeModal('modalTariffa');
+      showToast('✏️ Tariffa aggiornata', 'ok');
+    };
+    return; // non salva ancora
   } else {
-    DB.trasporti.push({from:from, to:to, carrier:carrier, price:price, unit:unit, conditions:conditions, provisional:provisional, rev:'Manuale'});
+    DB.trasporti.push({from:from, to:to, carrier:carrier, price:price, unit:unit, conditions:conditions, provisional:provisional, note:noteVal, rev:'Manuale'});
     showToast(provisional ? '⚠️ Tariffa aggiunta (da confermare)' : '✅ Tariffa aggiunta', provisional?'warn':'ok');
   }
   save(); refreshAll();
@@ -3499,7 +3531,9 @@ function printA3(rows, selectedCarriers) {
 
   html += '</tbody></table>';
   html += '<div class="footer"><span>Pro Trasporti Srl — Archivio Tariffe REV 03/2026</span><span>Stampato il ' + today + '</span></div>';
-  html += '</div>\n</div>\n\n</body></html>';
+
+
+  html += '</div>\n</div>\n\n</body>\n</html>';
 
   var w = window.open('', '_blank', 'width=1200,height=800');
   w.document.write(html);
@@ -3781,5 +3815,8 @@ init();
   </div>
 </div>
 
+
+
+<div class="modal-backdrop hidden" id="modalTariffaChoice"><div class="modal" style="max-width:340px;text-align:center;"><div style="font-size:14px;color:var(--t2);margin-bottom:16px;">Esiste gia una tariffa per questo trasportatore su questa tratta</div><div id="choiceCarrier" style="font-size:17px;font-weight:900;color:#f0f6ff;margin-bottom:4px;"></div><div id="choiceRoute" style="font-size:13px;color:var(--green);margin-bottom:6px;"></div><div id="choiceOldPrice" style="font-size:12px;color:var(--t2);margin-bottom:20px;padding:8px;background:rgba(255,255,255,.05);border-radius:8px;"></div><button class="btn btn-primary" id="btnAggiungi" style="width:100%;margin-bottom:10px;padding:14px;font-size:15px;">&#10133; Aggiungi tratta</button><button class="btn btn-secondary" id="btnAggiorna" style="width:100%;margin-bottom:10px;padding:14px;font-size:15px;">&#9998;&#65039; Aggiorna tratta</button><button onclick="closeModal('modalTariffaChoice')" style="width:100%;padding:10px;background:none;border:none;color:var(--t2);font-size:13px;cursor:pointer;">Annulla</button></div></div>
 </body>
 </html>
