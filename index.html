@@ -1092,6 +1092,8 @@ select.inp{cursor:pointer;}
   display: block; font-size: 10px; color: #7dd3fc;
   font-style: italic; margin-top: 1px;
 }
+.chip:active { background: rgba(255,255,255,.07) !important; transform: scale(.98); }
+.chip { transition: background .1s; }
 </style>
 </head>
 <body style="background:#0b0f16;">
@@ -1317,6 +1319,10 @@ select.inp{cursor:pointer;}
       <input type="checkbox" id="mtProvisional" style="width:16px;height:16px;accent-color:var(--amber);cursor:pointer;flex-shrink:0;">
       <div><div style="font-size:12px;font-weight:700;color:var(--amber);">⚠️ Prezzo da confermare</div><div style="font-size:10px;color:var(--t2);margin-top:1px;">Il prezzo è provvisorio</div></div>
     </label>
+        <div class="form-group" style="margin:10px 0 12px;">
+      <label class="form-label">Note</label>
+      <input class="inp" id="mtNote" placeholder="es. zona limitrofa, supplemento..." autocomplete="off">
+    </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('modalTariffa')">Annulla</button>
       <button class="btn btn-primary" onclick="saveTariffa()">💾 Salva</button>
@@ -1456,13 +1462,7 @@ select.inp{cursor:pointer;}
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeModal('modalExport')">Annulla</button>
-      <button class="btn btn-primary" onclick="doExport()">⬇️ Esporta</button>
-    </div>
-  </div>
-</div>
-
-<script>
+      <button class="btn btn-secondary" onclick="closeModal('modalExport')">Annulla<
 
 // ── Versione app ──
 var APP_VERSION = "1.0.0";
@@ -1541,8 +1541,15 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
     function chipSection(list, label, color) {
       if (!list.length) return '';
       var out = '<div class="chips-section-label" style="color:' + color + '">' + label + '</div>';
-      list.forEach(function(p) {
+      for (var _ci = 0; _ci < list.length; _ci++) {
+        var p = list[_ci];
         var gIdx = DB.trasporti.indexOf(p);
+        if (gIdx < 0) { // fallback: cerca per confronto valori
+          for (var _di = 0; _di < DB.trasporti.length; _di++) {
+            var _t = DB.trasporti[_di];
+            if (_t.from===p.from && _t.to===p.to && _t.carrier===p.carrier && _t.price===p.price && _t.unit===p.unit) { gIdx=_di; break; }
+          }
+        }
         var isBest = best && p.carrier===best.carrier && p.unit===best.unit;
         var cond = p.conditions ? '<span class="chip-cond">' + p.conditions + '</span>' : '';
         var flags = (p.provisional?'<span class="chip-flag warn">⚠️ da conf.</span>':'') +
@@ -1554,7 +1561,7 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
           '<div class="chip-right"><span class="chip-val">' + p.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + '</span><span class="chip-unit">' + p.unit + '</span></div>' +
           (flags?'<div class="chip-flags">'+flags+'</div>':'') +
         '</div>';
-      });
+      }
       return out;
     }
     var chipsHtml = chipSection(vg,'🚛 €/viaggio','var(--amber)') +
@@ -1563,8 +1570,8 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
     var key = route.from+'||'+route.to;
     var sf = route.from.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     var st = route.to.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="'+key.replace(/"/g,'&quot;')+'">' +
-      '<div class="rrow-head">' +
+    html += '<div class="rrow" data-key="'+key.replace(/"/g,'&quot;')+'">' +
+      '<div class="rrow-head" onclick="jumpToConfronto(this.parentNode)" style="cursor:pointer;">' +
         '<div class="rrow-route"><div class="rrow-from">'+route.from+'</div>' +
         '<div class="rrow-to-line"><span class="rrow-arrow">→</span><span class="rrow-to">'+route.to+'</span></div></div>' +
         bestHtml +
@@ -1576,6 +1583,23 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
       '</div></div>';
   });
   container.innerHTML = html;
+
+  // Aggiungi touch listener su tutti i chip (più affidabile di onclick inline su mobile)
+  var chips = container.querySelectorAll('.chip');
+  for (var _i = 0; _i < chips.length; _i++) {
+    (function(chip) {
+      var handler = function(e) {
+        e.stopPropagation();
+        var onclick = chip.getAttribute('onclick');
+        if (onclick) {
+          var match = onclick.match(/openEditSingle\((\d+)\)/);
+          if (match) openEditSingle(parseInt(match[1]));
+        }
+      };
+      chip.addEventListener('touchstart', handler, {passive: false});
+      chip.addEventListener('click', handler);
+    })(chips[_i]);
+  }
 };
 
 var _renderConfronto = function() {
@@ -1860,7 +1884,8 @@ function populateConfrontoSelect(routes) {
 }
 
 function jumpToConfronto(el) {
-  var key = el.getAttribute('data-key');
+  // el può essere rrow-head o rrow stesso
+  var key = el.getAttribute('data-key') || (el.parentNode && el.parentNode.getAttribute('data-key'));
   setView('confronto');
   setTimeout(function() {
     populateConfrontoSelect();
@@ -3539,7 +3564,63 @@ function exportToExcel(rows, selectedCarriers) {
 init();
 
 
+e_Pro_Trasporti_' + new Date().toISOString().split('T')[0] + '.xlsx');
+  showToast('✅ Excel esportato', 'ok');
+}
+
+init();
+
+
 </script>
+
+<!-- MODAL DETTAGLIO FORNITORE/CLIENTE -->
+<div class="modal-backdrop hidden" id="modalEntity">
+  <div class="modal" style="max-width:480px;padding:0;overflow:hidden;">
+    <div id="modalEntityHeader" style="padding:18px 18px 14px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(255,255,255,.07);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div id="modalEntityAvatar" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div id="modalEntityName" style="font-size:18px;font-weight:900;color:#f0f6ff;"></div>
+          <div id="modalEntityMeta" style="font-size:11px;color:var(--t2);margin-top:3px;"></div>
+        </div>
+        <button onclick="closeModal('modalEntity')" style="background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:4px;">✕</button>
+      </div>
+    </div>
+    <div id="modalEntityBody" style="max-height:65vh;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- MODAL EXPORT -->
+<div class="modal-backdrop hidden" id="modalExport">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title">🖨️ Esporta Tariffe</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+      <div class="form-group"><label class="form-label">📍 Partenza</label><select class="inp" id="expFrom"><option value="">— Tutte le basi —</option></select></div>
+      <div class="form-group"><label class="form-label">🎯 Destinazione</label><select class="inp" id="expTo"><option value="">— Tutte le destinazioni —</option></select></div>
+      <div class="form-group">
+        <label class="form-label">🚛 Trasportatori</label>
+        <div id="expCarrierList" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:160px;overflow-y:auto;background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px;"></div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn btn-secondary btn-sm" onclick="expSelectAll(true)" style="flex:1;">✅ Tutti</button>
+          <button class="btn btn-secondary btn-sm" onclick="expSelectAll(false)" style="flex:1;">☐ Nessuno</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📄 Formato</label>
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;cursor:pointer;"><input type="radio" name="expFormat" value="excel" checked style="accent-color:var(--green);"> <span style="font-size:13px;font-weight:700;">📊 Excel</span></label>
+          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;cursor:pointer;"><input type="radio" name="expFormat" value="print" style="accent-color:var(--green);"> <span style="font-size:13px;font-weight:700;">🖨️ A3</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modalExport')">Annulla</button>
+      <button class="btn btn-primary" onclick="doExport()">⬇️ Esporta</button>
+    </div>
+  </div>
+</div>
+
+<script></script>
 
 <!-- MODAL DETTAGLIO FORNITORE/CLIENTE -->
 <div class="modal-backdrop hidden" id="modalEntity">
