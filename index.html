@@ -1093,6 +1093,249 @@ select.inp{cursor:pointer;}
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
+.prow-section-hd {
+  font-size: 9px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: .1em; padding: 6px 13px 5px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  display: flex; align-items: center; gap: 6px;
+}
+.prow-section-hd.buy  { color: #fca5a5; background: rgba(248,113,113,.06); }
+.prow-section-hd.sell { color: #6ee7b7; background: rgba(52,211,153,.06); }
+
+.prow-line {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 13px; border-bottom: 1px solid rgba(255,255,255,.04);
+  transition: background .1s;
+}
+.prow-line:last-child { border-bottom: none; }
+
+/* Best = primo prezzo — evidenziato con bordo sinistro */
+.prow-line.best-buy {
+  background: rgba(248,113,113,.05);
+  border-left: 3px solid rgba(248,113,113,.5);
+  padding-left: 10px;
+}
+.prow-line.best-sell {
+  background: rgba(52,211,153,.05);
+  border-left: 3px solid rgba(52,211,153,.5);
+  padding-left: 10px;
+}
+
+.prow-line-left { flex: 1; min-width: 0; }
+.prow-entity {
+  font-size: 13px; font-weight: 700; color: #dce8ff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.prow-line.best-buy  .prow-entity { color: #fca5a5; }
+.prow-line.best-sell .prow-entity { color: #6ee7b7; }
+.prow-loc {
+  font-size: 10px; color: var(--t2); margin-top: 2px; font-weight: 500;
+}
+.prow-note {
+  font-size: 10px; color: #7dd3fc; margin-top: 2px;
+  font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.prow-line-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0;
+}
+.prow-price { font-size: 19px; font-weight: 900; line-height: 1; }
+.prow-price.buy  { color: #fca5a5; }
+.prow-price.sell { color: #6ee7b7; }
+.prow-unit { font-size: 10px; color: var(--t3); font-weight: 600; }
+
+/* ═══ PRODOTTI PREMIUM ══════════════════════════════════ */
+.prow {
+  background: linear-gradient(160deg, #111927, #0f1520);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px; margin-bottom: 14px;
+  overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.35);
+}
+.prow-head {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 13px 14px 10px; gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.prow-title { font-size: 17px; font-weight: 900; color: #fff; flex: 1; }
+.prow-badges { display: flex; gap: 6px; flex-shrink: 0; }
+.prow-badge {
+  font-size: 10px; font-weight: 800; padding: 3px 9px;
+  border-radius: 20px; letter-spacing: .02em;
+}
+.prow-badge.buy  { background: rgba(248,113,113,.15); color: #fca5a5; border: 1px solid rgba(248,113,113,.3); }
+.prow-badge.sell { background: rgba(52,211,153,.15);  color: #6ee7b7; border: 1px solid rgba(52,211,153,.3); }
+
+.prow-section-hd {
+  font-size: 9px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: .12em; padding: 7px 14px 6px;
+  display: flex; align-items: center; gap: 5px;
+}
+.prow-section-hd.buy  { color: #fca5a5; background: rgba(248,113,113,.07); border-top: 1px solid rgba(248,113,113,.12); }
+.prow-section-hd.sell { color: #6ee7b7; background: rgba(52,211,153,.07);  border-top: 1px solid rgba(52,211,153,.12); }
+
+.prow-line {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  cursor: pointer; transition: background .1s;
+}
+.prow-line:last-child { border-bottom: none; }
+.prow-line:active { background: rgba(255,255,255,.04); }
+
+.prow-line.best-buy {
+  background: rgba(248,113,113,.06);
+  border-left: 3px solid rgba(248,113,113,.6);
+  padding-left: 11px;
+}
+.prow-line.best-sell {
+  background: rgba(52,211,153,.06);
+  border-left: 3px solid rgba(52,211,153,.6);
+  padding-left: 11px;
+}
+
+.prow-line-left { flex: 1; min-width: 0; }
+.prow-entity {
+  font-size: 14px; font-weight: 800; color: #dce8ff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.prow-line.best-buy  .prow-entity { color: #fca5a5; }
+.prow-line.best-sell .prow-entity { color: #6ee7b7; }
+.prow-loc  { font-size: 10px; color: var(--t2); margin-top: 2px; }
+.prow-note { font-size: 10px; color: #7dd3fc; margin-top: 2px; font-style: italic; }
+
+.prow-line-right {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 2px; flex-shrink: 0;
+}
+.prow-price { font-size: 22px; font-weight: 900; line-height: 1; }
+.prow-price.buy  { color: #fca5a5; }
+.prow-price.sell { color: #6ee7b7; }
+.prow-unit { font-size: 10px; color: var(--t3); font-weight: 600; }
+.prow-best-badge {
+  font-size: 9px; font-weight: 800; color: #fbbf24;
+  background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.25);
+  border-radius: 8px; padding: 1px 6px; margin-top: 2px;
+}
+.prow-delta {
+  font-size: 10px; font-weight: 800; color: #6ee7b7;
+  background: rgba(52,211,153,.1); border-radius: 6px;
+  padding: 1px 5px; margin-top: 2px;
+}
+
+
+/* ═══ PRODOTTI A3 — Blu & Ambra ═══════════════════════ */
+.prow {
+  background: linear-gradient(160deg,#111927,#0f1520);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px; margin-bottom: 14px;
+  overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.35);
+}
+.prow-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 14px 11px; gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.prow-title { font-size: 17px; font-weight: 900; color: #fff; flex: 1; }
+.prow-badges { display: flex; gap: 6px; flex-shrink: 0; }
+.prow-badge { font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; }
+.prow-badge.buy  { background:rgba(96,165,250,.15); color:#60a5fa; border:1px solid rgba(96,165,250,.3); }
+.prow-badge.sell { background:rgba(251,191,36,.15);  color:#fbbf24; border:1px solid rgba(251,191,36,.3); }
+
+.prow-section-hd {
+  font-size: 9px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: .12em; padding: 6px 14px;
+  display: flex; align-items: center; gap: 5px;
+}
+.prow-section-hd.buy  { color:#60a5fa; background:rgba(96,165,250,.07); border-top:1px solid rgba(96,165,250,.1); }
+.prow-section-hd.sell { color:#fbbf24; background:rgba(251,191,36,.07); border-top:1px solid rgba(251,191,36,.1); }
+
+.prow-line {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+  transition: background .1s;
+}
+.prow-line:last-child { border-bottom: none; }
+.prow-line:active { background: rgba(255,255,255,.04); }
+.prow-line.best-buy  { background:rgba(96,165,250,.06); border-left:3px solid rgba(96,165,250,.7); padding-left:11px; }
+.prow-line.best-sell { background:rgba(251,191,36,.06); border-left:3px solid rgba(251,191,36,.7); padding-left:11px; }
+
+.prow-line-left { flex: 1; min-width: 0; }
+.prow-entity { font-size: 15px; font-weight: 800; color: #dce8ff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.prow-line.best-buy  .prow-entity { color: #60a5fa; }
+.prow-line.best-sell .prow-entity { color: #fbbf24; }
+.prow-loc  { font-size: 11px; color: #4a6480; margin-top: 3px; }
+.prow-note { font-size: 11px; color: #93c5fd; margin-top: 3px; font-style: italic; }
+
+.prow-line-right { display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0; }
+.prow-price { font-size: 22px; font-weight: 900; line-height: 1; }
+.prow-price.buy  { color: #60a5fa; }
+.prow-price.sell { color: #fbbf24; }
+.prow-unit { font-size: 10px; color: #4a6480; font-weight: 600; }
+.prow-best-badge {
+  font-size: 9px; font-weight: 800; color: #fbbf24;
+  background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.25);
+  border-radius: 8px; padding: 2px 7px; margin-top: 2px;
+}
+.prow-delta {
+  font-size: 10px; font-weight: 800; color: #34d399;
+  background: rgba(52,211,153,.1); border-radius: 6px;
+  padding: 2px 6px; margin-top: 2px;
+}
+
+
+/* ═══ PRODOTTI B4/P2 — Layout premium ═══════════════════ */
+.prow {
+  background: linear-gradient(160deg,#111927,#0f1520);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px; margin-bottom: 14px;
+  overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+.prow-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 14px 11px; gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.prow-title { font-size: 17px; font-weight: 900; color: #fff; flex: 1; }
+.prow-badges { display: flex; gap: 6px; flex-shrink: 0; }
+.prow-badge { font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; }
+.prow-badge.buy  { background:rgba(96,165,250,.15); color:#60a5fa; border:1px solid rgba(96,165,250,.3); }
+.prow-badge.sell { background:rgba(251,191,36,.15);  color:#fbbf24; border:1px solid rgba(251,191,36,.3); }
+
+.prow-section-hd {
+  font-size: 9px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: .12em; padding: 6px 14px;
+  display: flex; align-items: center; gap: 5px;
+}
+.prow-section-hd.buy  { color:#60a5fa; background:rgba(96,165,250,.07); border-top:1px solid rgba(96,165,250,.1); }
+.prow-section-hd.sell { color:#fbbf24; background:rgba(251,191,36,.07); border-top:1px solid rgba(251,191,36,.1); }
+
+.prow-line {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+  background: rgba(10,18,32,.6); transition: background .1s;
+}
+.prow-line:last-child { border-bottom: none; }
+.prow-line:active { background: rgba(255,255,255,.05); }
+.prow-line.best-buy  { background:rgba(14,26,46,.9); border-left:4px solid #60a5fa; padding-left:10px; }
+.prow-line.best-sell { background:rgba(14,26,46,.9); border-left:4px solid #fbbf24; padding-left:10px; }
+
+.prow-line-left { flex: 1; min-width: 0; }
+.prow-entity { font-size: 16px; font-weight: 900; color: #e0f0ff; letter-spacing:.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.prow-loc  { font-size: 12px; color: #60a5fa; margin-top: 3px; font-weight: 600; }
+.prow-note { font-size: 11px; color: #93c5fd; margin-top: 2px; font-style: italic; }
+
+.prow-line-right { display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0; }
+.prow-price      { font-size: 26px; font-weight: 900; color: #fbbf24; line-height: 1; }
+.prow-price.sell { color: #fbbf24; }
+.prow-unit { font-size: 11px; color: #60a5fa; font-weight: 700; }
+.prow-best-badge {
+  font-size: 9px; font-weight: 800; color: #fbbf24;
+  background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.25);
+  border-radius: 8px; padding: 2px 7px; margin-top: 2px;
+}
+.prow-best-badge.sell-badge { color: #34d399; background: rgba(52,211,153,.1); border-color: rgba(52,211,153,.25); }
+
 </style>
 </head>
 <body style="background:#0b0f16;">
@@ -1571,6 +1814,21 @@ function init() {
   if (saved) {
     try { DB = JSON.parse(saved); } catch(e) {}
   }
+
+  // ── Migrazione v3: deduplicazione automatica prodotti ──
+  if (!localStorage.getItem('tariffe-migration-v3')) {
+    var _seen = {};
+    var _deduped = [];
+    (DB.prodotti || []).forEach(function(p) {
+      var _k = (p.prodotto||'').trim()+'|'+(p.tipo||'')+'|'+(p.entity||'').trim()+'|'+(p.prezzo||0)+'|'+(p.unita||'');
+      if (!_seen[_k]) { _seen[_k] = true; _deduped.push(p); }
+    });
+    DB.prodotti = _deduped;
+    localStorage.setItem('tariffe-migration-v3', '1');
+    localStorage.setItem('archivio-tariffe-v3', JSON.stringify(DB));
+  }
+  // ────────────────────────────────────────────────────────
+
   // Normalizza destinazioni sinonime già in archivio
   DB.trasporti.forEach(function(t){ t.to = normalizeDest(t.to); });
   // Fix prezzi errati da versioni precedenti
@@ -2154,13 +2412,22 @@ function renderViewProdotto(data) {
   if (!data.length)
     return '<div class="empty"><div class="empty-icon">🌾</div><div class="empty-text">Nessun prezzo trovato.</div></div>';
 
-  // Raggruppa per prodotto
   var byProd = {};
   data.forEach(function(p) {
     var k = p.prodotto.trim();
     if (!byProd[k]) byProd[k] = { acquisto: [], vendita: [] };
-    byProd[k][p.tipo] && byProd[k][p.tipo].push(p);
+    if (byProd[k][p.tipo]) byProd[k][p.tipo].push(p);
   });
+
+  function prodEmoji(name) {
+    var n = name.toLowerCase();
+    if (n.indexOf('cippato')   >= 0) return '🪵';
+    if (n.indexOf('segatura')  >= 0) return '🪚';
+    if (n.indexOf('lolla')     >= 0) return '🌾';
+    if (n.indexOf('sfarinato') >= 0) return '🌿';
+    if (n.indexOf('pula')      >= 0) return '🌿';
+    return '🌿';
+  }
 
   var html = '';
   Object.keys(byProd).sort().forEach(function(prod) {
@@ -2169,55 +2436,57 @@ function renderViewProdotto(data) {
 
     html += '<div class="prow">';
     html += '<div class="prow-head">' +
-      '<div class="prow-title">🌿 ' + prod + '</div>' +
+      '<div class="prow-title">' + prodEmoji(prod) + ' ' + prod + '</div>' +
       '<div class="prow-badges">' +
         (buys.length  ? '<span class="prow-badge buy">'  + buys.length  + ' acquist' + (buys.length===1?'o':'i')  + '</span>' : '') +
         (sells.length ? '<span class="prow-badge sell">' + sells.length + ' vendit'  + (sells.length===1?'a':'e') + '</span>' : '') +
       '</div>' +
     '</div>';
 
-    // Sezione acquisto
     if (buys.length) {
       html += '<div class="prow-section-hd buy">💰 ACQUISTO</div>';
       buys.forEach(function(p, i) {
         var isBest = i === 0;
-        var prezzo = p.prezzo.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2});
+        var prezzo = p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2});
         html += '<div class="prow-line' + (isBest ? ' best-buy' : '') + '">' +
           '<div class="prow-line-left">' +
             '<div class="prow-entity">' + (p.entity || '—') + '</div>' +
-            '<div class="prow-loc">' + (p.luogo || '') + '</div>' +
+            '<div class="prow-loc">📍 ' + (p.luogo || '') + '</div>' +
+            (p.note ? '<div class="prow-note">' + p.note + '</div>' : '') +
           '</div>' +
           '<div class="prow-line-right">' +
-            '<span class="prow-price buy">' + prezzo + '</span>' +
+            '<span class="prow-price">' + prezzo + '</span>' +
             '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
+            (isBest ? '<span class="prow-best-badge">★ min</span>' : '') +
           '</div>' +
         '</div>';
       });
     }
 
-    // Sezione vendita
     if (sells.length) {
       html += '<div class="prow-section-hd sell">📈 VENDITA</div>';
       sells.forEach(function(p, i) {
         var isBest = i === 0;
-        var prezzo = p.prezzo.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2});
+        var prezzo = p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2});
         html += '<div class="prow-line' + (isBest ? ' best-sell' : '') + '">' +
           '<div class="prow-line-left">' +
             '<div class="prow-entity">' + (p.entity || '—') + '</div>' +
-            '<div class="prow-loc">' + (p.luogo || '') + '</div>' +
+            '<div class="prow-loc">📍 ' + (p.luogo || '') + '</div>' +
+            (p.note ? '<div class="prow-note">' + p.note + '</div>' : '') +
           '</div>' +
           '<div class="prow-line-right">' +
             '<span class="prow-price sell">' + prezzo + '</span>' +
             '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
+            (isBest ? '<span class="prow-best-badge sell-badge">★ max</span>' : '') +
           '</div>' +
         '</div>';
       });
     }
-
     html += '</div>';
   });
   return html;
 }
+
 
 function refreshProdotti() {
   var container = document.getElementById('prodottiContainer');
