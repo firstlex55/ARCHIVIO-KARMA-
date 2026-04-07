@@ -2,23 +2,24 @@
   "name": "Archivio Tariffe",
   "short_name": "Tariffe",
   "description": "Tariffe trasporti e prezzi prodotti - Pro Trasporti Srl",
-  "start_url": "/index.html",
+  "start_url": "/ARCHIVIO-KARMA-/",
+  "scope": "/ARCHIVIO-KARMA-/",
   "display": "standalone",
   "background_color": "#0b0f16",
   "theme_color": "#0b0f16",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-tariffe.png",
+      "src": "/ARCHIVIO-KARMA-/icon-tariffe.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "icon-tariffe.png",
+      "src": "/ARCHIVIO-KARMA-/icon-tariffe.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ]
 }
