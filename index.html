@@ -1554,7 +1554,7 @@ select.inp{cursor:pointer;}
       <div class="form-group"><label class="form-label">Destinazione</label><input class="inp" id="mtTo" placeholder="es. Verolavecchia (BS)" list="listToModal"><datalist id="listToModal"></datalist></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Trasportatore</label><input class="inp" id="mtCarrier" placeholder="Nome" list="listCarrierModal"><datalist id="listCarrierModal"></datalist></div>
+      <div class="form-group"><label class="form-label">Trasportatore</label><input class="inp" id="mtCarrier" placeholder="Nome" list="listCarrierModal" oninput="autoFillCondizioni()" onchange="autoFillCondizioni()"><datalist id="listCarrierModal"></datalist></div>
       <div class="form-group"><label class="form-label">Condizioni</label><input class="inp" id="mtConditions" placeholder="es. BB 60 gg FM"></div>
     </div>
     <div class="form-row">
@@ -1817,6 +1817,19 @@ function init() {
   var saved = localStorage.getItem('archivio-tariffe-v3');
   if (saved) {
     try { DB = JSON.parse(saved); } catch(e) {}
+  }
+  // Migrazione v4: deduplica prodotti con chiave estesa (include note)
+  if (!localStorage.getItem('tariffe-migration-v4')) {
+    var _seen = {};
+    var _deduped = [];
+    (DB.prodotti || []).forEach(function(p) {
+      var _k = (p.prodotto||'').trim()+'|'+(p.tipo||'')+'|'+(p.entity||'').trim()+'|'+(p.prezzo||0)+'|'+(p.unita||'')+'|'+(p.note||'').trim();
+      if (!_seen[_k]) { _seen[_k] = true; _deduped.push(p); }
+    });
+    DB.prodotti = _deduped;
+    localStorage.setItem('tariffe-migration-v3', '1');
+    localStorage.setItem('tariffe-migration-v4', '1');
+    localStorage.setItem('archivio-tariffe-v3', JSON.stringify(DB));
   }
 
   // ── Migrazione v3: deduplicazione automatica prodotti ──
@@ -2533,6 +2546,27 @@ function refreshProdotti() {
   container.innerHTML = renderViewProdotto(data);
 }
 
+
+function autoFillCondizioni() {
+  var carrier = document.getElementById('mtCarrier').value.trim();
+  if (!carrier) return;
+  var condCount = {};
+  DB.trasporti.forEach(function(t) {
+    if (t.carrier === carrier && t.conditions) {
+      condCount[t.conditions] = (condCount[t.conditions] || 0) + 1;
+    }
+  });
+  var bestCond = '';
+  var bestN = 0;
+  Object.keys(condCount).forEach(function(cond) {
+    if (condCount[cond] > bestN) { bestN = condCount[cond]; bestCond = cond; }
+  });
+  if (bestCond) {
+    var condEl = document.getElementById('mtConditions');
+    if (condEl && !condEl.value) condEl.value = bestCond;
+  }
+}
+
 function openAddTariffaModal() {
   // Popola datalist con valori esistenti
   var _fromSet = {}; DB.trasporti.forEach(function(r){ _fromSet[r.from]=1; }); var froms = Object.keys(_fromSet).sort();
@@ -2952,6 +2986,12 @@ function renderEditPricesList(prices) {
   var html = '';
   prices.forEach(function(p) {
     var globalIdx = DB.trasporti.indexOf(p);
+    if (globalIdx < 0) {
+      for (var _di=0; _di<DB.trasporti.length; _di++) {
+        var _t = DB.trasporti[_di];
+        if (_t && _t.from===p.from && _t.to===p.to && _t.carrier===p.carrier && _t.unit===p.unit) { globalIdx=_di; break; }
+      }
+    }
     var provCh = p.provisional ? 'checked' : '';
     var negCh  = p.negotiable  ? 'checked' : '';
     html += '<div class="erow" data-idx="' + globalIdx + '">' +
