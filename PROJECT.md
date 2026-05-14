@@ -1,200 +1,262 @@
-# ARCHIVIO TARIFFE — PROJECT.md
-*Ultimo aggiornamento: 31/03/2026*
+# ARCHIVIO TARIFFE — Project Documentation
+
+**Repository:** `firstlex55/ARCHIVIO-KARMA-`  
+**URL:** `https://firstlex55.github.io/ARCHIVIO-KARMA-/`  
+**File principale:** `index.html` (219 KB, single-file app)  
+**Versione app:** v1.0.0  
+**Azienda:** Pro Trasporti Srl  
 
 ---
 
-## Identità del progetto
+## Descrizione
 
-**App:** Archivio Tariffe — gestione tariffe trasporti e prezzi prodotti per Pro Trasporti Srl (Ferrara)  
-**File:** `archivio-tariffe.html` — single-file HTML/CSS/JS, hosted su GitHub Pages  
-**URL:** `firstlex55.github.io/archivio-tariffe.html`  
-**Versione:** v1.0.0  
-**localStorage key:** `archivio-tariffe-v3`  
-**Drive Client ID:** `107091966360-vbepp0lmghbck14vv89et30acl34d8a9.apps.googleusercontent.com`  
-**Drive filename:** `archivio-tariffe-data.json` (appDataFolder)
+App HTML single-file per la gestione di tariffe di trasporto e prezzi di prodotti biomassa/legno. Funziona completamente offline tramite localStorage, con sync opzionale su Google Drive. Sviluppata per uso mobile (Android Chrome), ottimizzata per schermo piccolo.
 
 ---
 
-## Dati incorporati (costanti JS globali)
+## File nel Repository
 
-```js
-var PDF_DATA   // 189 prezzi tariffe trasporti REV 03/2026 (Ferrara 16/03/2026)
-               // 18 trasportatori, 63 tratte
-var KARMA_DATA // 41 record Listino KarMa 03/2026
-               // formato: { prodotto, fornitore, provenienza, destinazione,
-               //            acquirente, costoAcquisto, prezzoVendita, unita }
+| File | Descrizione |
+|------|-------------|
+| `index.html` | App completa (single-file) |
+| `manifest.json` | Manifest PWA per installazione come app |
+| `icon-tariffe.png` | Icona 192×192 per schermata home |
+| `icon-tariffe-512.png` | Icona 512×512 per PWA |
+| `PROJECT.md` | Questo file |
+
+---
+
+## Struttura Tecnica
+
+### Stack
+- HTML/CSS/JS vanilla (no framework)
+- ExcelJS via CDN per export Excel
+- Google Drive API (GIS) per sync cloud
+- localStorage come database locale
+- Service Worker inline per PWA offline
+
+### Compatibilità Android (regole critiche)
+- **Zero** arrow functions (`=>`) — usare `function(x){}`
+- **Zero** template literals (`` ` ``) — usare concatenazione `'...' + var`
+- **Zero** `let`/`const` globali — usare `var`
+- **Zero** spread operator (`[...arr]`, `{...obj}`)
+- **Zero** shorthand object properties (`{from, to}`)
+- **Zero** parametri default (`function(x, y='val')`)
+- Verificare sempre con `node --check` dopo modifiche JS
+
+### Struttura HTML
+```
+<head>
+  <meta charset> + PWA meta tags
+  <style> ... </style>           ← CSS (~538 coppie {})
+  <script src="xlsx CDN">        ← libreria Excel
+</head>
+<body>
+  <!-- HTML interfaccia -->
+  <!-- Modal dialogs (15+ modal) -->
+  <script>
+    // JS principale (~136KB)
+    var PDF_DATA = [...];        ← 189 prezzi tariffe
+    var KARMA_DATA = [...];      ← 43 prezzi prodotti
+    // ... tutto il codice app
+    init();
+  </script>
+</body>
 ```
 
-Entrambe dichiarate con `var` (non `const`/`let`) per compatibilità Android Chrome.
+**ATTENZIONE:** Il tag `<script>` del main JS si trova a posizione fissa nel file. Modifiche che inseriscono HTML dentro il blocco `<script>` rompono l'app (il codice appare visibile nella pagina invece di essere eseguito).
 
 ---
 
-## Struttura DB
+## Database (localStorage)
 
-```js
-var DB = {
-  trasporti: [],   // [{from, to, carrier, price, unit, conditions, rev, provisional, negotiable}]
-  prodotti:  [],   // [{prodotto, tipo, entity, luogo, prezzo, unita, note, data}]
-  lastUpdate: null
+**Chiave:** `archivio-tariffe-v3`
+
+```json
+{
+  "trasporti": [...],   // tariffe trasporto
+  "prodotti": [...],    // prezzi prodotti
+  "pdfLoaded": true,
+  "pdfRev": "REV 03/2026",
+  "karmaRev": "KarMa 03/2026",
+  "lastUpdate": null
 }
 ```
 
-**Migrazione automatica in init():** COAP Bientina→Verolavecchia: price=32.5, unit='€/ton'
-
----
-
-## Architettura JS — ordine critico
-
-```
-1.  var PDF_DATA = [...]          ← dati incorporati
-2.  var KARMA_DATA = [...]
-3.  Variabili stato globali       ← var (non let/const) per Android
-    _drivePanel, _isDirty, _dirtyTimer, activePill, editingTratta,
-    activeProdottoFilter, importMode, currentView, currentProdView,
-    _autoSaveTimer, DB, driveAccessToken, driveFileId,
-    DRIVE_CLIENT_ID, DRIVE_SCOPE, DRIVE_FILENAME, APP_VERSION
-4.  Drive panel functions         ← toggleDrivePanel, markDirty, loadGISandRun
-5.  Autocomplete (acSearch, acOpen, acRender, acSelect, acClose)
-6.  Core functions                ← save, refreshAll, refreshStats, refreshProdotti, filterRoutes
-7.  abbrev(), normalizeDest()
-8.  function renderRapida()       ← stub che chiama _renderRapidaPremium
-9.  var _renderRapidaPremium      ← DEVE essere prima di init()
-10. var _renderConfronto
-11. var _renderCarrierPillsPremium
-12. function init()               ← chiamata esplicita dopo
-13. init();                       ← chiamata esplicita
-14. renderViewProdotto, renderViewFornitore, renderViewCliente
-15. openEditSingle, saveEditTratta, deleteTratta, removePriceRow
-16. importTrasporti, importProdotti, reloadBuiltinData, loadKarmaData
-17. handleFileImport              ← usa readAsArrayBuffer + decode_cell
-18. Drive functions               ← handleDriveClick, driveLogin, driveDisconnect,
-                                     setDriveStatus, driveSave, driveLoad, saveAndSync
-19. Export functions              ← openExportModal, doExport, exportToExcel, printA3
-20. Modal prodotto autocomplete   ← mpAcSearch, mpAcOpen, mpAcSelect, mpAcClose,
-                                     mpAcRender, mpAutoFillFromProdotto, mpAutoFillFromEntity
-21. openEntityModal
-22. window.addEventListener("load") ← NO GIS automatico, solo flag visivo Drive
+### Schema record trasporto
+```json
+{
+  "from": "Bientina (PI)",
+  "to": "Verolavecchia (BS)",
+  "carrier": "COAP",
+  "price": 31,
+  "unit": "€/ton",
+  "conditions": "BB 90 gg FM",
+  "provisional": false,
+  "negotiable": false,
+  "note": "",
+  "rev": "REV 03/2026"
+}
 ```
 
-**Regola critica:** `_renderRapidaPremium` definita PRIMA di `init()`. La stub `renderRapida()` controlla `typeof _renderRapidaPremium === 'function'` e delega.
+### Schema record prodotto
+```json
+{
+  "prodotto": "Cippato",
+  "tipo": "acquisto",
+  "entity": "Ardenghi",
+  "luogo": "Dosolo (MN)",
+  "prezzo": 38,
+  "unita": "€/ton",
+  "note": "",
+  "data": "",
+  "source": "karma"
+}
+```
+
+**source** può essere `"karma"` (da KARMA_DATA) o `"manual"` (aggiunto dall'utente).
 
 ---
 
-## Regole di compatibilità Android
+## Migrazioni localStorage
 
-| ❌ Vietato | ✅ Usare invece |
-|---|---|
-| `const`/`let` globali | `var` |
-| `const`/`let` dentro funzioni | `var` |
-| Template literals `` ` `` | concatenazione `'...' + var + '...'` |
-| `readAsBinaryString` | `readAsArrayBuffer` + `Uint8Array` |
-| `sheet_to_json({header:1})` | `decode_range` + `encode_cell` cella per cella |
-| `Object.entries(map)` | `Object.keys(map)` + `map[key]` |
-| Destructuring params `({a,b})=>` | `function(obj){ var a=obj.a, b=obj.b; }` |
-| Arrow functions in forEach | `function(x){...}` |
-| Surrogati unicode `\ud83e\udd1d` | emoji UTF-8 diretti 🤝 |
-| `window.renderRapida = fn` | `var _renderRapidaPremium = fn` (nome privato) |
+| Chiave | Operazione |
+|--------|-----------|
+| `tariffe-migration-v2` | Prima deduplicazione prodotti |
+| `tariffe-migration-v3` | Deduplicazione con chiave base |
+| `tariffe-migration-v4` | Deduplicazione con chiave estesa (include note) — **ULTIMA** |
+
+Le migrazioni si eseguono una sola volta al primo avvio dopo aggiornamento.
 
 ---
 
-## Tab e viste
+## Dati Incorporati
+
+### PDF_DATA — Tariffe Trasporto (REV 03/2026)
+- **189 prezzi** su **63 tratte** per **18 trasportatori**
+- Unità: `€/vg` (viaggio), `€/ton`, `€/mc`
+- Trasportatori: A.L.B. Srl, ALBA, ASCHIERI, AVIO, BRANCHINI, C.L.P., C.M. TRASPORTI, CEVOLO, CIRIONI, COAP, CONECO, CONSAR 2026, FRAULINI, PADANA, RUFFINI, STEGAGNO, UDERZO, UNITRAG
+
+### KARMA_DATA — Prezzi Prodotti (KarMa 03/2026)
+- **43 record** (dopo deduplicazione)
+- Prodotti: Cippato, Segatura, Lolla di Farro, Lolla di Riso, Pula/lolla mix cereali, Sfarinato cereali mix, Sfarinato sorgo/b
+- Include 9 record vendita AGROGI (Segatura, prezzi separati per fornitore)
+
+---
+
+## Funzionalità
 
 ### Tab Trasporti
-- **Vista ⚡ Rapida** — card `.rrow` con chip per trasportatore, best price in ambra (`_renderRapidaPremium`)
-- **Vista 📊 Confronto** — barre proporzionali (`_renderConfronto`)
-- Autocomplete DOM-based partenza/destinazione (`acSearch`, `acOpen`)
-- Pill filtro trasportatori (`_renderCarrierPillsPremium`)
-- Click su card → `jumpToConfronto()` → apre Confronto sulla tratta
-- ✏️ Modifica tratta → `openEditTratta(from, to)` → modal con tutti i trasportatori
-- Click su singolo prezzo → `openEditSingle(idx)` → modal singola riga
+
+**Vista Rapida**
+- Card per tratta con prezzo migliore in evidenza (ambra)
+- Chip per trasportatore con condizioni pagamento e note
+- Sezioni separate: 🚛 €/viaggio · ⚖️ €/tonnellata · 📦 €/metro cubo
+- Pill filtro trasportatori in cima (scrollabile orizzontalmente)
+- Click su chip → modal modifica singola tariffa
+- Click su header card → vista Confronto per quella tratta
+- Autocomplete partenza/destinazione con info contestuale:
+  - Campo DA: mostra n° destinazioni disponibili
+  - Campo A: mostra prezzo minimo disponibile per quella tratta
+
+**Vista Confronto**
+- Barre proporzionali per confronto visivo prezzi
+- Dropdown selezione tratta
+
+**Modal Aggiunta Tariffa (+)**
+- Campi: Da, A, Trasportatore, Condizioni, Prezzo, Unità, Note
+- **Auto-fill condizioni**: scrivendo il trasportatore, le condizioni si compilano automaticamente con quelle usate più spesso per quel trasportatore
+- Se esiste già una tariffa per stessa tratta+trasportatore+unità: modal scelta "➕ Aggiungi tratta" / "✏️ Aggiorna tratta"
+- Campo Note: appare sul chip solo se presente
+
+**Modal Modifica Singola**
+- Aperto toccando il chip del trasportatore
+- Campi: Prezzo, Unità, Condizioni, Note, ⚠️ Da confermare, 🤝 Trattabile
+- In fondo: confronto altri trasportatori stessa tratta (verde=più economico, rosso=più caro)
+
+**Modal Modifica Tratta (✏️ Modifica)**
+- Mostra tutti i trasportatori della tratta con campi modificabili
+- Pulsante ➕ aggiungi trasportatore
 
 ### Tab Prodotti
-- **🌾 Prodotto** — `renderViewProdotto()` — card con sezioni ACQUISTO/VENDITA, best evidenziato
-- **🏭 Fornitore** — `renderViewFornitore()` — entity-card bordo rosso, click → `openEntityModal`
-- **🚜 Cliente** — `renderViewCliente()` — entity-card bordo verde, click → `openEntityModal`
-- Filtro pill prodotti scroll orizzontale (`.ptabs-wrap`)
-- Autocomplete modal aggiunta prodotto (prodotto, entity, luogo con auto-fill)
-- Radio button Acquisto/Vendita
+
+**Vista Prodotto** (default)
+- Card per tipo prodotto con emoji automatica (🪵 Cippato, 🪚 Segatura, 🌾 Lolla, 🌿 altro)
+- Sezioni ACQUISTO (blu) e VENDITA (ambra)
+- Layout B4: fornitore grande, luogo in blu, prezzo in ambra 26px
+- ★ min sul prezzo più basso acquisto
+- Tocca riga → modal modifica prodotto
+
+**Vista Fornitore / Vista Cliente**
+- Raggruppa per entità con avatar iniziali (da implementare)
+- Card con lista prodotti per fornitore/cliente
+
+**Modal Aggiunta Prodotto (+)**
+- Campi: Prodotto, Tipo (acquisto/vendita), Fornitore/Cliente, Luogo, Prezzo, Unità, Note, Data
+
+**Modal Modifica Prodotto**
+- Aperto toccando qualsiasi riga nella vista Prodotti
+- Campi: Prodotto, Prezzo, Unità, Fornitore/Cliente, Luogo, Note
+- Pulsante 🗑 Elimina
 
 ### Tab Import
-- `handleFileImport` → `readAsArrayBuffer` + `XLSX.utils.decode_cell` (matrice completa)
-- `importTrasporti` — auto-detect righe carrier/condizioni/dati (scansione prime 5 righe)
-  - Struttura file: R1=data+carriers, R2=labels, R3=condizioni, R4+=dati
-  - Parser gestisce range "500-550" → prende il primo valore (500)
-- `importProdotti` — crea UN record per ogni riga (acquisto E vendita separati)
-  - Struttura KarMa: PRODOTTO, Fornitore, Provenienza, Destinazione, Acquirente, Costo Acquisto, Prezzo Vendita
-  - record vendita include `note: 'da [fornitore]'` per tracciabilità
-- Pulsante **"🔄 Carica Tariffe REV 03/2026"** → `reloadBuiltinData()` (carica PDF_DATA)
-- Pulsante **"🌾 Carica Listino KarMa 03/2026"** → `loadKarmaData()` (carica KARMA_DATA)
+
+- Import Excel trasporti (auto-detect colonne)
+- Import Excel prodotti
+- 🔄 Ricarica tariffe REV 03/2026 (da PDF_DATA)
+- 🌾 Carica listino KarMa (da KARMA_DATA, idempotente)
+- Export Excel filtrato
+- Gestione Dati: Svuota tutto / Svuota prodotti
+- Import/Export JSON backup
+
+### Google Drive
+- Client ID: `107091966360-vbepp0lmghbck14vv89et30acl34d8a9.apps.googleusercontent.com`
+- GIS caricato lazy al primo click
+- Auto-save debounce 2s dopo ogni modifica
+- Salva/carica in `appDataFolder` (invisibile all'utente)
+- Gestione conflitti con modal scelta locale/drive
 
 ---
 
-## Google Drive
+## Regole di Sviluppo
 
-- GIS caricato **lazy** solo al click del pulsante Drive (no flash bianco su Android)
-- `handleDriveClick()` → `loadGISandRun()` → `driveLogin()`
-- `driveSave(silent)` — cerca file esistente, aggiorna o crea in `appDataFolder`
-- Auto-save debounce 2s dopo ogni `save()` (solo se `driveAccessToken` presente)
-- `driveLoad()` — scarica e merge dati da Drive
-- Token NON persistito — richiede login ad ogni sessione
+### Workflow
+1. L'utente carica il file HTML completo nella chat
+2. Claude applica modifiche chirurgiche al JS/CSS/HTML
+3. Verifica con `node --check` dopo ogni modifica JS
+4. L'utente scarica e carica su GitHub
 
----
+### Punti Critici
+- **Non toccare mai** la struttura dei tag `<script>` — il main JS è tra posizioni fisse nel file
+- **Non inserire HTML** dentro il blocco `<script>` (causa il bug del codice visibile)
+- **renderViewProdotto** usa `DB.prodotti.indexOf(p)` con fallback by-value
+- **renderEditPricesList** idem per `DB.trasporti.indexOf(p)`
+- **init()** chiamata esplicita alla fine del JS (non dentro window.onload)
+- **KARMA_DATA** si ricarica automaticamente all'avvio se `DB.karmaRev` non corrisponde
 
-## CSS palette
-
-```css
---bg:#0b0f16; --s1:#111927; --s2:#0f1520; --s3:#1a2436;
---green:#34d399; --amber:#fb923c; --red:#f87171; --blue:#60a5fa;
---t1:#f0f6ff; --t2:#8ba3c0; --t3:#4a6080;
---b1:rgba(255,255,255,.08);
-```
-
-### Componenti CSS chiave
-`.rrow`, `.chip`, `.chips`, `.rrow-best`, `.rrow-head`, `.rrow-route`  
-`.price-row`, `.entity-card.forn/.clie`, `.prow`, `.prow-head`, `.prow-section-hd`  
-`.erow`, `.erow-prov-label`, `.pvbtn`, `.pvbtn.pv-prodotto/fornitore/cliente.active`  
-`.drive-panel`, `.dp-btn`, `.mp-ac`, `.ac-dropdown`, `.entity-modal-row`  
-`.prodotti-tab`, `.ptabs-wrap`, `.modal-backdrop`, `.modal`
+### CSS Chiavi
+- `--amber`: colore primario ambra (#fb923c)
+- `--green`: verde (#34d399)  
+- `--t2`: testo secondario
+- `.prow-*`: classi card prodotti
+- `.chip-*`: classi chip trasportatori in vista rapida
+- `.rrow-*`: classi card tratta
 
 ---
 
-## Modal attivi
+## Feature da Implementare (Backlog)
 
-| ID | Funzione apertura | Descrizione |
-|---|---|---|
-| `modalEditTratta` | `openEditTratta(from,to)` / `openEditSingle(idx)` | Modifica prezzi tratta |
-| `modalProdotto` | `openAddProdottoModal(prodotto?)` | Aggiungi prezzo prodotto |
-| `modalEntity` | `openEntityModal(name, tipo)` | Dettaglio fornitore/cliente |
-| `modalExport` | `openExportModal()` | Export Excel/Stampa A3 |
-| `drivePanel` | `toggleDrivePanel()` | Pannello Google Drive |
+- [ ] Avatar iniziali colorati per trasportatori (stile B preferito — quadrato arrotondato con bordo)
+- [ ] Campo Cliente separato nei record prodotto (oltre al campo entity)
+- [ ] Vista Fornitore → Cliente con freccia nella lista prodotti
+- [ ] Storico prezzi (confronto revisioni)
+- [ ] Icona PWA che funziona su Android (problema: Chrome non legge manifest da GitHub Pages correttamente)
 
 ---
 
-## Stato audit (31/03/2026)
+## Note Sessioni Precedenti
 
-- ✅ Zero funzioni mancanti (24+ funzioni critiche verificate)
-- ✅ Zero duplicati
-- ✅ `_renderRapidaPremium` prima di `init()`
-- ✅ CSS bilanciato
-- ✅ Sintassi JS pulita (Node --check)
-- ✅ Runtime test zero crash
-- ✅ 188 prezzi tariffe (1 anomalia risolta: CIRIONI range 500-550→500)
-- ✅ 54 prezzi KarMa senza anomalie
-
----
-
-## File Excel di riferimento
-
-| File | Struttura |
-|---|---|
-| `Tariffe_trasporti_2026_rev_03_16_03_2026.xlsx` | R1=carriers, R2=labels, R3=condizioni, R4+=dati, 63 tratte × 18 carrier |
-| `Listino_KarMa_03_2026.xlsx` | PRODOTTO/Fornitore/Provenienza/Destinazione/Acquirente/CostoAcquisto/PrezzoVendita |
-
----
-
-## Pending
-
-- [ ] Aggiornamento dati quando arriva REV 04/2026 (sostituire PDF_DATA e KARMA_DATA)
-- [ ] Test modifica singola tratta su Android
-- [ ] Verifica funzionamento Drive su mobile dopo lazy-load GIS
-- [ ] Gestione prezzi con unità miste per stesso fornitore (€/mc + €/ton)
+- **Bug ricorrente**: HTML del modal finisce dentro `<script>` tag → codice visibile nella pagina. Causa: inserimento di HTML vicino al punto di apertura del tag script. Fix: sempre ricostruire dal file originale caricato dall'utente.
+- **Doppioni prodotti**: causati da caricamento KarMa multiplo senza deduplicazione. Risolto con migrazione v4.
+- **Arrow functions Android**: `=>` causa crash su Android vecchio. Convertire sempre in `function(){}`.
+- **Drive Client ID** da non modificare: `107091966360-vbepp0lmghbck14vv89et30acl34d8a9.apps.googleusercontent.com`
