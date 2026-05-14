@@ -164,38 +164,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .cdelta.pos{color:var(--red);}
 .cinfo{font-size:10px;color:var(--t3);margin:-3px 0 5px 108px;}
 
-/* PRODOTTI */
-.prow{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b1);border-left:3px solid var(--green);border-radius:var(--r);margin-bottom:12px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.3);}
-.prow-head{display:flex;align-items:flex-start;justify-content:space-between;padding:11px 13px 8px;gap:8px;}
-.prow-title{font-size:16px;font-weight:900;color:#fff;flex:1;letter-spacing:.01em;}
-.prow-bests{display:flex;gap:6px;flex-shrink:0;}
-.prow-best{display:flex;flex-direction:column;align-items:center;border-radius:8px;padding:5px 9px;text-align:center;min-width:60px;}
-.prow-best.buy{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);}
-.prow-best.sell{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);}
-.prow-best-label{font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1px;}
-.prow-best.buy .prow-best-label{color:#fca5a5;}
-.prow-best.sell .prow-best-label{color:#6ee7b7;}
-.prow-best-price{font-size:15px;font-weight:900;color:#fff;line-height:1;}
-.prow-best-who{font-size:8px;color:#6a85aa;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62px;}
-.prow-section-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--t2);padding:5px 14px;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.18);}
-
-/* PCHIPS — griglia 2 colonne prodotti */
-.pchips{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:5px 11px 12px;}
-.pchip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:9px 10px;display:flex;flex-direction:column;gap:3px;}
-.pchip.best-buy{background:rgba(248,113,113,.10);border-color:rgba(248,113,113,.35);}
-.pchip.best-sell{background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.35);}
-/* Nome fornitore/cliente — ciano brillante, leggibilissimo */
-.pchip-who{font-size:10px;font-weight:900;color:#38bdf8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.04em;}
-.pchip.best-buy .pchip-who{color:#fca5a5;}
-.pchip.best-sell .pchip-who{color:#6ee7b7;}
-.pchip-price-row{display:flex;align-items:baseline;gap:3px;}
-.pchip-val{font-size:18px;font-weight:900;color:#e2ecff;line-height:1;}
-.pchip.best-buy .pchip-val{color:#f87171;}
-.pchip.best-sell .pchip-val{color:#34d399;}
-.pchip-unit{font-size:10px;font-weight:600;color:#4a6080;}
-.pchip.best-buy .pchip-unit{color:rgba(248,113,113,.6);}
-.pchip.best-sell .pchip-unit{color:rgba(52,211,153,.6);}
-.pchip-loc{font-size:9px;color:#4a6080;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* PRODOTTI — vedi blocco premium più avanti */
 
 /* CARDS */
 .card{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b1);border-radius:var(--r);padding:14px;margin-bottom:12px;}
@@ -276,79 +245,6 @@ select.inp{cursor:pointer;}
 
 .hidden{display:none!important;}
 .search-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
-
-/* ═══ PRODOTTI ═══════════════════════════════ */
-.prow {
-  background: linear-gradient(160deg, var(--s1) 0%, var(--s2) 100%);
-  border: 1px solid var(--b1); border-left: 3px solid var(--green);
-  border-radius: 12px; margin-bottom: 10px; overflow: hidden;
-  box-shadow: 0 3px 12px rgba(0,0,0,.25);
-}
-.prow-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 11px 14px 9px; gap: 8px;
-}
-.prow-title {
-  font-size: 15px; font-weight: 900; color: #fff;
-  flex: 1; letter-spacing: .01em;
-}
-.prow-badges { display: flex; gap: 6px; flex-shrink: 0; }
-.pbadge {
-  display: flex; flex-direction: column; align-items: center;
-  border-radius: 8px; padding: 4px 10px; min-width: 56px; text-align: center;
-}
-.pbadge.buy  { background: rgba(248,113,113,.12); border: 1px solid rgba(248,113,113,.3); }
-.pbadge.sell { background: rgba(52,211,153,.12);  border: 1px solid rgba(52,211,153,.3); }
-.pbadge-lbl { font-size: 8px; font-weight: 800; letter-spacing:.08em; margin-bottom:1px; }
-.pbadge.buy  .pbadge-lbl { color: #fca5a5; }
-.pbadge.sell .pbadge-lbl { color: #86efac; }
-.pbadge-val { font-size: 14px; font-weight: 900; color: #fff; line-height:1; }
-
-/* Sezione acquisto/vendita */
-.psec-label {
-  font-size: 9px; font-weight: 800; text-transform: uppercase;
-  letter-spacing: .1em; color: var(--t2);
-  padding: 5px 14px 4px;
-  border-top: 1px solid var(--b1); background: rgba(0,0,0,.15);
-}
-
-/* Riga singola fornitore */
-.prow-line {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 14px; border-top: 1px solid rgba(255,255,255,.04);
-  min-height: 38px;
-}
-.prow-line.best-buy  { background: rgba(248,113,113,.07); border-left: 2px solid rgba(248,113,113,.5); }
-.prow-line.best-sell { background: rgba(52,211,153,.07);  border-left: 2px solid rgba(52,211,153,.5); }
-
-/* Nome fornitore/cliente — azzurro brillante */
-
-.prl-left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.prl-who { font-size: 13px; font-weight: 800; color: #e8f0ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.prow-line.best-buy  .prl-who { color: #fca5a5; font-weight: 900; }
-.prow-line.best-sell .prl-who { color: #86efac; font-weight: 900; }
-.prl-note { font-size: 9px; color: #5a7898; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-
-/* Prezzo */
-.prl-price {
-  font-size: 15px; font-weight: 900; color: #ffffff;
-  flex-shrink: 0; display: flex; align-items: baseline; gap: 2px;
-}
-.prow-line.best-buy  .prl-price { color: #fca5a5; }
-.prow-line.best-sell .prl-price { color: #86efac; }
-.prl-unit {
-  font-size: 10px; font-weight: 600; color: #6a87a8; margin-left: 2px;
-}
-
-/* Luogo */
-.prl-loc {
-  font-size: 10px; font-weight: 500; color: #6a87a8;
-  flex-shrink: 0; text-align: right;
-  max-width: 105px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.chip-cond { font-size: 9px; color: #4a6070; margin-left: 8px; flex-shrink: 0; }
 
 /* ═══ PRODOTTI VIEW SWITCHER ═══════════════ */
 .prod-view-wrap {
@@ -820,66 +716,6 @@ select.inp{cursor:pointer;}
 }
 
 
-/* ═══ VISTA PRODOTTO — CARD PREMIUM ══════════════════ */
-.prow {
-  background: linear-gradient(160deg, #111927 0%, #0f1520 100%);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 14px; margin-bottom: 12px; overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,.3);
-}
-.prow-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 13px 16px 11px;
-  background: rgba(0,0,0,.2);
-  border-bottom: 1px solid rgba(255,255,255,.06);
-}
-.prow-title {
-  font-size: 16px; font-weight: 900; color: #f0f6ff;
-  letter-spacing: .01em;
-}
-.prow-badges { display: flex; gap: 5px; }
-.prow-badge {
-  font-size: 9px; font-weight: 800; padding: 3px 8px;
-  border-radius: 20px; letter-spacing: .04em;
-}
-.prow-badge.buy  { background: rgba(248,113,113,.15); color: #fca5a5; border: 1px solid rgba(248,113,113,.25); }
-.prow-badge.sell { background: rgba(52,211,153,.12);  color: #86efac; border: 1px solid rgba(52,211,153,.22); }
-
-.prow-section-hd {
-  font-size: 9px; font-weight: 800; letter-spacing: .1em;
-  text-transform: uppercase; padding: 6px 16px 4px;
-  border-top: 1px solid rgba(255,255,255,.05);
-}
-.prow-section-hd.buy  { color: #f87171; background: rgba(248,113,113,.06); }
-.prow-section-hd.sell { color: #34d399; background: rgba(52,211,153,.06); }
-
-.prow-line {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 16px; border-top: 1px solid rgba(255,255,255,.04);
-  gap: 10px;
-}
-.prow-line.best-buy  { background: rgba(248,113,113,.06); border-left: 2px solid rgba(248,113,113,.4); padding-left: 14px; }
-.prow-line.best-sell { background: rgba(52,211,153,.06);  border-left: 2px solid rgba(52,211,153,.4);  padding-left: 14px; }
-.prow-line-left { flex: 1; min-width: 0; }
-.prow-entity {
-  font-size: 13px; font-weight: 700; color: #dce8ff;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.prow-loc {
-  font-size: 11px; color: #4a6080; margin-top: 1px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.prow-line-right {
-  display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0;
-}
-.prow-price {
-  font-size: 18px; font-weight: 900; line-height: 1;
-}
-.prow-price.buy  { color: #fca5a5; }
-.prow-price.sell { color: #86efac; }
-.prow-unit { font-size: 10px; font-weight: 600; color: #4a6480; }
-
-
 /* ═══ MODAL PRODOTTO — AUTOCOMPLETE ══════════════════ */
 .mp-ac {
   position: absolute; top: calc(100% + 2px); left: 0; right: 0;
@@ -1096,6 +932,9 @@ select.inp{cursor:pointer;}
   margin-top: 2px; display: flex; align-items: center; gap: 3px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+.chip-date {
+  font-size: 9px; color: #4a6480; font-weight: 500; margin-top: 2px;
+}
 
 .prow-section-hd {
   font-size: 9px; font-weight: 900; text-transform: uppercase;
@@ -1147,146 +986,6 @@ select.inp{cursor:pointer;}
 .prow-price.buy  { color: #fca5a5; }
 .prow-price.sell { color: #6ee7b7; }
 .prow-unit { font-size: 10px; color: var(--t3); font-weight: 600; }
-
-/* ═══ PRODOTTI PREMIUM ══════════════════════════════════ */
-.prow {
-  background: linear-gradient(160deg, #111927, #0f1520);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 16px; margin-bottom: 14px;
-  overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.35);
-}
-.prow-head {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  padding: 13px 14px 10px; gap: 8px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
-}
-.prow-title { font-size: 17px; font-weight: 900; color: #fff; flex: 1; }
-.prow-badges { display: flex; gap: 6px; flex-shrink: 0; }
-.prow-badge {
-  font-size: 10px; font-weight: 800; padding: 3px 9px;
-  border-radius: 20px; letter-spacing: .02em;
-}
-.prow-badge.buy  { background: rgba(248,113,113,.15); color: #fca5a5; border: 1px solid rgba(248,113,113,.3); }
-.prow-badge.sell { background: rgba(52,211,153,.15);  color: #6ee7b7; border: 1px solid rgba(52,211,153,.3); }
-
-.prow-section-hd {
-  font-size: 9px; font-weight: 900; text-transform: uppercase;
-  letter-spacing: .12em; padding: 7px 14px 6px;
-  display: flex; align-items: center; gap: 5px;
-}
-.prow-section-hd.buy  { color: #fca5a5; background: rgba(248,113,113,.07); border-top: 1px solid rgba(248,113,113,.12); }
-.prow-section-hd.sell { color: #6ee7b7; background: rgba(52,211,153,.07);  border-top: 1px solid rgba(52,211,153,.12); }
-
-.prow-line {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 14px;
-  border-bottom: 1px solid rgba(255,255,255,.04);
-  cursor: pointer; transition: background .1s;
-}
-.prow-line:last-child { border-bottom: none; }
-.prow-line:active { background: rgba(255,255,255,.04); }
-
-.prow-line.best-buy {
-  background: rgba(248,113,113,.06);
-  border-left: 3px solid rgba(248,113,113,.6);
-  padding-left: 11px;
-}
-.prow-line.best-sell {
-  background: rgba(52,211,153,.06);
-  border-left: 3px solid rgba(52,211,153,.6);
-  padding-left: 11px;
-}
-
-.prow-line-left { flex: 1; min-width: 0; }
-.prow-entity {
-  font-size: 14px; font-weight: 800; color: #dce8ff;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.prow-line.best-buy  .prow-entity { color: #fca5a5; }
-.prow-line.best-sell .prow-entity { color: #6ee7b7; }
-.prow-loc  { font-size: 10px; color: var(--t2); margin-top: 2px; }
-.prow-note { font-size: 10px; color: #7dd3fc; margin-top: 2px; font-style: italic; }
-
-.prow-line-right {
-  display: flex; flex-direction: column;
-  align-items: flex-end; gap: 2px; flex-shrink: 0;
-}
-.prow-price { font-size: 22px; font-weight: 900; line-height: 1; }
-.prow-price.buy  { color: #fca5a5; }
-.prow-price.sell { color: #6ee7b7; }
-.prow-unit { font-size: 10px; color: var(--t3); font-weight: 600; }
-.prow-best-badge {
-  font-size: 9px; font-weight: 800; color: #fbbf24;
-  background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.25);
-  border-radius: 8px; padding: 1px 6px; margin-top: 2px;
-}
-.prow-delta {
-  font-size: 10px; font-weight: 800; color: #6ee7b7;
-  background: rgba(52,211,153,.1); border-radius: 6px;
-  padding: 1px 5px; margin-top: 2px;
-}
-
-
-/* ═══ PRODOTTI A3 — Blu & Ambra ═══════════════════════ */
-.prow {
-  background: linear-gradient(160deg,#111927,#0f1520);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 16px; margin-bottom: 14px;
-  overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.35);
-}
-.prow-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 13px 14px 11px; gap: 8px;
-  border-bottom: 1px solid rgba(255,255,255,.07);
-}
-.prow-title { font-size: 17px; font-weight: 900; color: #fff; flex: 1; }
-.prow-badges { display: flex; gap: 6px; flex-shrink: 0; }
-.prow-badge { font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; }
-.prow-badge.buy  { background:rgba(96,165,250,.15); color:#60a5fa; border:1px solid rgba(96,165,250,.3); }
-.prow-badge.sell { background:rgba(251,191,36,.15);  color:#fbbf24; border:1px solid rgba(251,191,36,.3); }
-
-.prow-section-hd {
-  font-size: 9px; font-weight: 900; text-transform: uppercase;
-  letter-spacing: .12em; padding: 6px 14px;
-  display: flex; align-items: center; gap: 5px;
-}
-.prow-section-hd.buy  { color:#60a5fa; background:rgba(96,165,250,.07); border-top:1px solid rgba(96,165,250,.1); }
-.prow-section-hd.sell { color:#fbbf24; background:rgba(251,191,36,.07); border-top:1px solid rgba(251,191,36,.1); }
-
-.prow-line {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
-  transition: background .1s;
-}
-.prow-line:last-child { border-bottom: none; }
-.prow-line:active { background: rgba(255,255,255,.04); }
-.prow-line.best-buy  { background:rgba(96,165,250,.06); border-left:3px solid rgba(96,165,250,.7); padding-left:11px; }
-.prow-line.best-sell { background:rgba(251,191,36,.06); border-left:3px solid rgba(251,191,36,.7); padding-left:11px; }
-
-.prow-line-left { flex: 1; min-width: 0; }
-.prow-entity { font-size: 15px; font-weight: 800; color: #dce8ff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.prow-line.best-buy  .prow-entity { color: #60a5fa; }
-.prow-line.best-sell .prow-entity { color: #fbbf24; }
-.prow-loc  { font-size: 11px; color: #4a6480; margin-top: 3px; }
-.prow-note { font-size: 11px; color: #93c5fd; margin-top: 3px; font-style: italic; }
-
-.prow-line-right { display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0; }
-.prow-price { font-size: 22px; font-weight: 900; line-height: 1; }
-.prow-price.buy  { color: #60a5fa; }
-.prow-price.sell { color: #fbbf24; }
-.prow-unit { font-size: 10px; color: #4a6480; font-weight: 600; }
-.prow-best-badge {
-  font-size: 9px; font-weight: 800; color: #fbbf24;
-  background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.25);
-  border-radius: 8px; padding: 2px 7px; margin-top: 2px;
-}
-.prow-delta {
-  font-size: 10px; font-weight: 800; color: #34d399;
-  background: rgba(52,211,153,.1); border-radius: 6px;
-  padding: 2px 6px; margin-top: 2px;
-}
-
 
 /* ═══ PRODOTTI B4/P2 — Layout premium ═══════════════════ */
 .prow {
@@ -1406,13 +1105,13 @@ select.inp{cursor:pointer;}
     <div class="search-card-top">
       <div class="sf" style="position:relative;overflow:visible;">
         <span class="sf-icon">📍</span><span class="sf-label">Da</span>
-        <input class="sf-input" id="searchFrom" placeholder="Scrivi partenza..." oninput="acSearch('From')" onfocus="acOpen('From')" onblur="setTimeout(function(){acClose('From')},200)" autocomplete="off">
+        <input class="sf-input" id="searchFrom" placeholder="Partenza o trasportatore..." oninput="acSearch('From')" onfocus="acOpen('From')" onblur="setTimeout(function(){acClose('From')},200)" autocomplete="off">
         <div class="ac-dropdown hidden" id="acFrom"></div>
       </div>
       <div class="sf-connector"><div class="sf-arrow">↓</div></div>
       <div class="sf" style="position:relative;overflow:visible;">
         <span class="sf-icon">🎯</span><span class="sf-label">A</span>
-        <input class="sf-input" id="searchTo" placeholder="Scrivi destinazione..." oninput="acSearch('To')" onfocus="acOpen('To')" onblur="setTimeout(function(){acClose('To')},200)" autocomplete="off">
+        <input class="sf-input" id="searchTo" placeholder="Destinazione o trasportatore..." oninput="acSearch('To')" onfocus="acOpen('To')" onblur="setTimeout(function(){acClose('To')},200)" autocomplete="off">
         <div class="ac-dropdown hidden" id="acTo"></div>
       </div>
     </div>
@@ -1504,7 +1203,8 @@ select.inp{cursor:pointer;}
         <input type="file" id="jsonImportInput" accept=".json" class="hidden" onchange="loadJSON(event)">
         <button class="btn btn-primary" onclick="reloadBuiltinData()" style="width:100%;margin-top:8px;background:linear-gradient(135deg,#059669,#34d399);color:#0b0f16;font-weight:900;">🔄 Carica Tariffe REV 03/2026 (incorporato)</button>
         <button class="btn btn-secondary btn-sm" onclick="exportFilteredExcel()">⬇️ Excel</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmClear()">🗑 Svuota</button>
+        <button class="btn btn-secondary btn-sm" onclick="clearProdottiManuali()">🗑 Svuota manuali</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmClear()">🗑 Svuota tutto</button>
       </div>
     </div>
   </div>
@@ -1568,6 +1268,10 @@ select.inp{cursor:pointer;}
     <div class="form-group" style="margin-bottom:12px;">
       <label class="form-label">Note</label>
       <input class="inp" id="mtNote" placeholder="es. zona limitrofa, supplemento...">
+    </div>
+    <div class="form-group" style="margin-bottom:12px;">
+      <label class="form-label">&#128197; Data tariffa</label>
+      <input class="inp" id="mtData" type="date">
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('modalTariffa')">Annulla</button>
@@ -1768,6 +1472,21 @@ select.inp{cursor:pointer;}
 
 // ── Versione app ──
 var APP_VERSION = "1.0.0";
+
+// ── Utilità data ──
+function formatData(d) {
+  if (!d) return '';
+  // Supporta YYYY-MM-DD
+  var parts = d.split('-');
+  if (parts.length === 3) return parts[2] + '/' + parts[1] + '/' + parts[0].slice(2);
+  return d;
+}
+function isDataVecchia(d, giorni) {
+  if (!d) return false;
+  giorni = giorni || 60;
+  var ms = new Date() - new Date(d);
+  return ms > giorni * 24 * 60 * 60 * 1000;
+}
 
 // ── Variabili di stato globali ──
 var _drivePanel = false;
@@ -1991,9 +1710,15 @@ function filterRoutes() {
   var toQ = document.getElementById('searchTo').value.trim().toLowerCase();
   var _sc = document.getElementById('searchCarrier'); var carrier = activePill || (_sc ? _sc.value : '');
   var routes = getUniqueRoutes();
-  if(fromQ) routes = routes.filter(function(r){ return r.from.toLowerCase().includes(fromQ); });
-  if(toQ) routes = routes.filter(function(r){ return r.to.toLowerCase().includes(toQ); });
-  if(carrier) routes = routes.filter(function(r){ return r.prices.some(function(p){ return p.carrier === carrier; }); });
+  if (fromQ) routes = routes.filter(function(r){
+    return r.from.toLowerCase().includes(fromQ) ||
+           r.prices.some(function(p){ return p.carrier.toLowerCase().includes(fromQ); });
+  });
+  if (toQ) routes = routes.filter(function(r){
+    return r.to.toLowerCase().includes(toQ) ||
+           r.prices.some(function(p){ return p.carrier.toLowerCase().includes(toQ); });
+  });
+  if (carrier) routes = routes.filter(function(r){ return r.prices.some(function(p){ return p.carrier === carrier; }); });
   renderRapida(routes, carrier);
   if(currentView==='confronto') populateConfrontoSelect(routes);
 }
@@ -2465,16 +2190,29 @@ function renderViewProdotto(data) {
       buys.forEach(function(p, i) {
         var isBest = i === 0;
         var prezzo = p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2});
-        html += '<div class="prow-line' + (isBest ? ' best-buy' : '') + '">' +
+        var globalIdx = DB.prodotti.indexOf(p);
+        if (globalIdx < 0) {
+          for (var _di=0; _di<DB.prodotti.length; _di++) {
+            var _pp = DB.prodotti[_di];
+            if (_pp && _pp.prodotto===p.prodotto && _pp.entity===p.entity && _pp.prezzo===p.prezzo && _pp.tipo===p.tipo) { globalIdx=_di; break; }
+          }
+        }
+        var dataStr = p.data ? '<div class="prow-date">📅 ' + formatData(p.data) + '</div>' : '';
+        html += '<div class="prow-line' + (isBest ? ' best-buy' : '') + '" onclick="openEditProdotto(' + globalIdx + ')" style="cursor:pointer;">' +
           '<div class="prow-line-left">' +
             '<div class="prow-entity">' + (p.entity || '—') + '</div>' +
             '<div class="prow-loc">📍 ' + (p.luogo || '') + '</div>' +
             (p.note ? '<div class="prow-note">' + p.note + '</div>' : '') +
           '</div>' +
           '<div class="prow-line-right">' +
-            '<span class="prow-price">' + prezzo + '</span>' +
-            '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
-            (isBest ? '<span class="prow-best-badge">★ min</span>' : '') +
+            '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">' +
+              '<div style="display:flex;align-items:baseline;gap:2px;">' +
+                '<span class="prow-price">' + prezzo + '</span>' +
+                '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
+              '</div>' +
+              dataStr +
+              (isBest ? '<span class="prow-best-badge">★ min</span>' : '') +
+            '</div>' +
           '</div>' +
         '</div>';
       });
@@ -2485,16 +2223,29 @@ function renderViewProdotto(data) {
       sells.forEach(function(p, i) {
         var isBest = i === 0;
         var prezzo = p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2});
-        html += '<div class="prow-line' + (isBest ? ' best-sell' : '') + '">' +
+        var globalIdx = DB.prodotti.indexOf(p);
+        if (globalIdx < 0) {
+          for (var _di=0; _di<DB.prodotti.length; _di++) {
+            var _pp = DB.prodotti[_di];
+            if (_pp && _pp.prodotto===p.prodotto && _pp.entity===p.entity && _pp.prezzo===p.prezzo && _pp.tipo===p.tipo) { globalIdx=_di; break; }
+          }
+        }
+        var dataStr = p.data ? '<div class="prow-date">📅 ' + formatData(p.data) + '</div>' : '';
+        html += '<div class="prow-line' + (isBest ? ' best-sell' : '') + '" onclick="openEditProdotto(' + globalIdx + ')" style="cursor:pointer;">' +
           '<div class="prow-line-left">' +
             '<div class="prow-entity">' + (p.entity || '—') + '</div>' +
             '<div class="prow-loc">📍 ' + (p.luogo || '') + '</div>' +
             (p.note ? '<div class="prow-note">' + p.note + '</div>' : '') +
           '</div>' +
           '<div class="prow-line-right">' +
-            '<span class="prow-price sell">' + prezzo + '</span>' +
-            '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
-            (isBest ? '<span class="prow-best-badge sell-badge">★ max</span>' : '') +
+            '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">' +
+              '<div style="display:flex;align-items:baseline;gap:2px;">' +
+                '<span class="prow-price sell">' + prezzo + '</span>' +
+                '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
+              '</div>' +
+              dataStr +
+              (isBest ? '<span class="prow-best-badge sell-badge">★ max</span>' : '') +
+            '</div>' +
           '</div>' +
         '</div>';
       });
@@ -2583,6 +2334,7 @@ function openAddTariffaModal() {
   document.getElementById('mtPrice').value = '';
   document.getElementById('mtUnit').value = '€/vg';
   document.getElementById('mtProvisional').checked = false;
+  var mtD = document.getElementById('mtData'); if (mtD) mtD.value = '';
   document.getElementById('modalTariffa').classList.remove('hidden');
 }
 
@@ -2607,39 +2359,19 @@ function saveTariffa() {
     if (_t.from===from && _t.to===to && _t.carrier===carrier && _t.unit===unit) { existing=_t; break; }
   }
   var noteVal = document.getElementById('mtNote') ? document.getElementById('mtNote').value.trim() : '';
+  var dataVal = document.getElementById('mtData') ? document.getElementById('mtData').value : '';
   if (existing) {
     var _ex = existing;
-    var _nr = {from:from,to:to,carrier:carrier,price:price,unit:unit,conditions:conditions,provisional:provisional,note:noteVal,rev:'Manuale'};
+    var _nr = {from:from,to:to,carrier:carrier,price:price,unit:unit,conditions:conditions,provisional:provisional,note:noteVal,data:dataVal,rev:'Manuale'};
     document.getElementById('choiceCarrier').textContent = carrier;
     document.getElementById('choiceRoute').textContent = from + ' → ' + to;
     document.getElementById('choiceOldPrice').textContent = 'Prezzo attuale: ' + _ex.price + ' ' + _ex.unit;
     document.getElementById('modalTariffaChoice').classList.remove('hidden');
     document.getElementById('btnAggiungi').onclick = function(){ DB.trasporti.push(_nr); save(); refreshAll(); closeModal('modalTariffaChoice'); closeModal('modalTariffa'); showToast('✅ Tariffa aggiunta', 'ok'); };
-    document.getElementById('btnAggiorna').onclick = function(){ _ex.price=price;_ex.unit=unit;_ex.conditions=conditions;_ex.provisional=provisional;_ex.note=noteVal;_ex.rev='Manuale'; save(); refreshAll(); closeModal('modalTariffaChoice'); closeModal('modalTariffa'); showToast('✏️ Tariffa aggiornata', 'ok'); };
+    document.getElementById('btnAggiorna').onclick = function(){ _ex.price=price;_ex.unit=unit;_ex.conditions=conditions;_ex.provisional=provisional;_ex.note=noteVal;_ex.data=dataVal;_ex.rev='Manuale'; save(); refreshAll(); closeModal('modalTariffaChoice'); closeModal('modalTariffa'); showToast('✏️ Tariffa aggiornata', 'ok'); };
     return;
-    // Mostra modal scelta
-    var _ex = existing;
-    document.getElementById('choiceCarrier').textContent = carrier;
-    document.getElementById('choiceRoute').textContent = from + ' → ' + to;
-    document.getElementById('choiceOldPrice').textContent = 'Prezzo attuale: ' + _ex.price.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}) + ' ' + _ex.unit;
-    document.getElementById('modalTariffaChoice').classList.remove('hidden');
-    document.getElementById('btnAggiungi').onclick = function() {
-      DB.trasporti.push({from:from, to:to, carrier:carrier, price:price, unit:unit, conditions:conditions, provisional:provisional, note:noteVal, rev:'Manuale'});
-      save(); refreshAll();
-      closeModal('modalTariffaChoice'); closeModal('modalTariffa');
-      showToast('✅ Nuova tariffa aggiunta', 'ok');
-    };
-    document.getElementById('btnAggiorna').onclick = function() {
-      _ex.price = price; _ex.unit = unit;
-      _ex.conditions = conditions; _ex.provisional = provisional;
-      _ex.note = noteVal; _ex.rev = 'Manuale';
-      save(); refreshAll();
-      closeModal('modalTariffaChoice'); closeModal('modalTariffa');
-      showToast('✏️ Tariffa aggiornata', 'ok');
-    };
-    return; // non salva ancora
   } else {
-    DB.trasporti.push({from:from, to:to, carrier:carrier, price:price, unit:unit, conditions:conditions, provisional:provisional, note:noteVal, rev:'Manuale'});
+    DB.trasporti.push({from:from, to:to, carrier:carrier, price:price, unit:unit, conditions:conditions, provisional:provisional, note:noteVal, data:dataVal, rev:'Manuale'});
     showToast(provisional ? '⚠️ Tariffa aggiunta (da confermare)' : '✅ Tariffa aggiunta', provisional?'warn':'ok');
   }
   save(); refreshAll();
@@ -2826,6 +2558,64 @@ function deleteProdotto(idx) {
   save(); refreshAll();
 }
 
+var _editingProdottoIdx = -1;
+
+function openEditProdotto(idx) {
+  var p = DB.prodotti[idx];
+  if (!p) return;
+  _editingProdottoIdx = idx;
+  var el;
+  el = document.getElementById('epProdotto'); if(el) el.value = p.prodotto || '';
+  el = document.getElementById('epEntity');   if(el) el.value = p.entity || '';
+  el = document.getElementById('epLuogo');    if(el) el.value = p.luogo || '';
+  el = document.getElementById('epPrezzo');   if(el) el.value = p.prezzo || '';
+  el = document.getElementById('epNote');     if(el) el.value = p.note || '';
+  el = document.getElementById('epData');     if(el) el.value = p.data || '';
+  var unitEl = document.getElementById('epUnita');
+  if (unitEl) {
+    for (var i=0; i<unitEl.options.length; i++) {
+      if (unitEl.options[i].value === (p.unita || '€/ton')) { unitEl.selectedIndex = i; break; }
+    }
+  }
+  var tipoEl = document.getElementById('epTipo');
+  if (tipoEl) {
+    for (var j=0; j<tipoEl.options.length; j++) {
+      if (tipoEl.options[j].value === (p.tipo || 'acquisto')) { tipoEl.selectedIndex = j; break; }
+    }
+  }
+  var titleEl = document.getElementById('epTitle');
+  if (titleEl) titleEl.textContent = '✏️ ' + (p.entity || p.prodotto);
+  document.getElementById('modalEditProdotto').classList.remove('hidden');
+}
+
+function saveEditProdotto() {
+  var idx = _editingProdottoIdx;
+  if (idx < 0 || !DB.prodotti[idx]) return;
+  var prezzo = parseFloat(document.getElementById('epPrezzo').value);
+  if (isNaN(prezzo)) { showToast('⚠️ Prezzo non valido', 'warn'); return; }
+  DB.prodotti[idx].prodotto = document.getElementById('epProdotto').value.trim() || DB.prodotti[idx].prodotto;
+  DB.prodotti[idx].entity   = document.getElementById('epEntity').value.trim();
+  DB.prodotti[idx].luogo    = document.getElementById('epLuogo').value.trim();
+  DB.prodotti[idx].prezzo   = prezzo;
+  DB.prodotti[idx].unita    = document.getElementById('epUnita').value;
+  DB.prodotti[idx].tipo     = document.getElementById('epTipo').value;
+  DB.prodotti[idx].note     = document.getElementById('epNote').value.trim();
+  DB.prodotti[idx].data     = document.getElementById('epData').value;
+  saveAndSync(); refreshAll();
+  closeModal('modalEditProdotto');
+  showToast('✅ Prezzo aggiornato', 'ok');
+}
+
+function deleteEditProdotto() {
+  var idx = _editingProdottoIdx;
+  if (idx < 0) return;
+  if (!confirm('Eliminare questo prezzo?')) return;
+  DB.prodotti.splice(idx, 1);
+  saveAndSync(); refreshAll();
+  closeModal('modalEditProdotto');
+  showToast('🗑 Eliminato', 'warn');
+}
+
 function exportData() {
   var blob = new Blob([JSON.stringify(DB,null,2)], {type:'application/json'});
   var a = document.createElement('a');
@@ -2861,6 +2651,13 @@ function clearProdotti() {
   DB.prodotti = [];
   save(); refreshAll();
   showToast('🗑 Prodotti eliminati', 'warn');
+}
+
+function clearProdottiManuali() {
+  if (!confirm('Eliminare solo i prodotti inseriti manualmente? I dati KarMa verranno mantenuti.')) return;
+  DB.prodotti = DB.prodotti.filter(function(p){ return p.source === 'karma'; });
+  save(); refreshAll();
+  showToast('🗑 Prodotti manuali eliminati', 'warn');
 }
 
 function clearAll() {
@@ -3155,6 +2952,9 @@ function acGetList(field) {
   if (field === 'From') return (function(){var _s={};DB.trasporti.forEach(function(r){_s[r.from]=1;});return Object.keys(_s);})().sort();
   return (function(){var _s={};DB.trasporti.forEach(function(r){_s[r.to]=1;});return Object.keys(_s).sort()})();
 }
+function acGetCarriers() {
+  return (function(){var _s={};DB.trasporti.forEach(function(r){if(r.carrier)_s[r.carrier]=1;});return Object.keys(_s).sort();})();
+}
 function acRender(field, items, q) {
   var dropdown = document.getElementById('ac' + field);
   if (!dropdown) return;
@@ -3179,6 +2979,14 @@ function acSearch(field) {
   var q = input.value.trim().toLowerCase();
   filterRoutes();
   var items = acGetList(field).filter(function(v){ return !q || v.toLowerCase().includes(q); });
+  // Se non trova partenze/destinazioni, suggerisci trasportatori
+  if (!items.length && q && field === 'From') {
+    var carriers = acGetCarriers().filter(function(v){ return v.toLowerCase().includes(q); });
+    if (carriers.length) {
+      acRender(field, carriers.map(function(c){ return '🚛 ' + c; }), '');
+      return;
+    }
+  }
   if (!items.length) { acClose(field); return; }
   acRender(field, items, q);
 }
@@ -3297,6 +3105,7 @@ function saveEditTratta() {
       if (pv) p.provisional = pv.checked;
       if (ng) p.negotiable = ng.checked;
       var ne = document.getElementById('singleNote'); if (ne) p.note = ne.value.trim();
+      var de = document.getElementById('singleData'); if (de) p.data = de.value;
     }
     closeModal('modalEditTratta');
     var ab = document.querySelector('#modalEditTratta .btn-secondary.btn-sm');
@@ -3394,6 +3203,10 @@ function openEditSingle(globalIdx) {
     '</div>' +
     '<div class="erow-field-group"><div class="erow-label">Condizioni pagamento</div>' +
       '<input class="erow-input" id="singleCond" type="text" value="' + (p.conditions||'') + '" placeholder="es. BB 60 gg FM"></div>' +
+    '<div class="erow-field-group"><div class="erow-label">&#128197; Data tariffa</div>' +
+      '<input class="erow-input" id="singleData" type="date" value="' + (p.data||'') + '"></div>' +
+    '<div class="erow-field-group"><div class="erow-label">Note</div>' +
+      '<input class="erow-input" id="singleNote" type="text" value="' + (p.note||'').replace(/"/g,'&quot;') + '" placeholder="opzionale"></div>' +
     '<label class="erow-prov-label"><input type="checkbox" id="singleProvisional" ' + (p.provisional?'checked':'') + '> <span>⚠️ Prezzo da confermare</span></label>' +
     '<label class="erow-prov-label" style="background:rgba(96,165,250,.10);border-color:rgba(96,165,250,.25);"><input type="checkbox" id="singleNegotiable" ' + (p.negotiable?'checked':'') + '> <span style="color:#7cb9ff;">🤝 Prezzo trattabile</span></label>' +
   '</div>';
@@ -3687,7 +3500,9 @@ function expSelectAll(v) {
 function doExport() {
   var fromFilter  = document.getElementById('expFrom').value;
   var toFilter    = document.getElementById('expTo').value;
-  var selCarriers = [...document.querySelectorAll('.expCarrier:checked')].map(function(cb){ return cb.value; });
+  var _expChecked = document.querySelectorAll('.expCarrier:checked');
+  var selCarriers = [];
+  for (var _eci=0; _eci<_expChecked.length; _eci++) { selCarriers.push(_expChecked[_eci].value); }
   var format      = document.querySelector('input[name="expFormat"]:checked').value;
 
   // Filter data
@@ -3989,6 +3804,7 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
         '<div class="chip-left">' +
           '<div class="chip-who">' + p.carrier + '</div>' +
           (p.conditions ? '<div class="chip-cond">' + p.conditions + '</div>' : '') +
+          (p.data ? '<div class="chip-date">' + (isDataVecchia(p.data, 90) ? '⏰ ' : '') + 'tariffa del ' + formatData(p.data) + '</div>' : '') +
           (p.note ? '<div class="chip-note">📝 ' + p.note + '</div>' : '') +
         '</div>' +
         '<div class="chip-right">' +
@@ -4130,6 +3946,63 @@ init();
 
 
 
-<div class="modal-backdrop hidden" id="modalTariffaChoice"><div class="modal" style="max-width:340px;text-align:center;"><div style="font-size:14px;color:var(--t2);margin-bottom:16px;">Esiste gia una tariffa per questo trasportatore su questa tratta</div><div id="choiceCarrier" style="font-size:17px;font-weight:900;color:#f0f6ff;margin-bottom:4px;"></div><div id="choiceRoute" style="font-size:13px;color:var(--green);margin-bottom:6px;"></div><div id="choiceOldPrice" style="font-size:12px;color:var(--t2);margin-bottom:20px;padding:8px;background:rgba(255,255,255,.05);border-radius:8px;"></div><button class="btn btn-primary" id="btnAggiungi" style="width:100%;margin-bottom:10px;padding:14px;font-size:15px;">&#10133; Aggiungi tratta</button><button class="btn btn-secondary" id="btnAggiorna" style="width:100%;margin-bottom:10px;padding:14px;font-size:15px;">&#9998;&#65039; Aggiorna tratta</button><button onclick="closeModal('modalTariffaChoice')" style="width:100%;padding:10px;background:none;border:none;color:var(--t2);font-size:13px;cursor:pointer;">Annulla</button></div></div>
+<!-- MODAL MODIFICA PRODOTTO -->
+<div class="modal-backdrop hidden" id="modalEditProdotto">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title" id="epTitle">&#9998;&#65039; Modifica prezzo</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Prodotto</label>
+          <input class="inp" id="epProdotto" type="text" placeholder="es. Cippato">
+        </div>
+        <div class="form-group" style="max-width:120px;">
+          <label class="form-label">Tipo</label>
+          <select class="inp" id="epTipo">
+            <option value="acquisto">Acquisto</option>
+            <option value="vendita">Vendita</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fornitore / Cliente</label>
+        <input class="inp" id="epEntity" type="text" placeholder="es. Vender Legnami">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Luogo</label>
+        <input class="inp" id="epLuogo" type="text" placeholder="es. Mezzocorona (TN)">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Prezzo</label>
+          <input class="inp" id="epPrezzo" type="number" step="0.01" placeholder="0.00">
+        </div>
+        <div class="form-group" style="max-width:110px;">
+          <label class="form-label">Unita</label>
+          <select class="inp" id="epUnita">
+            <option value="€/ton">€/ton</option>
+            <option value="€/mc">€/mc</option>
+            <option value="€/vg">€/vg</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">&#128197; Data rilevazione</label>
+        <input class="inp" id="epData" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note</label>
+        <input class="inp" id="epNote" type="text" placeholder="es. da Vender Legnami">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-danger btn-sm" onclick="deleteEditProdotto()">&#128465; Elimina</button>
+      <div style="flex:1;"></div>
+      <button class="btn btn-secondary" onclick="closeModal('modalEditProdotto')">Annulla</button>
+      <button class="btn btn-primary" onclick="saveEditProdotto()">&#9989; Salva</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
