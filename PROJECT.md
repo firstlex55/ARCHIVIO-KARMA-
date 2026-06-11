@@ -2,7 +2,7 @@
 
 **Repository:** `firstlex55/ARCHIVIO-KARMA-`  
 **URL:** `https://firstlex55.github.io/ARCHIVIO-KARMA-/`  
-**File principale:** `index.html` (single-file app, ~4289 righe)  
+**File principale:** `index.html` (single-file app, ~4300 righe)  
 **Versione app:** v1.0.0  
 **Azienda:** Pro Trasporti Srl  
 
@@ -146,22 +146,28 @@
 ### Ricerca Globale (sopra i tab)
 - Campo sempre visibile, cerca in tempo reale su trasporti E prodotti
 - Attiva con 2+ caratteri, mostra max 5 risultati per sezione
-- Click risultato trasporto → salta tab e filtra automaticamente
+- Click risultato trasporto → salta tab, imposta **sia `searchFrom` che `searchTo`** e filtra
 - Click risultato prodotto → salta tab e apre modal modifica
-- Funzioni: `doGlobalSearch()`, `closeGlobalSearch()`, `globalJumpTrasporto(from)`, `globalJumpProdotto(idx)`
+- Funzioni: `doGlobalSearch()`, `closeGlobalSearch()`, `globalJumpTrasporto(from, to)`, `globalJumpProdotto(idx)`
+
+### Bug ricerca corretti (sessione 11-06)
+1. **`globalJumpTrasporto`** ora riceve e imposta anche `to` (prima azzerava sempre searchTo)
+2. **`acSearch`** ora suggerisce trasportatori come fallback anche nel campo Destinazione (prima solo in Partenza)
+3. **`doGlobalSearch`** ora passa sia `from` che `to` al click sul risultato tratta
 
 ### Tab Trasporti
 
 **Vista Rapida**
 - Card per tratta (`rrow`) con bordo sinistro colorato deterministicamente per base di carico (`fromColor(from)` — palette 10 colori)
 - Prezzo migliore in evidenza con badge sfondo ambra (`.rrow-best-price`)
-- Chip per trasportatore con condizioni pagamento, data tariffa (`tariffa del GG/MM/AA`), note
+- Chip per trasportatore con condizioni pagamento, data tariffa pill (`tariffa del GG/MM/AA`) con pallino, note
 - Badge `⏰` su chip se data > 90 giorni
+- **Pill data chip:** pill arrotondata con pallino `●` + "tariffa del GG/MM/AA" — stile `.chip-date` con `border-radius:20px`, sfondo `rgba(36,48,72,.7)`, testo `#6a82a0`
 - Pill filtro trasportatori: bordo 2px + glow quando attiva
 - Tap feedback su card (`:active` → `scale(0.985)`) e chip (`:active` → `scale(0.98)`)
 - Click su chip → modal modifica singola tariffa
 - Click su header card → vista Confronto per quella tratta
-- Autocomplete: Campo DA e A cercano anche per nome trasportatore
+- Autocomplete: Campo DA e A cercano anche per nome trasportatore (fallback su entrambi i campi)
 - Funzione `fromColor(from)` per colore deterministico bordo
 
 **Vista Confronto**
@@ -183,10 +189,19 @@
 
 ### Tab Prodotti
 
+**Layout chip (aggiornato sessione 11-06)**
+- Struttura identica ai chip della tab Trasporti (stesso layout, stesse dimensioni testo)
+- **Acquisto:** verde `#34d399` — bordo sinistro `rgba(52,211,153,.6)`, sfondo `rgba(52,211,153,.07)`, section header verde
+- **Vendita:** ambra `#fb923c` — bordo sinistro `rgba(251,146,60,.6)`, sfondo `rgba(251,146,60,.07)`, section header ambra
+- Entity 13px font-weight 700, loc 11px blu `#7eb8f7`, note 11px `#93c5fd` corsivo
+- Prezzo acquisto verde, prezzo vendita ambra
+- **Pill data:** `prezzo del GG/MM/AA` con pallino — identica alla pill dei chip tratte
+- **Niente avatar** — rimosso il quadrato con iniziali
+- Best acquisto badge `★ min`, best vendita badge `★ max`
+
 **Vista Prodotto** (default)
 - Card per tipo prodotto con emoji automatica
-- Sezioni ACQUISTO (blu, bordo 2px) e VENDITA (ambra, bordo 2px)
-- Data rilevazione sotto il prezzo: `📅 GG/MM/AA` (via `formatData()`)
+- Sezioni ACQUISTO e VENDITA con colori sopra descritti
 - Tocca riga → modal modifica prodotto (`openEditProdotto(globalIdx)`)
 - Stat cards colorate: Prodotti=verde, Fornitori=rosso, Clienti=ambra
 
@@ -248,6 +263,8 @@
 | `saveAndSync()` | salva localStorage + trigger Drive sync |
 | `refreshAll()` | aggiorna stats + ricerca + prodotti + confronto |
 | `doGlobalSearch()` | ricerca globale su trasporti e prodotti |
+| `globalJumpTrasporto(from, to)` | salta a tab trasporti con from e to impostati |
+| `acSearch(field)` | autocomplete campi DA/A con fallback trasportatori su entrambi |
 
 ---
 
@@ -275,8 +292,10 @@
 | `--amber` | colore primario ambra (#fb923c) |
 | `--green` | verde (#34d399) |
 | `--t2`, `--t3` | testo secondario/terziario |
-| `.prow-*` | classi card prodotti |
+| `.prow-*` | classi chip prodotti (layout identico a `.chip-*`) |
 | `.chip-*` | classi chip trasportatori |
+| `.chip-date` | pill data tariffa: `border-radius:20px`, pallino, "tariffa del GG/MM/AA" |
+| `.prow-date` | pill data prodotto: identica a `.chip-date`, "prezzo del GG/MM/AA" |
 | `.rrow-*` | classi card tratta |
 | `.global-*` | classi ricerca globale |
 | `.cpill` | pill filtro trasportatori |
@@ -286,7 +305,6 @@
 
 ## Feature da Implementare (Backlog)
 
-- [ ] Avatar iniziali colorati per trasportatori (stile B — quadrato arrotondato con bordo)
 - [ ] Campo Cliente separato nei record prodotto
 - [ ] Vista Fornitore → Cliente con freccia
 - [ ] Storico prezzi (confronto revisioni)
@@ -294,6 +312,7 @@
 - [ ] Copia rapida chip con long-press
 - [ ] Widget "ultima modifica" in fondo alla pagina
 - [ ] Icona PWA su Android (problema manifest GitHub Pages)
+- [ ] Ulteriori migliorie grafiche tab Prodotti (in corso)
 
 ---
 
@@ -307,3 +326,14 @@
 - **spread in doExport**: `[...querySelectorAll()]` convertito in loop `for`.
 - **Array.from in addPriceRowInEdit**: convertito in `Object.keys({})`.
 - **Drive Client ID** da non modificare: `107091966360-vbepp0lmghbck14vv89et30acl34d8a9.apps.googleusercontent.com`
+
+## Modifiche Sessione 11-06-2026
+
+### Grafiche
+1. **Chip data tab Trasporti**: sostituita emoji `📅` con pill arrotondata — pallino + "tariffa del GG/MM/AA". Rimosso `⏰` condizionale (per ora). CSS `.chip-date` riscritto.
+2. **Tab Prodotti — layout completo**: riscritto per essere identico ai chip tratte. Rimosso avatar con iniziali. Verde per acquisto, ambra per vendita. Pill data "prezzo del GG/MM/AA".
+
+### Bug Fix Ricerca
+1. `globalJumpTrasporto(from, to)` — ora imposta sia partenza che destinazione
+2. `acSearch(field)` — fallback trasportatori attivo su entrambi i campi DA e A
+3. `doGlobalSearch()` — click risultato tratta ora passa `from` e `to` alla funzione di salto
