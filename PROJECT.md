@@ -2,15 +2,9 @@
 
 **Repository:** `firstlex55/ARCHIVIO-KARMA-`  
 **URL:** `https://firstlex55.github.io/ARCHIVIO-KARMA-/`  
-**File principale:** `index.html` (219 KB, single-file app)  
+**File principale:** `index.html` (single-file app, ~4289 righe)  
 **Versione app:** v1.0.0  
 **Azienda:** Pro Trasporti Srl  
-
----
-
-## Descrizione
-
-App HTML single-file per la gestione di tariffe di trasporto e prezzi di prodotti biomassa/legno. Funziona completamente offline tramite localStorage, con sync opzionale su Google Drive. Sviluppata per uso mobile (Android Chrome), ottimizzata per schermo piccolo.
 
 ---
 
@@ -30,7 +24,7 @@ App HTML single-file per la gestione di tariffe di trasporto e prezzi di prodott
 
 ### Stack
 - HTML/CSS/JS vanilla (no framework)
-- ExcelJS via CDN per export Excel
+- SheetJS (XLSX) via CDN per export Excel
 - Google Drive API (GIS) per sync cloud
 - localStorage come database locale
 - Service Worker inline per PWA offline
@@ -42,20 +36,22 @@ App HTML single-file per la gestione di tariffe di trasporto e prezzi di prodott
 - **Zero** spread operator (`[...arr]`, `{...obj}`)
 - **Zero** shorthand object properties (`{from, to}`)
 - **Zero** parametri default (`function(x, y='val')`)
+- **Zero** `Array.from()`, `.find()`, `.findIndex()` su array
+- **Zero** `Array.prototype.includes()` su array (ok su stringhe)
 - Verificare sempre con `node --check` dopo modifiche JS
 
 ### Struttura HTML
 ```
 <head>
   <meta charset> + PWA meta tags
-  <style> ... </style>           ← CSS (~538 coppie {})
-  <script src="xlsx CDN">        ← libreria Excel
+  <style> ... </style>           ← CSS (~600+ regole)
+  <script src="xlsx CDN">        ← libreria Excel (SheetJS)
 </head>
 <body>
-  <!-- HTML interfaccia -->
+  <!-- Ricerca globale (sopra i tab) -->
+  <!-- Tab Trasporti / Prodotti / Import -->
   <!-- Modal dialogs (15+ modal) -->
   <script>
-    // JS principale (~136KB)
     var PDF_DATA = [...];        ← 189 prezzi tariffe
     var KARMA_DATA = [...];      ← 43 prezzi prodotti
     // ... tutto il codice app
@@ -64,7 +60,7 @@ App HTML single-file per la gestione di tariffe di trasporto e prezzi di prodott
 </body>
 ```
 
-**ATTENZIONE:** Il tag `<script>` del main JS si trova a posizione fissa nel file. Modifiche che inseriscono HTML dentro il blocco `<script>` rompono l'app (il codice appare visibile nella pagina invece di essere eseguito).
+**ATTENZIONE:** Il tag `<script>` del main JS si trova a posizione fissa nel file. Modifiche che inseriscono HTML dentro il blocco `<script>` rompono l'app.
 
 ---
 
@@ -74,8 +70,8 @@ App HTML single-file per la gestione di tariffe di trasporto e prezzi di prodott
 
 ```json
 {
-  "trasporti": [...],   // tariffe trasporto
-  "prodotti": [...],    // prezzi prodotti
+  "trasporti": [...],
+  "prodotti": [...],
   "pdfLoaded": true,
   "pdfRev": "REV 03/2026",
   "karmaRev": "KarMa 03/2026",
@@ -95,6 +91,7 @@ App HTML single-file per la gestione di tariffe di trasporto e prezzi di prodott
   "provisional": false,
   "negotiable": false,
   "note": "",
+  "data": "2026-03-01",
   "rev": "REV 03/2026"
 }
 ```
@@ -109,12 +106,13 @@ App HTML single-file per la gestione di tariffe di trasporto e prezzi di prodott
   "prezzo": 38,
   "unita": "€/ton",
   "note": "",
-  "data": "",
+  "data": "2026-03-01",
   "source": "karma"
 }
 ```
 
-**source** può essere `"karma"` (da KARMA_DATA) o `"manual"` (aggiunto dall'utente).
+**source** può essere `"karma"` (da KARMA_DATA) o `"manual"` (aggiunto dall'utente).  
+**data** formato `YYYY-MM-DD` — visualizzato come `GG/MM/AA` tramite `formatData()`.
 
 ---
 
@@ -126,8 +124,6 @@ App HTML single-file per la gestione di tariffe di trasporto e prezzi di prodott
 | `tariffe-migration-v3` | Deduplicazione con chiave base |
 | `tariffe-migration-v4` | Deduplicazione con chiave estesa (include note) — **ULTIMA** |
 
-Le migrazioni si eseguono una sola volta al primo avvio dopo aggiornamento.
-
 ---
 
 ## Dati Incorporati
@@ -136,85 +132,122 @@ Le migrazioni si eseguono una sola volta al primo avvio dopo aggiornamento.
 - **189 prezzi** su **63 tratte** per **18 trasportatori**
 - Unità: `€/vg` (viaggio), `€/ton`, `€/mc`
 - Trasportatori: A.L.B. Srl, ALBA, ASCHIERI, AVIO, BRANCHINI, C.L.P., C.M. TRASPORTI, CEVOLO, CIRIONI, COAP, CONECO, CONSAR 2026, FRAULINI, PADANA, RUFFINI, STEGAGNO, UDERZO, UNITRAG
+- Al ricarico via `reloadBuiltinData()`: tutti i record ricevono `data: '2026-03-01'` automaticamente
 
 ### KARMA_DATA — Prezzi Prodotti (KarMa 03/2026)
 - **43 record** (dopo deduplicazione)
 - Prodotti: Cippato, Segatura, Lolla di Farro, Lolla di Riso, Pula/lolla mix cereali, Sfarinato cereali mix, Sfarinato sorgo/b
-- Include 9 record vendita AGROGI (Segatura, prezzi separati per fornitore)
+- Include 9 record vendita AGROGI
 
 ---
 
 ## Funzionalità
 
+### Ricerca Globale (sopra i tab)
+- Campo sempre visibile, cerca in tempo reale su trasporti E prodotti
+- Attiva con 2+ caratteri, mostra max 5 risultati per sezione
+- Click risultato trasporto → salta tab e filtra automaticamente
+- Click risultato prodotto → salta tab e apre modal modifica
+- Funzioni: `doGlobalSearch()`, `closeGlobalSearch()`, `globalJumpTrasporto(from)`, `globalJumpProdotto(idx)`
+
 ### Tab Trasporti
 
 **Vista Rapida**
-- Card per tratta con prezzo migliore in evidenza (ambra)
-- Chip per trasportatore con condizioni pagamento e note
-- Sezioni separate: 🚛 €/viaggio · ⚖️ €/tonnellata · 📦 €/metro cubo
-- Pill filtro trasportatori in cima (scrollabile orizzontalmente)
+- Card per tratta (`rrow`) con bordo sinistro colorato deterministicamente per base di carico (`fromColor(from)` — palette 10 colori)
+- Prezzo migliore in evidenza con badge sfondo ambra (`.rrow-best-price`)
+- Chip per trasportatore con condizioni pagamento, data tariffa (`tariffa del GG/MM/AA`), note
+- Badge `⏰` su chip se data > 90 giorni
+- Pill filtro trasportatori: bordo 2px + glow quando attiva
+- Tap feedback su card (`:active` → `scale(0.985)`) e chip (`:active` → `scale(0.98)`)
 - Click su chip → modal modifica singola tariffa
 - Click su header card → vista Confronto per quella tratta
-- Autocomplete partenza/destinazione con info contestuale:
-  - Campo DA: mostra n° destinazioni disponibili
-  - Campo A: mostra prezzo minimo disponibile per quella tratta
+- Autocomplete: Campo DA e A cercano anche per nome trasportatore
+- Funzione `fromColor(from)` per colore deterministico bordo
 
 **Vista Confronto**
 - Barre proporzionali per confronto visivo prezzi
 - Dropdown selezione tratta
 
 **Modal Aggiunta Tariffa (+)**
-- Campi: Da, A, Trasportatore, Condizioni, Prezzo, Unità, Note
-- **Auto-fill condizioni**: scrivendo il trasportatore, le condizioni si compilano automaticamente con quelle usate più spesso per quel trasportatore
-- Se esiste già una tariffa per stessa tratta+trasportatore+unità: modal scelta "➕ Aggiungi tratta" / "✏️ Aggiorna tratta"
-- Campo Note: appare sul chip solo se presente
+- Campi: Da, A, Trasportatore, Condizioni, Prezzo, Unità, Note, 📅 Data tariffa
+- Auto-fill condizioni dal trasportatore più frequente
+- Se esiste già: modal scelta "➕ Aggiungi" / "✏️ Aggiorna"
 
-**Modal Modifica Singola**
-- Aperto toccando il chip del trasportatore
-- Campi: Prezzo, Unità, Condizioni, Note, ⚠️ Da confermare, 🤝 Trattabile
-- In fondo: confronto altri trasportatori stessa tratta (verde=più economico, rosso=più caro)
+**Modal Modifica Singola** (`openEditSingle(globalIdx)`)
+- Campi: Prezzo, Unità, Condizioni, 📅 Data tariffa, Note, ⚠️ Da confermare, 🤝 Trattabile
+- In fondo: confronto altri trasportatori stessa tratta
 
 **Modal Modifica Tratta (✏️ Modifica)**
-- Mostra tutti i trasportatori della tratta con campi modificabili
-- Pulsante ➕ aggiungi trasportatore
+- Tutti i trasportatori con campi modificabili
+- Pulsante ➕ aggiungi trasportatore (usa `Object.keys` invece di `Array.from(new Set(...))`)
 
 ### Tab Prodotti
 
 **Vista Prodotto** (default)
-- Card per tipo prodotto con emoji automatica (🪵 Cippato, 🪚 Segatura, 🌾 Lolla, 🌿 altro)
-- Sezioni ACQUISTO (blu) e VENDITA (ambra)
-- Layout B4: fornitore grande, luogo in blu, prezzo in ambra 26px
-- ★ min sul prezzo più basso acquisto
-- Tocca riga → modal modifica prodotto
+- Card per tipo prodotto con emoji automatica
+- Sezioni ACQUISTO (blu, bordo 2px) e VENDITA (ambra, bordo 2px)
+- Data rilevazione sotto il prezzo: `📅 GG/MM/AA` (via `formatData()`)
+- Tocca riga → modal modifica prodotto (`openEditProdotto(globalIdx)`)
+- Stat cards colorate: Prodotti=verde, Fornitori=rosso, Clienti=ambra
 
 **Vista Fornitore / Vista Cliente**
-- Raggruppa per entità con avatar iniziali (da implementare)
-- Card con lista prodotti per fornitore/cliente
+- Raggruppa per entità
 
 **Modal Aggiunta Prodotto (+)**
-- Campi: Prodotto, Tipo (acquisto/vendita), Fornitore/Cliente, Luogo, Prezzo, Unità, Note, Data
+- Campi: Prodotto, Tipo, Fornitore/Cliente, Luogo, Prezzo, Unità, Note, Data
 
-**Modal Modifica Prodotto**
-- Aperto toccando qualsiasi riga nella vista Prodotti
-- Campi: Prodotto, Prezzo, Unità, Fornitore/Cliente, Luogo, Note
+**Modal Modifica Prodotto** (`openEditProdotto(idx)`, `saveEditProdotto()`, `deleteEditProdotto()`)
+- Campi: Prodotto, Tipo, Fornitore/Cliente, Luogo, Prezzo, Unità, 📅 Data rilevazione, Note
 - Pulsante 🗑 Elimina
 
 ### Tab Import
 
 - Import Excel trasporti (auto-detect colonne)
 - Import Excel prodotti
-- 🔄 Ricarica tariffe REV 03/2026 (da PDF_DATA)
+- 🔄 Ricarica tariffe REV 03/2026 (da PDF_DATA, setta `data:'2026-03-01'`)
 - 🌾 Carica listino KarMa (da KARMA_DATA, idempotente)
-- Export Excel filtrato
-- Gestione Dati: Svuota tutto / Svuota prodotti
+- ⬇️ Export Excel — modal con selezione tipo:
+  - **🚛 Tariffe Trasporti**: filtri da/a/trasportatori, formato Excel o A3
+  - **🌾 Prezzi Prodotti**: sheet "Tutti i prezzi" + sheet per ogni prodotto
+- 🗑 Svuota manuali (`clearProdottiManuali()` — mantiene `source='karma'`)
+- 🗑 Svuota tutto
 - Import/Export JSON backup
+
+**Export A3** (`printA3(rows, selectedCarriers)`)
+- Apre anteprima in nuova finestra (no stampa automatica)
+- Pulsante 🖨️ Stampa visibile, nascosto in stampa
+- REV dinamica da `DB.pdfRev`
+- Best price: min €/vg separato da min €/ton, cella gialla
+- Gestione popup bloccato con toast
+
+**Export Excel Tariffe** (`exportToExcel(rows, selectedCarriers)`)
+- REV dinamica, freeze righe/colonne, flag ⚠️ su provvisori
+
+**Export Excel Prodotti** (`exportProdottiExcel()`)
+- Sheet "Tutti i prezzi" + uno sheet per prodotto
+- Acquisti ordinati per prezzo crescente, vendite per decrescente
 
 ### Google Drive
 - Client ID: `107091966360-vbepp0lmghbck14vv89et30acl34d8a9.apps.googleusercontent.com`
 - GIS caricato lazy al primo click
 - Auto-save debounce 2s dopo ogni modifica
-- Salva/carica in `appDataFolder` (invisibile all'utente)
+- Salva/carica in `appDataFolder`
 - Gestione conflitti con modal scelta locale/drive
+
+---
+
+## Funzioni Utility Chiave
+
+| Funzione | Descrizione |
+|----------|-------------|
+| `formatData(d)` | `'2026-03-01'` → `'01/03/26'` |
+| `isDataVecchia(d, giorni)` | true se data > N giorni fa (default 60, tariffe 90) |
+| `fromColor(from)` | colore deterministico da stringa (palette 10 colori) |
+| `normalizeDest(dest)` | normalizza sinonimi destinazioni (es. Migliaro/Fiscaglia) |
+| `abbrev(carrier)` | abbreviazione trasportatore per display compatto |
+| `saveAndSync()` | salva localStorage + trigger Drive sync |
+| `refreshAll()` | aggiorna stats + ricerca + prodotti + confronto |
+| `doGlobalSearch()` | ricerca globale su trasporti e prodotti |
 
 ---
 
@@ -224,39 +257,53 @@ Le migrazioni si eseguono una sola volta al primo avvio dopo aggiornamento.
 1. L'utente carica il file HTML completo nella chat
 2. Claude applica modifiche chirurgiche al JS/CSS/HTML
 3. Verifica con `node --check` dopo ogni modifica JS
-4. L'utente scarica e carica su GitHub
+4. Audit: zero arrow functions, spread, Array.from, template literals, ID duplicati
+5. L'utente scarica e carica su GitHub
 
 ### Punti Critici
-- **Non toccare mai** la struttura dei tag `<script>` — il main JS è tra posizioni fisse nel file
-- **Non inserire HTML** dentro il blocco `<script>` (causa il bug del codice visibile)
+- **Non toccare mai** la struttura dei tag `<script>`
+- **Non inserire HTML** dentro il blocco `<script>`
 - **renderViewProdotto** usa `DB.prodotti.indexOf(p)` con fallback by-value
 - **renderEditPricesList** idem per `DB.trasporti.indexOf(p)`
-- **init()** chiamata esplicita alla fine del JS (non dentro window.onload)
-- **KARMA_DATA** si ricarica automaticamente all'avvio se `DB.karmaRev` non corrisponde
+- **init()** chiamata esplicita alla fine del JS
+- **KARMA_DATA** si ricarica automaticamente se `DB.karmaRev` non corrisponde
+- **selCarriers** filtrato con loop `for`, mai `.includes()` su array
 
 ### CSS Chiavi
-- `--amber`: colore primario ambra (#fb923c)
-- `--green`: verde (#34d399)  
-- `--t2`: testo secondario
-- `.prow-*`: classi card prodotti
-- `.chip-*`: classi chip trasportatori in vista rapida
-- `.rrow-*`: classi card tratta
+| Variabile/Classe | Uso |
+|-----------------|-----|
+| `--amber` | colore primario ambra (#fb923c) |
+| `--green` | verde (#34d399) |
+| `--t2`, `--t3` | testo secondario/terziario |
+| `.prow-*` | classi card prodotti |
+| `.chip-*` | classi chip trasportatori |
+| `.rrow-*` | classi card tratta |
+| `.global-*` | classi ricerca globale |
+| `.cpill` | pill filtro trasportatori |
+| `.stat-card.red/amber` | stat cards colorate tab prodotti |
 
 ---
 
 ## Feature da Implementare (Backlog)
 
-- [ ] Avatar iniziali colorati per trasportatori (stile B preferito — quadrato arrotondato con bordo)
-- [ ] Campo Cliente separato nei record prodotto (oltre al campo entity)
-- [ ] Vista Fornitore → Cliente con freccia nella lista prodotti
+- [ ] Avatar iniziali colorati per trasportatori (stile B — quadrato arrotondato con bordo)
+- [ ] Campo Cliente separato nei record prodotto
+- [ ] Vista Fornitore → Cliente con freccia
 - [ ] Storico prezzi (confronto revisioni)
-- [ ] Icona PWA che funziona su Android (problema: Chrome non legge manifest da GitHub Pages correttamente)
+- [ ] Delta prezzi tra date (▲/▼ accanto al prezzo)
+- [ ] Copia rapida chip con long-press
+- [ ] Widget "ultima modifica" in fondo alla pagina
+- [ ] Icona PWA su Android (problema manifest GitHub Pages)
 
 ---
 
 ## Note Sessioni Precedenti
 
-- **Bug ricorrente**: HTML del modal finisce dentro `<script>` tag → codice visibile nella pagina. Causa: inserimento di HTML vicino al punto di apertura del tag script. Fix: sempre ricostruire dal file originale caricato dall'utente.
-- **Doppioni prodotti**: causati da caricamento KarMa multiplo senza deduplicazione. Risolto con migrazione v4.
-- **Arrow functions Android**: `=>` causa crash su Android vecchio. Convertire sempre in `function(){}`.
+- **Bug ricorrente**: HTML modal dentro `<script>` → codice visibile. Fix: sempre ricostruire dal file originale.
+- **Doppioni prodotti**: risolto con migrazione v4.
+- **Arrow functions Android**: `=>` causa crash. Convertire sempre in `function(){}`.
+- **CSS duplicato**: blocchi `.prow-*` erano definiti 4-5 volte. Rimossi in sessione precedente.
+- **Modal duplicati**: `modalTariffaChoice`, `modalEntity`, `modalExport` erano duplicati in fondo al file. Rimossi.
+- **spread in doExport**: `[...querySelectorAll()]` convertito in loop `for`.
+- **Array.from in addPriceRowInEdit**: convertito in `Object.keys({})`.
 - **Drive Client ID** da non modificare: `107091966360-vbepp0lmghbck14vv89et30acl34d8a9.apps.googleusercontent.com`
