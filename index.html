@@ -995,25 +995,24 @@ select.inp{cursor:pointer;}
   border-top: 1px solid rgba(255,255,255,.06);
   display: flex; align-items: center; gap: 6px;
 }
-.prow-section-hd.buy  { color: #fca5a5; background: rgba(248,113,113,.06); }
-.prow-section-hd.sell { color: #6ee7b7; background: rgba(52,211,153,.06); }
+.prow-section-hd.buy  { color: rgba(52,211,153,.8); background: rgba(52,211,153,.07); }
+.prow-section-hd.sell { color: rgba(251,146,60,.8); background: rgba(251,146,60,.07); }
 
 .prow-line {
   display: flex; align-items: center; gap: 10px;
-  padding: 10px 13px; border-bottom: 1px solid rgba(255,255,255,.04);
+  padding: 9px 13px; border-bottom: 1px solid rgba(255,255,255,.04);
   transition: background .1s;
 }
 .prow-line:last-child { border-bottom: none; }
 
-/* Best = primo prezzo — evidenziato con bordo sinistro */
 .prow-line.best-buy {
-  background: rgba(248,113,113,.05);
-  border-left: 3px solid rgba(248,113,113,.5);
+  background: rgba(52,211,153,.07);
+  border-left: 3px solid rgba(52,211,153,.6);
   padding-left: 10px;
 }
 .prow-line.best-sell {
-  background: rgba(52,211,153,.05);
-  border-left: 3px solid rgba(52,211,153,.5);
+  background: rgba(251,146,60,.07);
+  border-left: 3px solid rgba(251,146,60,.6);
   padding-left: 10px;
 }
 
@@ -1022,22 +1021,29 @@ select.inp{cursor:pointer;}
   font-size: 13px; font-weight: 700; color: #dce8ff;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.prow-line.best-buy  .prow-entity { color: #fca5a5; }
-.prow-line.best-sell .prow-entity { color: #6ee7b7; }
+.prow-line.best-buy  .prow-entity { color: #6ee7b7; }
+.prow-line.best-sell .prow-entity { color: #fcd34d; }
 .prow-loc {
-  font-size: 10px; color: var(--t2); margin-top: 2px; font-weight: 500;
+  font-size: 11px; color: #7eb8f7; margin-top: 2px; font-weight: 600;
 }
 .prow-note {
-  font-size: 10px; color: #7dd3fc; margin-top: 2px;
+  font-size: 11px; color: #93c5fd; margin-top: 2px;
   font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.prow-date {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 4px;
+  background: rgba(36,48,72,.7); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px; padding: 2px 8px 2px 6px;
+  font-size: 9px; font-weight: 700; color: #6a82a0; letter-spacing: .03em;
 }
 
 .prow-line-right {
   display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0;
 }
 .prow-price { font-size: 19px; font-weight: 900; line-height: 1; }
-.prow-price.buy  { color: #fca5a5; }
-.prow-price.sell { color: #6ee7b7; }
+.prow-price.buy  { color: #34d399; }
+.prow-price.sell { color: #fb923c; }
 .prow-unit { font-size: 10px; color: var(--t3); font-weight: 600; }
 
 /* ═══ PRODOTTI B4/P2 — Layout premium ═══════════════════ */
@@ -2390,20 +2396,20 @@ function renderViewProdotto(data) {
             if (_pp && _pp.prodotto===p.prodotto && _pp.entity===p.entity && _pp.prezzo===p.prezzo && _pp.tipo===p.tipo) { globalIdx=_di; break; }
           }
         }
-        var dataStr = p.data ? '<div class="prow-date">📅 ' + formatData(p.data) + '</div>' : '';
+        var dataStr = p.data ? '<div class="prow-date"><span style="width:5px;height:5px;border-radius:50%;background:#374e6a;flex-shrink:0;display:inline-block;"></span>prezzo del ' + formatData(p.data) + '</div>' : '';
         html += '<div class="prow-line' + (isBest ? ' best-buy' : '') + '" onclick="openEditProdotto(' + globalIdx + ')" style="cursor:pointer;">' +
           '<div class="prow-line-left">' +
             '<div class="prow-entity">' + (p.entity || '—') + '</div>' +
             '<div class="prow-loc">📍 ' + (p.luogo || '') + '</div>' +
             (p.note ? '<div class="prow-note">' + p.note + '</div>' : '') +
+            dataStr +
           '</div>' +
           '<div class="prow-line-right">' +
             '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">' +
               '<div style="display:flex;align-items:baseline;gap:2px;">' +
-                '<span class="prow-price">' + prezzo + '</span>' +
+                '<span class="prow-price buy">' + prezzo + '</span>' +
                 '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
               '</div>' +
-              dataStr +
               (isBest ? '<span class="prow-best-badge">★ min</span>' : '') +
             '</div>' +
           '</div>' +
@@ -2423,12 +2429,13 @@ function renderViewProdotto(data) {
             if (_pp && _pp.prodotto===p.prodotto && _pp.entity===p.entity && _pp.prezzo===p.prezzo && _pp.tipo===p.tipo) { globalIdx=_di; break; }
           }
         }
-        var dataStr = p.data ? '<div class="prow-date">📅 ' + formatData(p.data) + '</div>' : '';
+        var dataStr = p.data ? '<div class="prow-date"><span style="width:5px;height:5px;border-radius:50%;background:#374e6a;flex-shrink:0;display:inline-block;"></span>prezzo del ' + formatData(p.data) + '</div>' : '';
         html += '<div class="prow-line' + (isBest ? ' best-sell' : '') + '" onclick="openEditProdotto(' + globalIdx + ')" style="cursor:pointer;">' +
           '<div class="prow-line-left">' +
             '<div class="prow-entity">' + (p.entity || '—') + '</div>' +
             '<div class="prow-loc">📍 ' + (p.luogo || '') + '</div>' +
             (p.note ? '<div class="prow-note">' + p.note + '</div>' : '') +
+            dataStr +
           '</div>' +
           '<div class="prow-line-right">' +
             '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">' +
@@ -2436,7 +2443,6 @@ function renderViewProdotto(data) {
                 '<span class="prow-price sell">' + prezzo + '</span>' +
                 '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
               '</div>' +
-              dataStr +
               (isBest ? '<span class="prow-best-badge sell-badge">★ max</span>' : '') +
             '</div>' +
           '</div>' +
