@@ -33,8 +33,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px;}
 
 /* HEADER */
-.header{position:sticky;top:0;z-index:100;background:linear-gradient(180deg,#131c2c 0%,var(--s1) 100%);border-bottom:1px solid var(--b1);padding:0 12px;height:58px;display:flex;align-items:center;gap:8px;}
-.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,var(--green) 40%,var(--amber) 70%,transparent 100%);}
+.header{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#0d1520 0%,#111c2e 50%,#0d1a28 100%);border-bottom:1px solid rgba(52,211,153,.15);padding:0 12px;height:58px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 16px rgba(0,0,0,.4);}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,var(--green) 30%,var(--blue) 60%,var(--amber) 80%,transparent 100%);}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(52,211,153,.2),transparent);}
 .h-logo{font-size:30px;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(52,211,153,.35));}
 .h-text{flex:1;min-width:0;}
 .h-title{font-size:20px;font-weight:900;letter-spacing:.05em;line-height:1;background:linear-gradient(90deg,#fff 0%,var(--green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
@@ -45,6 +46,40 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .h-drive.syncing{border-color:var(--amber);color:var(--amber);animation:pulse 1s infinite;}
 .h-drive.error{border-color:var(--red);color:var(--red);}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* RICERCA GLOBALE */
+.global-search-wrap { padding: 10px 12px 0; position: relative; }
+.global-search-input {
+  width: 100%; background: var(--s2); border: 1.5px solid var(--b2);
+  border-radius: 10px; padding: 10px 14px 10px 36px;
+  color: var(--t1); font-size: 14px; font-weight: 600; outline: none;
+  box-sizing: border-box; transition: border-color .15s;
+  -webkit-appearance: none;
+}
+.global-search-input:focus { border-color: var(--green); }
+.global-search-input::placeholder { color: var(--t3); font-weight: 400; }
+.global-search-icon { position: absolute; left: 24px; top: 50%; transform: translateY(-50%); font-size: 15px; pointer-events: none; }
+.global-results {
+  background: var(--s1); border: 1px solid var(--b1); border-radius: var(--r);
+  margin: 8px 12px 0; overflow: hidden; display: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+.global-results.open { display: block; }
+.global-res-section { padding: 8px 12px 4px; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; color: var(--t3); border-top: 1px solid var(--b1); }
+.global-res-section:first-child { border-top: none; }
+.global-res-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+  cursor: pointer; transition: background .1s; gap: 10px;
+  -webkit-tap-highlight-color: transparent;
+}
+.global-res-item:last-child { border-bottom: none; }
+.global-res-item:active { background: rgba(255,255,255,.05); }
+.global-res-left { flex: 1; min-width: 0; }
+.global-res-title { font-size: 13px; font-weight: 700; color: var(--t1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.global-res-sub { font-size: 10px; color: var(--t3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.global-res-price { font-size: 14px; font-weight: 900; color: var(--amber); flex-shrink: 0; }
+.global-res-empty { padding: 16px; text-align: center; color: var(--t3); font-size: 12px; }
 
 /* TABS */
 .tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--b1);position:relative;z-index:1;}
@@ -91,9 +126,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 /* CARRIER PILLS */
 .cpills{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 0 8px;}
 .cpills::-webkit-scrollbar{display:none;}
-.cpill{flex-shrink:0;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--b1);background:var(--s2);color:var(--t2);transition:all .12s;white-space:nowrap;}
-.cpill.on{background:var(--gdim);border-color:var(--green);color:var(--green);}
-.cpill.all.on{background:var(--amberdim);border-color:var(--amber);color:var(--amber);}
+.cpill{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--b1);background:var(--s2);color:var(--t2);transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+.cpill:active{transform:scale(0.94);}
+.cpill.on{background:var(--gdim);border-color:var(--green);border-width:2px;color:var(--green);box-shadow:0 0 8px rgba(52,211,153,.15);}
+.cpill.all.on{background:var(--amberdim);border-color:var(--amber);border-width:2px;color:var(--amber);box-shadow:0 0 8px rgba(251,146,60,.15);}
 
 /* RROW — card tratta */
 .rrow {
@@ -104,8 +140,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   box-shadow: 0 3px 14px rgba(0,0,0,.3);
   transition: transform .12s, box-shadow .12s;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .rrow:hover{transform:translateY(-1px);border-color:var(--green);border-left-color:var(--green);box-shadow:0 5px 20px rgba(52,211,153,.10);}
+.rrow:active{transform:scale(0.985);box-shadow:0 1px 6px rgba(0,0,0,.2);}
 .rrow-head{display:flex;align-items:flex-start;justify-content:space-between;padding:11px 13px 7px;gap:8px;}
 .rrow-route{flex:1;min-width:0;}
 .rrow-from{font-size:14px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -114,8 +152,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .rrow-to{font-size:13px;font-weight:700;color:var(--green);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .rrow-best{text-align:right;flex-shrink:0;}
 .rrow-best-who{font-size:11px;font-weight:900;color:var(--green);text-transform:uppercase;letter-spacing:.06em;}
-.rrow-best-price{font-size:20px;font-weight:900;color:var(--amber);line-height:1;}
-.rrow-best-unit{font-size:9px;font-weight:700;color:rgba(251,146,60,.7);}
+.rrow-best-price{font-size:20px;font-weight:900;color:var(--amber);line-height:1;background:var(--amberdim);border:1px solid var(--ambersolid);border-radius:8px;padding:2px 8px;display:inline-block;}
+.rrow-best-unit{font-size:9px;font-weight:700;color:rgba(251,146,60,.7);margin-top:2px;display:block;}
 
 /* CHIPS — lista verticale trasportatori */
 .chips { display: flex; flex-direction: column; gap: 0; padding: 0 10px 8px; }
@@ -127,7 +165,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   border-radius: 6px; transition: background .12s;
 }
 .chip:last-child { border-bottom: none; }
-.chip:active { background: rgba(255,255,255,.06); }
+.chip:active { background: rgba(255,255,255,.06); transform: scale(0.98); }
+.prow-line:active { background: rgba(255,255,255,.05) !important; transform: scale(0.99); }
 .chip.best {
   background: rgba(251,146,60,.07);
   border-left: 3px solid rgba(251,146,60,.6);
@@ -1095,6 +1134,13 @@ select.inp{cursor:pointer;}
   <button class="unsaved-dismiss" onclick="dismissUnsaved()">✕</button>
 </div>
 
+<!-- RICERCA GLOBALE -->
+<div class="global-search-wrap">
+  <span class="global-search-icon">🔍</span>
+  <input class="global-search-input" id="globalSearch" type="text" placeholder="Cerca in tutto... tratte, trasportatori, prodotti" oninput="doGlobalSearch()" onblur="setTimeout(function(){closeGlobalSearch()},200)" autocomplete="off">
+</div>
+<div class="global-results" id="globalResults"></div>
+
 <div class="tabs">
   <button class="tab active" onclick="switchTab('trasporti')">🚛 Trasporti<span class="tab-badge" id="tabBadgeTrasporti"></span></button>
   <button class="tab" onclick="switchTab('prodotti')">🌾 Prodotti<span class="tab-badge" id="tabBadgeProdotti"></span></button>
@@ -1495,7 +1541,16 @@ select.inp{cursor:pointer;}
 // ── Versione app ──
 var APP_VERSION = "1.0.0";
 
-// ── Utilità data ──
+// ── Colore deterministico per base di carico ──
+var _fromColorCache = {};
+var _fromColorPalette = ['#34d399','#60a5fa','#a78bfa','#fb923c','#f472b6','#38bdf8','#fbbf24','#4ade80','#c084fc','#f87171'];
+function fromColor(from) {
+  if (_fromColorCache[from]) return _fromColorCache[from];
+  var hash = 0;
+  for (var _ci=0; _ci<from.length; _ci++) { hash = ((hash << 5) - hash) + from.charCodeAt(_ci); hash = hash & hash; }
+  _fromColorCache[from] = _fromColorPalette[Math.abs(hash) % _fromColorPalette.length];
+  return _fromColorCache[from];
+}
 function formatData(d) {
   if (!d) return '';
   // Supporta YYYY-MM-DD
@@ -1833,6 +1888,95 @@ function clearSearch() {
   activePill = '';
   renderCarrierPills();
   filterRoutes();
+}
+
+function closeGlobalSearch() {
+  var r = document.getElementById('globalResults');
+  if (r) r.classList.remove('open');
+}
+
+function doGlobalSearch() {
+  var inp = document.getElementById('globalSearch');
+  var q = inp ? inp.value.trim().toLowerCase() : '';
+  var box = document.getElementById('globalResults');
+  if (!box) return;
+  if (!q || q.length < 2) { box.classList.remove('open'); return; }
+
+  var html = '';
+  var totalFound = 0;
+
+  // ── Trasporti ──
+  var tratteSeen = {};
+  var trasportiRows = [];
+  DB.trasporti.forEach(function(t) {
+    var hay = ((t.from||'') + ' ' + (t.to||'') + ' ' + (t.carrier||'')).toLowerCase();
+    if (hay.indexOf(q) < 0) return;
+    var k = t.from + '||' + t.to;
+    if (!tratteSeen[k]) { tratteSeen[k] = t; trasportiRows.push(k); }
+    else if (t.price < tratteSeen[k].price) { tratteSeen[k] = t; }
+  });
+  if (trasportiRows.length) {
+    totalFound += trasportiRows.length;
+    html += '<div class="global-res-section">🚛 Trasporti (' + trasportiRows.length + ')</div>';
+    for (var _ti=0; _ti<trasportiRows.length && _ti<5; _ti++) {
+      var t = tratteSeen[trasportiRows[_ti]];
+      var sf2 = t.from.replace(/'/g,'&#39;');
+      html += '<div class="global-res-item" onclick="globalJumpTrasporto(\'' + sf2 + '\')">' +
+        '<div class="global-res-left">' +
+          '<div class="global-res-title">' + t.from + ' \u2192 ' + t.to + '</div>' +
+          '<div class="global-res-sub">' + t.carrier + (t.conditions ? ' \u00b7 ' + t.conditions : '') + '</div>' +
+        '</div>' +
+        '<div class="global-res-price">' + t.price.toLocaleString('it-IT',{minimumFractionDigits:0}) + ' ' + t.unit + '</div>' +
+      '</div>';
+    }
+    if (trasportiRows.length > 5) html += '<div class="global-res-empty" style="padding:5px 14px;font-size:10px;">+ altri ' + (trasportiRows.length - 5) + ' nella tab Trasporti</div>';
+  }
+
+  // ── Prodotti ──
+  var prodMatches = [];
+  for (var _pi2=0; _pi2<DB.prodotti.length; _pi2++) {
+    var p2 = DB.prodotti[_pi2];
+    var hay2 = ((p2.prodotto||'') + ' ' + (p2.entity||'') + ' ' + (p2.luogo||'') + ' ' + (p2.note||'')).toLowerCase();
+    if (hay2.indexOf(q) >= 0) prodMatches.push({p:p2, idx:_pi2});
+  }
+  if (prodMatches.length) {
+    totalFound += prodMatches.length;
+    html += '<div class="global-res-section">\uD83C\uDF3E Prodotti (' + prodMatches.length + ')</div>';
+    for (var _pi3=0; _pi3<prodMatches.length && _pi3<5; _pi3++) {
+      var pm = prodMatches[_pi3];
+      var tipoIcon = pm.p.tipo === 'acquisto' ? '\uD83D\uDCB0' : '\uD83D\uDCC8';
+      var pColor = pm.p.tipo === 'acquisto' ? '#fca5a5' : '#6ee7b7';
+      html += '<div class="global-res-item" onclick="globalJumpProdotto(' + pm.idx + ')">' +
+        '<div class="global-res-left">' +
+          '<div class="global-res-title">' + tipoIcon + ' ' + (pm.p.prodotto||'\u2014') + '</div>' +
+          '<div class="global-res-sub">' + (pm.p.entity||'') + (pm.p.luogo ? ' \u00b7 ' + pm.p.luogo : '') + '</div>' +
+        '</div>' +
+        '<div class="global-res-price" style="color:' + pColor + '">' + (pm.p.prezzo||'\u2014') + ' ' + (pm.p.unita||'') + '</div>' +
+      '</div>';
+    }
+    if (prodMatches.length > 5) html += '<div class="global-res-empty" style="padding:5px 14px;font-size:10px;">+ altri ' + (prodMatches.length - 5) + ' nella tab Prodotti</div>';
+  }
+
+  if (!totalFound) html = '<div class="global-res-empty">Nessun risultato per "' + q.replace(/</g,'&lt;') + '"</div>';
+  box.innerHTML = html;
+  box.classList.add('open');
+}
+
+function globalJumpTrasporto(from) {
+  closeGlobalSearch();
+  var gs = document.getElementById('globalSearch'); if (gs) gs.value = '';
+  switchTab('trasporti');
+  var sf = document.getElementById('searchFrom'); if (sf) sf.value = from;
+  var st = document.getElementById('searchTo'); if (st) st.value = '';
+  activePill = '';
+  filterRoutes();
+}
+
+function globalJumpProdotto(idx) {
+  closeGlobalSearch();
+  var gs = document.getElementById('globalSearch'); if (gs) gs.value = '';
+  switchTab('prodotti');
+  setTimeout(function(){ openEditProdotto(idx); }, 120);
 }
 
 function formatPrice(v) {
@@ -4005,7 +4149,7 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
     var safeKey = key.replace(/"/g, '&quot;');
     var sf = route.from.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     var st = route.to.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="' + safeKey + '">' +
+    html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="' + safeKey + '" style="border-left-color:' + fromColor(route.from) + ';">' +
       '<div class="rrow-head">' +
         '<div class="rrow-route">' +
           '<div class="rrow-from">' + route.from + '</div>' +
