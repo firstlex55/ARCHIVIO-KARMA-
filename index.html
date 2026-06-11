@@ -978,7 +978,15 @@ select.inp{cursor:pointer;}
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .chip-date {
-  font-size: 9px; color: #4a6480; font-weight: 500; margin-top: 2px;
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 4px;
+  background: rgba(36,48,72,.7);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  padding: 2px 8px 2px 6px;
+  font-size: 9px; font-weight: 700;
+  color: #6a82a0;
+  letter-spacing: .03em;
 }
 
 .prow-section-hd {
@@ -1921,7 +1929,8 @@ function doGlobalSearch() {
     for (var _ti=0; _ti<trasportiRows.length && _ti<5; _ti++) {
       var t = tratteSeen[trasportiRows[_ti]];
       var sf2 = t.from.replace(/'/g,'&#39;');
-      html += '<div class="global-res-item" onclick="globalJumpTrasporto(\'' + sf2 + '\')">' +
+      var st2 = t.to.replace(/'/g,'&#39;');
+      html += '<div class="global-res-item" onclick="globalJumpTrasporto(\'' + sf2 + '\',\'' + st2 + '\')">' +
         '<div class="global-res-left">' +
           '<div class="global-res-title">' + t.from + ' \u2192 ' + t.to + '</div>' +
           '<div class="global-res-sub">' + t.carrier + (t.conditions ? ' \u00b7 ' + t.conditions : '') + '</div>' +
@@ -1962,12 +1971,12 @@ function doGlobalSearch() {
   box.classList.add('open');
 }
 
-function globalJumpTrasporto(from) {
+function globalJumpTrasporto(from, to) {
   closeGlobalSearch();
   var gs = document.getElementById('globalSearch'); if (gs) gs.value = '';
   switchTab('trasporti');
-  var sf = document.getElementById('searchFrom'); if (sf) sf.value = from;
-  var st = document.getElementById('searchTo'); if (st) st.value = '';
+  var sf = document.getElementById('searchFrom'); if (sf) sf.value = from || '';
+  var st = document.getElementById('searchTo'); if (st) st.value = to || '';
   activePill = '';
   filterRoutes();
 }
@@ -3164,7 +3173,7 @@ function acSearch(field) {
   filterRoutes();
   var items = acGetList(field).filter(function(v){ return !q || v.toLowerCase().includes(q); });
   // Se non trova partenze/destinazioni, suggerisci trasportatori
-  if (!items.length && q && field === 'From') {
+  if (!items.length && q) {
     var carriers = acGetCarriers().filter(function(v){ return v.toLowerCase().includes(q); });
     if (carriers.length) {
       acRender(field, carriers.map(function(c){ return '🚛 ' + c; }), '');
@@ -4135,7 +4144,7 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
         '<div class="chip-left">' +
           '<div class="chip-who">' + p.carrier + '</div>' +
           (p.conditions ? '<div class="chip-cond">' + p.conditions + '</div>' : '') +
-          (p.data ? '<div class="chip-date">' + (isDataVecchia(p.data, 90) ? '⏰ ' : '') + 'tariffa del ' + formatData(p.data) + '</div>' : '') +
+          (p.data ? '<div class="chip-date"><span style="width:5px;height:5px;border-radius:50%;background:#374e6a;flex-shrink:0;display:inline-block;"></span>tariffa del ' + formatData(p.data) + '</div>' : '') +
           (p.note ? '<div class="chip-note">📝 ' + p.note + '</div>' : '') +
         '</div>' +
         '<div class="chip-right">' +
