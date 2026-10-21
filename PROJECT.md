@@ -2,7 +2,7 @@
 
 **Repository:** `firstlex55/ARCHIVIO-KARMA-`  
 **URL:** `https://firstlex55.github.io/ARCHIVIO-KARMA-/`  
-**File principale:** `index.html` (single-file app, ~4300 righe)  
+**File principale:** `index.html` (single-file app, ~5450 righe)  
 **Versione app:** v1.0.0  
 **Azienda:** Pro Trasporti Srl  
 
@@ -13,6 +13,7 @@
 | File | Descrizione |
 |------|-------------|
 | `index.html` | App completa (single-file) |
+| `sw.js` | **Service worker** (giro 4), **opzionale e NON in uso** (Fil ha deciso di non usarlo, dal giro 5 non si consegna più). Se manca l'app funziona uguale (la registrazione fallisce in silenzio), solo non si apre offline |
 | `manifest.json` | Manifest PWA per installazione come app |
 | `icon-tariffe.png` | Icona 192×192 per schermata home |
 | `icon-tariffe-512.png` | Icona 512×512 per PWA |
@@ -27,7 +28,7 @@
 - SheetJS (XLSX) via CDN per export Excel
 - Google Drive API (GIS) per sync cloud
 - localStorage come database locale
-- Service Worker inline per PWA offline
+- **Nessun Service Worker** (la versione precedente di questo file diceva il contrario, ma nel codice non c'è): l'app NON funziona offline perché SheetJS e Google si caricano dal web. Da fare (vedi backlog).
 
 ### Compatibilità Android (regole critiche)
 - **Zero** arrow functions (`=>`) — usare `function(x){}`
@@ -75,9 +76,14 @@
   "pdfLoaded": true,
   "pdfRev": "REV 03/2026",
   "karmaRev": "KarMa 03/2026",
+  "karmaHidden": { "<chiave KarMa>": 1 },
   "lastUpdate": null
 }
 ```
+
+- `pdfLoaded`: le tariffe incorporate si caricano **solo al primo avvio**. Se l'utente svuota, resta vuoto.
+- `karmaRev`: il listino KarMa si (ri)applica solo quando questa non coincide con `KARMA_REV` nel codice (nuova revisione del listino), mai perché "mancano dei record".
+- `karmaHidden`: chiavi (`karmaKey`) dei prezzi KarMa cancellati dall'utente; il listino non li rimette. Viene salvato anche su Drive.
 
 ### Schema record trasporto
 ```json
@@ -95,6 +101,7 @@
   "rev": "REV 03/2026"
 }
 ```
+`rev` vale **`"Manuale"`** per ogni tariffa inserita **o modificata a mano** (dal giro 5 anche la "Modifica tratta"/"Modifica prezzo" la imposta, ma solo se un campo è davvero cambiato: `trSig()`). Le tariffe `Manuale` sono protette dal "Ricarica REV 03/2026" e dall'import Excel (mai sovrascritte). ⚠️ Le modifiche fatte **prima** del giro 5 non hanno questo segno e non si distinguono da quelle incorporate.
 
 ### Schema record prodotto
 ```json
@@ -107,11 +114,18 @@
   "unita": "€/ton",
   "note": "",
   "data": "2026-03-01",
-  "source": "karma"
+  "source": "karma",
+  "kk": "cippato|acquisto|ardenghi|dosolo (mn)|",
+  "edited": true
 }
 ```
 
-**source** può essere `"karma"` (da KARMA_DATA) o `"manual"` (aggiunto dall'utente).  
+**source**:
+- `"karma"` — dal listino incorporato `KARMA_DATA`. Ha `kk` (chiave stabile del listino, `karmaKey()`); `edited:true` se l'utente ne ha cambiato i valori (un aggiornamento di revisione non lo sovrascrive).
+- `"manual"` — inserito dal modulo. I record vecchi senza `source` vengono marcati così da `normalizeDB()`.
+- `"import"` — importato da Excel (`importProdotti`).
+
+Manuali e importati **non vengono mai toccati** dal ricaricamento del listino KarMa.  
 **data** formato `YYYY-MM-DD` — visualizzato come `GG/MM/AA` tramite `formatData()`.
 
 ---
@@ -132,7 +146,8 @@
 - **189 prezzi** su **63 tratte** per **18 trasportatori**
 - Unità: `€/vg` (viaggio), `€/ton`, `€/mc`
 - Trasportatori: A.L.B. Srl, ALBA, ASCHIERI, AVIO, BRANCHINI, C.L.P., C.M. TRASPORTI, CEVOLO, CIRIONI, COAP, CONECO, CONSAR 2026, FRAULINI, PADANA, RUFFINI, STEGAGNO, UDERZO, UNITRAG
-- Al ricarico via `reloadBuiltinData()`: tutti i record ricevono `data: '2026-03-01'` automaticamente
+- `builtinTariffe()` (primo avvio e `reloadBuiltinData()`): tutti i record ricevono `data: '2026-03-01'`, destinazioni normalizzate
+- `reloadBuiltinData()` chiede conferma e **conserva le tariffe con `rev:'Manuale'`** (inserite o modificate a mano); le altre (incorporate o importate da Excel) vengono sostituite
 
 ### KARMA_DATA — Prezzi Prodotti (KarMa 03/2026)
 - **43 record** (dopo deduplicazione)
@@ -217,16 +232,17 @@
 
 ### Tab Import
 
-- Import Excel trasporti (auto-detect colonne)
-- Import Excel prodotti
-- 🔄 Ricarica tariffe REV 03/2026 (da PDF_DATA, setta `data:'2026-03-01'`)
-- 🌾 Carica listino KarMa (da KARMA_DATA, idempotente)
+- Import Excel trasporti **con controllo prima di scrivere** (giro 5, vedi sezione "Giro 5"): finestra "📋 Controllo del file" con Nuove / Già presenti / Prezzo diverso / Non lette; si aggiungono le nuove e, per le tariffe già presenti con prezzo diverso, c'è la scelta in cima alla finestra **"Mantieni le mie" (di partenza) / "Sovrascrivi"**. Le tariffe che nel file non ci sono non si toccano mai. Con "Sovrascrivi" le tariffe inserite/modificate a mano (`rev:'Manuale'`) e quelle con data più recente del file restano comunque com'erano, a meno che si spunti la casella "Sovrascrivi anche le N inserite o modificate da me, o più recenti". Il vecchio selettore Aggiungi/Aggiorna non c'è più
+- Import Excel prodotti (invariato: **solo aggiunge**, non sovrascrive mai; record con `source:'import'`, `prodKey` contro i doppioni). ⚠️ Provato sul listino `Listino_KarMa_03.2026.xls` sopra ai prezzi KarMa già incorporati: ne aggiunge ~42 doppi (le voci incorporate hanno in `note` la destinazione "→ …"/"da X (luogo)", quindi `prodKey` non coincide) e di "56+M%" tiene solo 56. Non corretto (non richiesto): vedi Backlog
+- Import prodotti: record con `source:'import'`; un file ripetuto non crea doppioni (`prodKey`)
+- 🔄 Ricarica tariffe REV 03/2026 (da PDF_DATA, setta `data:'2026-03-01'`; chiede conferma, conserva le tariffe a mano)
+- 🌾 Carica listino KarMa (da KARMA_DATA; chiede conferma: i prezzi KarMa modificati/cancellati tornano originali, manuali e importati restano)
 - ⬇️ Export Excel — modal con selezione tipo:
   - **🚛 Tariffe Trasporti**: filtri da/a/trasportatori, formato Excel o A3
   - **🌾 Prezzi Prodotti**: sheet "Tutti i prezzi" + sheet per ogni prodotto
-- 🗑 Svuota manuali (`clearProdottiManuali()` — mantiene `source='karma'`)
-- 🗑 Svuota tutto
-- Import/Export JSON backup
+- 🗑 Svuota manuali (`clearProdottiManuali()` — toglie manuali + importati, mantiene `source='karma'`)
+- 🗑 Svuota tutto (`clearAll()` — l'archivio **resta vuoto** anche dopo il riavvio; per ripristinare usare i due pulsanti di ricarico)
+- Card **💾 Backup e annulla**: Salva backup ora (file JSON), Annulla ultima modifica, Ripristina da un file di backup (l'import chiede conferma e rifiuta file senza tariffe/prodotti)
 
 **Export A3** (`printA3(rows, selectedCarriers)`)
 - Apre anteprima in nuova finestra (no stampa automatica)
@@ -242,12 +258,15 @@
 - Sheet "Tutti i prezzi" + uno sheet per prodotto
 - Acquisti ordinati per prezzo crescente, vendite per decrescente
 
-### Google Drive
+### Google Drive (riscritto nel giro 4 — vedi "Giro 4" per i dettagli)
 - Client ID: `107091966360-vbepp0lmghbck14vv89et30acl34d8a9.apps.googleusercontent.com`
-- GIS caricato lazy al primo click
-- Auto-save debounce 2s dopo ogni modifica
-- Salva/carica in `appDataFolder`
-- Gestione conflitti con modal scelta locale/drive
+- GIS caricato lazy al primo click (`loadGISandRun`); salva/carica in `appDataFolder`
+- Auto-save 2 s dopo ogni modifica, **solo** se il permesso è valido (`driveTokenValid()`)
+- `driveCheck(r)`: ogni risposta di Google deve essere `ok`, altrimenti è un errore (prima un 401 veniva mostrato come "✅ Salvato")
+- Prima di ogni salvataggio si controlla la data del file su Drive (`driveSyncCheck`): se un altro dispositivo ha salvato nel frattempo → unione automatica o finestra di conflitto
+- Il permesso dura ~1 ora: alla scadenza il chip diventa 🔑, un tocco riconnette senza password (`requestAccessToken({prompt:''})`); il token è salvato in `archivio-drive-token` e dopo un ricaricamento si riprende da solo
+- Offline: chip 📴, le modifiche restano sul telefono (`archivio-drive-dirty`) e partono da sole al ritorno della rete
+- Payload su Drive: `trasporti`, `prodotti`, `lastUpdate`, `karmaHidden`, `karmaRev`, `pdfLoaded`, `savedAt`
 
 ---
 
@@ -283,15 +302,21 @@
 - **renderViewProdotto** usa `DB.prodotti.indexOf(p)` con fallback by-value
 - **renderEditPricesList** idem per `DB.trasporti.indexOf(p)`
 - **init()** chiamata esplicita alla fine del JS
-- **KARMA_DATA** si ricarica automaticamente se `DB.karmaRev` non corrisponde
+- **KARMA_DATA** si applica solo se `DB.karmaRev !== KARMA_REV` (nuova revisione) — mai in base al numero di record. Per una nuova revisione del listino: cambiare `KARMA_REV` e `KARMA_DATA`; `applyKarma(false)` rispetta i prezzi KarMa modificati/cancellati dall'utente
+- **Testo nell'HTML**: ogni testo dell'utente (trasportatore, tratta, note, fornitore…) va passato da `esc()`; ogni stringa dentro `onclick="f('…')"` da `jq()`. Mai concatenare nomi grezzi (un apostrofo o una virgoletta rompe il pulsante o tronca il campo)
 - **selCarriers** filtrato con loop `for`, mai `.includes()` su array
+- **Colori**: mai esadecimali o `rgba(0,0,0,…)` fissi nel CSS dell'app; usare sempre le variabili del tema (altrimenti il tema chiaro/scuro si rompe). Eccezione voluta: il popup di stampa A3 (`printA3`) ha i suoi colori fissi, perché stampa su carta bianca
+- **Pesi**: usare al massimo `font-weight:700` (600 per i titoli, 500 per le etichette). Mai 800/900: stancano e sono troppo marcati
+- **Tema**: dopo ogni modifica grafica controllare entrambi i temi (scuro e chiaro) e rilanciare l'audit di contrasto (rapporto ≥ 4.5 per il testo normale)
 
 ### CSS Chiavi
 | Variabile/Classe | Uso |
 |-----------------|-----|
-| `--amber` | colore primario ambra (#fb923c) |
-| `--green` | verde (#34d399) |
-| `--t2`, `--t3` | testo secondario/terziario |
+| `--bg`, `--s1`, `--s2`, `--b1`, `--b2` | sfondo pagina, superfici, bordi (cambiano col tema) |
+| `--t1`, `--t2`, `--t3` | testo primario/secondario/terziario |
+| `--amber`, `--green`, `--blue`, `--red` | colori semantici (prezzo/avviso, minimo/acquisto, info, errore) |
+| `--amber-rgb`, `--green-rgb`, `--shade-rgb`… | stessi colori come canali "r,g,b": si usano come `rgba(var(--green-rgb),.15)` per sfumature |
+| `--hd1`, `--hd2` | gradiente dell'header |
 | `.prow-*` | classi chip prodotti (layout identico a `.chip-*`) |
 | `.chip-*` | classi chip trasportatori |
 | `.chip-date` | pill data tariffa: `border-radius:20px`, pallino, "tariffa del GG/MM/AA" |
@@ -309,6 +334,8 @@
 - [ ] Vista Fornitore → Cliente con freccia
 - [ ] Storico prezzi (confronto revisioni)
 - [ ] Delta prezzi tra date (▲/▼ accanto al prezzo)
+- [x] ~~Condividi tratta su WhatsApp~~ (giro 4)
+- [x] ~~Annulla dopo le cancellazioni + backup in un tocco~~ (giro 4)
 - [ ] Copia rapida chip con long-press
 - [ ] Widget "ultima modifica" in fondo alla pagina
 - [ ] Icona PWA su Android (problema manifest GitHub Pages)
@@ -337,3 +364,263 @@
 1. `globalJumpTrasporto(from, to)` — ora imposta sia partenza che destinazione
 2. `acSearch(field)` — fallback trasportatori attivo su entrambi i campi DA e A
 3. `doGlobalSearch()` — click risultato tratta ora passa `from` e `to` alla funzione di salto
+
+## Modifiche Sessione 19-10-2026
+
+### Bug gravi corretti (perdita dati / prezzi mancanti)
+1. **Cancellazione**: il pulsante Elimina del modal prezzo singolo e il 🗑 sulle card chiamavano `deleteTratta()`, che cancellava TUTTI i prezzi della tratta. Ora:
+   - `deleteSinglePrice()` elimina solo il record aperto (conferma con trasportatore, prezzo e tratta)
+   - `deleteTratta()` elimina l'intera tratta solo da "Modifica tratta" (conferma con il numero di prezzi)
+   - `deleteFromEditModal()` sceglie da sola quale usare; l'etichetta del pulsante cambia ("Elimina prezzo" / "Elimina tratta")
+   - rimosso il 🗑 dalle card della vista Rapida
+2. **Prezzi €/mc nascosti**: le viste Rapida e Confronto mostravano solo `€/vg` e `€/ton`, quindi i prezzi `€/mc` (o altre unità) sparivano. Ora `groupByUnit()` raggruppa tutte le unità (ordine vg, ton, mc, altre). (Questa NON era la causa dei prezzi mancanti segnalati: vedi punto successivo.)
+2b. **Tendina Da/A che non scorre e taglia le basi (causa vera dei prezzi mancanti)**. Tre difetti insieme:
+   - `.search-card` aveva `overflow:hidden`: la tendina veniva ritagliata dopo poche righe → ora `overflow:visible` e `.search-card-bar` con angoli arrotondati propri
+   - `acRender` mostrava solo 14 voci (`slice(0,14)`) ma le basi di carico sono 27: da Grezzana in poi non comparivano mai (stesso problema con `slice(0,10)` nelle tendine del modal Prodotto, dove i luoghi sono 43) → ora si mostrano tutte, con indicatore "N voci · scorri per vederle tutte"
+   - ogni voce faceva `preventDefault()` su `touchstart`: al primo contatto col dito la voce veniva scelta e lo scroll bloccato → ora `acBindPick()`: tocco breve = seleziona, trascinamento = scorre
+   - altezza adattata allo spazio visibile sopra la tastiera (`acFit`, `acReveal`, listener `visualViewport`); scroll fluido (`-webkit-overflow-scrolling`, `overscroll-behavior:contain`); `acSafeClose` non chiude la tendina mentre il dito scorre
+   - suggerimenti trasportatore ("🚛 NOME"): il simbolo veniva copiato nel campo e la ricerca non trovava nulla → ora `acSelect` lo toglie
+3. **Modal prezzo singolo**: aggiunta la lista di tutti i prezzi della tratta (tap su una riga per passare a quel prezzo). Era documentata ma nel codice non c'era.
+4. **Unità convertite di nascosto**: i select unità dei modal avevano solo vg/ton, quindi modificare un prezzo `€/mc` lo trasformava in `€/vg` al salvataggio. Ora `unitOptionsHtml()` include `€/mc` e conserva qualunque unità esistente (anche in "Aggiungi tariffa").
+5. Intestazione vista Rapida: ora mostra "N tratte · N prezzi" per controllare a colpo d'occhio che i conteggi tornino.
+
+### Pulizia codice
+- Rimosso tag CSS troncato `</sty` (invalidava la regola `.chip-section-label`)
+- `resolveConflict` riscritta senza `async/await` e con `_applyDriveData()` (prima richiamava funzioni inesistenti)
+- `new Set(...)` in `openEntityModal` sostituito con loop su oggetto
+
+### Funzioni nuove
+| Funzione | Descrizione |
+|----------|-------------|
+| `unitRank(u)` / `UNIT_ORDER` | ordine fisso delle unità |
+| `unitOptionsHtml(cur)` | `<option>` per i select unità, conserva l'unità corrente |
+| `groupByUnit(prices)` | raggruppa e ordina i prezzi per unità |
+| `deleteSinglePrice()` | elimina un solo record |
+| `deleteFromEditModal()` | instrada Elimina prezzo / Elimina tratta |
+
+### Giro 2 — Audit del codice e correzioni sulla sicurezza dei dati
+Audit completo con simulazione dei problemi sul codice vero (harness `vm` + Chromium/Playwright su profilo telefono). Problemi riprodotti e corretti:
+
+1. **Cancellare un prezzo KarMa faceva ricaricare tutto il listino** (condizione `karmaInDB < karmaExpected` in `init`): il prezzo cancellato ricompariva e le modifiche agli altri prezzi KarMa venivano azzerate. Ora il listino si applica solo se cambia `KARMA_REV`; le cancellazioni sono ricordate in `DB.karmaHidden`, le modifiche segnate con `edited:true` (`applyKarma`, `forgetKarma`).
+2. **Prodotti importati da Excel senza `source`** venivano persi a ogni ricarico del listino KarMa. Ora `source:'import'`; `normalizeDB()` marca come `manual` i record vecchi senza origine. L'import non crea più doppioni (`prodKey`).
+3. **"Svuota tutto" non svuotava** (al riavvio tornavano le 189 tariffe): ora `pdfLoaded`/`karmaRev` impostati, restano vuoti. Stesso per "Elimina tutti i prodotti".
+4. **"Carica tariffe incorporate" cancellava le tariffe inserite a mano**: ora conserva quelle con `rev:'Manuale'` (e se una tariffa PDF è stata modificata a mano, vince la modifica). Conferma con il numero esatto.
+5. **Drive**:
+   - un errore di Google (401/403/5xx) veniva mostrato come "✅ Salvato su Drive": ora `driveCheck`/`driveFail`
+   - "Carica da Drive" sostituiva tutto senza chiedere (nel test: 190 → 1 tariffe): ora conferma con i numeri; rifiuta file senza dati
+   - `_applyDriveData` e `loadJSON` non fanno più ricomparire i dati incorporati sopra i dati caricati; `loadJSON` chiede conferma e valida il file
+6. **Apostrofi nei pulsanti**: cercando "colle" 4 risultati su 7 non rispondevano al tocco ("Colle Val d'Elsa (SI)"); stesso per i filtri prodotto e le pill. Nuovo `jq()` per le stringhe negli `onclick`.
+7. **Testo non protetto nell'HTML**: nuovo `esc()` applicato alle viste principali (Rapida, Confronto, Prodotti per prodotto/fornitore/cliente, ricerca globale, modal modifica, export). Prima una virgoletta nelle condizioni di pagamento troncava il campo e al salvataggio troncava il dato.
+8. Piccoli: tolto `maximum-scale=1.0` dal viewport (ora si può ingrandire); etichette import chiarite ("Aggiungi: solo le tariffe nuove" / "Aggiorna: sovrascrive i prezzi già presenti"; prima "Sostituisci — Cancella e reimporta" non era vero); le tariffe incorporate del primo avvio ora hanno la data come quelle ricaricate.
+
+#### Funzioni nuove (giro 2)
+| Funzione | Descrizione |
+|----------|-------------|
+| `esc(s)` / `jq(s)` | testo sicuro per HTML / per stringhe dentro `onclick` |
+| `normalizeDB()` | rende coerente il DB dopo ogni caricamento (array, `karmaHidden`, `source`, `kk`) |
+| `applyKarma(reset)` | applica il listino KarMa; `reset=true` = ricarica esplicita, `false` = aggiornamento di revisione |
+| `karmaKey(k)` / `prodKey(p)` | chiave stabile di un prezzo KarMa / di un prodotto (anti-doppioni) |
+| `forgetKarma(p)` | ricorda che un prezzo KarMa è stato cancellato |
+| `builtinTariffe()` | tariffe incorporate pronte (data, destinazioni normalizzate) |
+| `driveCheck(r)` / `driveFail(e, what)` | errori Drive veri e avvisi |
+
+Costanti: `KARMA_REV`, `PDF_REV`.
+
+### Giro 3 — Tema più morbido: scuro (predefinito), chiaro, automatico
+Motivo: nero pieno contro testo bianco pieno stanca la vista (alone intorno alle lettere), soprattutto sul telefono per ore.
+
+- **Palette**: `:root` = scuro morbido (sfondo blu-grafite `--bg:#151a22`, testo non bianco puro); `:root[data-theme="light"]` = chiaro morbido (sfondo grigio-azzurro `--bg:#e4e7ec`, non bianco puro). Tutti i colori dell'app sono variabili (vedi "CSS Chiavi"); i colori esadecimali fissi sono stati sostituiti
+- **Scelta dell'utente**: pulsante tondo nell'header (luna / sole / mezzo cerchio) che alterna **Scuro → Chiaro → Automatico** (segue il telefono). Salvata in `localStorage['archivio-theme']` (`dark` | `light` | `auto`)
+- **Attributi su `<html>`**: `data-theme` = tema in uso (`dark`|`light`, già risolto), `data-theme-pref` = scelta (`dark`|`light`|`auto`; guida l'icona del pulsante)
+- **Nessun lampo**: uno `<script>` piccolo subito dopo il meta viewport imposta gli attributi prima del primo disegno; `color-scheme` e `<meta name="theme-color">` seguono il tema (barra di stato di Android). In modalità automatica un listener `matchMedia('(prefers-color-scheme: light)')` aggiorna la pagina quando cambia il telefono
+- **Contrasto**: audit automatico in Chromium su 3.723 testi — con i colori vecchi 670 sotto soglia, ora 0 in entrambi i temi (regola finale in fondo al CSS per le etichette ambra delle unità)
+- **Stampa A3**: non cambia (colori propri, non usa le variabili)
+- **Header stretto**: la scritta `v1.0.0` si nasconde sotto i 430px, il sottotitolo si stringe sotto 380/350px (verificato a 340, 360, 393, 412px). Le media query vanno **dopo** le regole `.h-*` base, altrimenti vengono sovrascritte
+
+- **Pesi del carattere (variante "B", scelta da Fil)**: il grassetto 800/900 su tutto (circa 75 punti) risultava troppo pesante. Mappa applicata a tutto il CSS e agli stili inline: 900→700, 800→700, 700→600, 600→500, 500 e 400 invariati. Il carattere resta quello di sistema (`-apple-system, "SF Pro Display", "Segoe UI", sans-serif`). **Il popup di stampa A3 è escluso** (mantiene i suoi pesi 700/900). Regola per il nuovo codice: massimo `font-weight:700`, niente 800/900. Anteprime A/B/C/D confrontate in Chromium con Inter al posto del font del telefono; su telefono la resa può differire leggermente
+
+#### Funzioni nuove (giro 3)
+Costanti: `THEME_KEY` (`'archivio-theme'`), `THEME_NAMES`.
+
+| Funzione | Descrizione |
+|----------|-------------|
+| `themePref()` | legge la scelta salvata (default `dark`) |
+| `themeResolve(pref)` | `auto` → `dark`/`light` secondo il telefono |
+| `applyTheme(pref)` | imposta gli attributi su `<html>`, `meta theme-color` e l'etichetta del pulsante (non salva) |
+| `cycleTheme()` | pulsante header: Scuro → Chiaro → Automatico; salva la scelta e mostra un avviso |
+| `themeInit()` | primo comando di `init()`: applica il tema e aggancia il listener `matchMedia` |
+
+### Giro 4 — Annulla + backup, Condividi su WhatsApp, Drive affidabile, uso offline
+Richiesta di Fil: "1, 2 e 8" dell'elenco di migliorie. Collaudo: 5 suite vm (test.js 13, test2.js 14, test3.js 16, test5.js 76, **test6.js 126**), **test_sw.js 18**, Chromium (browser_test 20, browser_theme_test 15, **browser_giro4_test 25** con service worker vero e rete spenta) e audit di contrasto delle nuove schermate (0 problemi nei due temi a 340 e 393 px).
+
+#### 1. Annulla e backup
+- **Avviso con pulsante** — `showToast(msg, type, act)`: `act = {label, fn}` aggiunge il pulsante dentro l'avviso (`.toast-act`, l'avviso diventa cliccabile, 9 s invece di 3,2 s)
+- **Pila di annullamento** — prima di ogni operazione distruttiva si fa `var snap = undoSnapshot()`, dopo l'operazione `undoToast(etichetta, snap, messaggio, tipo)`: mostra l'avviso con **↩️ Annulla**. In memoria le ultime 10 (`_undoStack`), l'ultima è salvata anche in `archivio-tariffe-undo` (sopravvive al ricaricamento). Si può annullare anche dopo che l'avviso è sparito: Import → **Annulla ultima modifica** (`undoLast()`, mostra cosa e quando)
+- **Operazioni con Annulla**: elimina prezzo/prodotto, modifica prodotto, svuota prodotti / manuali / tutto, carica KarMa, ricarica tariffe REV, ripristina JSON, importa tariffe (solo se qualcosa è cambiato), importa prodotti (solo se ci sono nuovi), elimina tratta, elimina singolo prezzo, salva tratta (modo singolo e multiplo), scelte nel conflitto Drive. **Regola per il nuovo codice**: ogni operazione che cancella o sovrascrive dati deve prendere `undoSnapshot()` prima e chiamare `undoToast()` dopo
+- **Backup** — `exportData()` scarica `archivio-tariffe-backup-AAAAMMGG….json` (contiene `app` e `exportedAt`) e salva la data in `archivio-last-backup` (`BACKUP_KEY`); `backupInfo()` / `backupRefreshUI()` mostrano "Ultimo backup: GG/MM/AAAA (oggi / ieri / N giorni fa)" in ogni elemento `.backup-info` (in ambra se mai fatto o più vecchio di 14 giorni). Pulsante **Salva backup ora** nella card Import → "💾 Backup e annulla" e **Backup sul telefono (file)** nel pannello Drive. Ripristino: `importDataJSON()` apre il selettore file, `loadJSON()` legge e chiede conferma. I due vecchi pulsanti JSON della card "Gestione dati" sono stati tolti
+- Se il telefono ha la memoria piena, `save()` avvisa ("❌ Memoria del telefono piena…") invece di perdere i dati in silenzio
+
+#### 2. Condividi tratta (WhatsApp)
+- Pulsante **📤 Condividi** su ogni scheda in vista Rapida e **📤 Condividi tratta** in vista Confronto → `openShareTratta(from, to)` apre `modalShare`
+- Elenco dei prezzi della tratta con spunta (togli quelli che non vuoi mandare), opzioni **Nomi trasportatori / Condizioni / Data tariffa**, testo modificabile (`#shareText`). `shareBuild()` costruisce il testo (`*Da → A*`, un punto elenco per prezzo, `Tariffe del GG/MM/AA`; prezzi con virgola italiana, `€/vg` → `€/viaggio`)
+- Invio: `shareSend('wa')` apre `https://wa.me/?text=…`; `shareSend('sys')` usa `navigator.share` (menu "Altre app"); `shareCopy()` copia (con ripiego `execCommand` se la clipboard non è permessa)
+- Nel confronto, `_renderConfronto` ora passa le città da `esc()`/`jq()`
+
+#### 3. Drive: conflitti, riconnessione, offline
+**Chiavi localStorage**
+| Chiave | Contenuto |
+|--------|-----------|
+| `driveConnected` | `'1'` se Drive è stato collegato su questo telefono |
+| `archivio-drive-token` | `{t, e}`: token Google e scadenza (ms). `e = 0` = scadenza ignota, si considera valido finché Google non risponde 401 |
+| `archivio-drive-sync` | `modifiedTime` dell'ultimo file Drive visto/scritto da questo telefono |
+| `archivio-drive-dirty` | `'1'` = ci sono modifiche locali non ancora su Drive |
+| `archivio-drive-base` | mappa di impronte dell'ultimo stato comune telefono↔Drive (base per l'unione a tre vie) |
+| `archivio-tariffe-undo`, `archivio-last-backup` | vedi punto 1 |
+
+**Stati del chip header / pannello** (`setDriveStatus(state)`, `_driveState`): `''` (non connesso) · `connected` ☁️ · `syncing` · `error` · `expired` 🔑 (permesso scaduto: un tocco riconnette) · `offline` 📴. Il chip è cliccabile (`driveChipClick()`): se scaduto riconnette subito, altrimenti apre il pannello.
+
+**Flusso di salvataggio** (`save()` → autosave 2 s → `driveSave(silent)`):
+1. `driveSyncCheck()` legge solo i metadati del file (`driveFetchMeta`: `id`, `modifiedTime`) e confronta con `archivio-drive-sync`
+2. Drive invariato → carica (`driveDoUpload`, PATCH con `fields=id,modifiedTime`, poi `driveRemember`)
+3. Drive cambiato da un altro dispositivo e **qui nessuna modifica** → adozione automatica (`driveAdopt`), con avviso
+4. Drive cambiato **e** modifiche locali → se i due contenuti sono uguali (`driveSameContent`) si allinea; altrimenti **unione automatica** a tre vie; la finestra `modalDriveConflict` compare solo se serve scegliere (`driveShowConflict` / `resolveConflict('merge' | 'local' | 'drive' | 'later')`) — nella finestra "Unisci i due" è il pulsante consigliato
+5. Ogni salvataggio manda `savedAt`; la sessione scaduta → chip 🔑, `archivio-drive-dirty` resta `'1'`; offline → chip 📴 e ripartenza da sola al ritorno della rete (listener `online`, `offline`, `visibilitychange`, con pausa di 60 s fra un controllo e l'altro)
+
+**Unione a tre vie** (`driveMerge(remote)` → `{added, changed, removed}`, `mergeList`, `sigMap`, `driveSaveBase/driveLoadBase`)
+- Le tariffe si riconoscono dalla chiave `tkey` = da + a + trasportatore + unità; i prodotti da `pkey`; `sigT`/`sigP` sono le impronte del contenuto
+- Si confronta **base** (ultimo stato comune) con **locale** e **Drive**:
+  - nuovo solo su un lato → si tiene
+  - cancellato su un lato e non toccato sull'altro → **resta cancellato** (non ricompare)
+  - cancellato su un lato ma modificato sull'altro → si tiene la modifica
+  - modificato su un solo lato → vince quel lato
+  - modificato su entrambi → vince la `data` più recente (a parità, questo telefono)
+- Senza base (primo collegamento, nuovo telefono) l'unione è a due vie (unione dei due elenchi, in caso di differenza vince la data più recente); l'avviso dice quante tariffe sono state aggiunte, cambiate o tolte, e c'è sempre **Annulla**
+- La base viene salvata dopo ogni allineamento riuscito (adozione, stesso contenuto, upload) e cancellata da `driveDisconnect`
+
+**Funzioni** (blocco prima di `// ─── START ───`)
+| Funzione | Descrizione |
+|----------|-------------|
+| `driveInUse()` / `driveIsDirty()` / `driveTokenValid()` | collegato su questo telefono / ci sono modifiche non salvate / token presente e non scaduto |
+| `driveStoreToken`, `driveArmExpiry`, `driveExpire` | salva il token, programma la scadenza, passa a 🔑 |
+| `driveLogin(reconnect)`, `driveReconnect`, `handleDriveClick`, `driveChipClick`, `driveDisconnect`, `driveRestore` | collegamento (con `prompt:''` = senza password se possibile), disconnessione, ripresa all'avvio da `init()` |
+| `driveGetClient`, `driveOnToken`, `driveTokenError` | client GIS con `error_callback` (popup chiuso/bloccato → avviso chiaro) |
+| `driveHeaders`, `driveFetchMeta`, `driveDownload`, `drivePayload`, `driveUploadFile`, `driveRemember` | chiamate all'API Drive (ognuna passa da `driveCheck`) |
+| `driveSyncCheck(reason, silent)`, `driveDoUpload`, `driveAdopt`, `_applyDriveData`, `driveDiff`, `driveSameContent` | cuore della sincronizzazione |
+| `driveSave(silent)`, `driveLoad()` | pulsanti del pannello (Salva / Carica); `driveLoad` chiede conferma e ha l'Annulla |
+| `driveFail(e, what)`, `driveEnd`, `driveClean(seq)`, `driveFlashSaved` | errori, fine operazione, pulizia "non salvato" solo se non ci sono state altre modifiche nel frattempo (`_saveSeq`), lampo ✓ sul chip |
+| `markDirty`, `showUnsavedBanner`, `hideUnsavedBanner`, `dismissUnsaved` | banner "modifiche non ancora su Drive" (ora compare anche se il permesso è scaduto) |
+
+Variabili di stato: `_driveState`, `_driveBusy` (una sola operazione alla volta), `_driveRerun` (richiesta arrivata mentre era occupato → si ripete), `_driveSnooze` ("Decido dopo": niente popup finché non cambia qualcosa), `_driveConflict`, `_saveSeq`.
+
+#### 4. Uso offline (service worker)
+- **`sw.js`** (stessa cartella di `index.html`): all'installazione salva `index.html`, `manifest.json`, `icon-tariffe.png` (ognuno facoltativo: se uno manca non fallisce) e la libreria Excel da cdnjs
+- **File dell'app** (`index.html`, manifest, icona): *prima la rete* (aggiornamenti subito), se non c'è rete o impiega più di 4 s → copia salvata. Se la rete risponde con un errore (500…) e c'è la copia, si usa la copia
+- **SheetJS** (cdnjs): *prima la copia salvata*, poi la rete (`ignoreVary`). Non è più nel `<head>`: `loadXLSX(ok, fail)` la carica solo quando serve (import o export Excel); senza rete e senza copia spiega "Per esportare in Excel serve internet almeno una volta"
+- **Google** (login e Drive): mai intercettato, passa sempre dalla rete. Anche POST e altri siti esterni non vengono toccati
+- Registrazione: `swRegister()` all'evento `load`, solo su https o localhost. **Per forzare il rinnovo della memoria dopo aver cambiato `sw.js` cambiare `CACHE` (`archivio-tariffe-v1` → `v2`)**; le modifiche a `index.html` non lo richiedono
+- Primo avvio con rete: l'app (e la libreria Excel) si salvano da sole; dalla seconda apertura in poi funziona anche in galleria/aereo
+- **Deploy**: caricare su GitHub `index.html` **e** `sw.js` nella stessa cartella. Dopo il primo caricamento servono due aperture online perché il service worker prenda il controllo
+
+#### Struttura dei test del giro 4 (cartella di lavoro, non nel repository)
+`test6.js` (vm + finto server Drive: primo salvataggio, due dispositivi, conflitto, nuovo telefono, sessione scaduta, offline, corse tra richieste, unione a tre vie, loader Excel) · `test_sw.js` (service worker con cache e rete finte) · `browser_giro4_test.py` (Chromium vero: registra il service worker, spegne server e rete, ricarica; Annulla, Condividi, stati del chip, conflitto) · `audit_giro4.py` (contrasto nuove schermate, 340 e 393 px, scuro e chiaro). `test4.js` è vecchio e non funziona: ignorarlo.
+
+#### Limiti noti / da sapere
+- L'Annulla ripristina l'**intero** archivio com'era prima dell'operazione: se nel frattempo si sono fatte altre modifiche, vanno perse (l'avviso lo dice nel nome: "Annulla")
+- Drive: se si modifica la stessa tariffa su due telefoni la data più recente vince; due telefoni con l'orologio sbagliato possono sbagliare vincitore
+- Il pulsante "Carica Tariffe REV 03/2026 (incorporato)" a 340 px tocca il bordo destro (grafica vecchia, non toccata)
+
+### Giro 5 — Import tariffe da Excel: controllo prima di scrivere
+Richiesta di Fil: importare un file con molte tariffe, **non inserire quelle già presenti e a posto, inserire solo le nuove**. Il vecchio `importTrasporti` scriveva subito, confrontava con testo esatto (maiuscole, spazi, parentesi), segnava tutto "REV 03/2026" senza data, leggeva male alcune celle e con 3 trasportatori o meno non trovava la riga dei nomi.
+
+**Flusso** (`handleFileImport` → `importTrasporti(data, filename, sheetName)` → finestra `modalImport` → `impApply()`):
+1. Il file si legge (`sheetToMatrix`, max 5000 righe × 200 colonne). Se i fogli sono più d'uno si usa il primo in cui `impFindLayout` riconosce la tabella
+2. `impParse(data)` produce un **piano** senza scrivere niente: prezzi letti, celle non lette, note
+3. `impClassify(items)` confronta con l'archivio di adesso (si rifà anche in `impApply`, così un Drive che cambia i dati nel frattempo non crea errori)
+4. La finestra mostra i conteggi e gli elenchi; **solo dopo "Importa"** si scrive, con `undoSnapshot()`/`undoToast()` (Annulla)
+
+**Aggiunte dopo il collaudo sui file veri** (`Tariffe_trasporti_2026_rev_03_16.03.2026.xls` e `Listino_KarMa_03.2026.xls`, letti qui convertiti con LibreOffice → xlsx → matrice):
+- **Richiesta esplicita di Fil**: *"non voglio che mi sovrascrivi quelli nuovi o che ho modificato"* → vedi "Protezione" qui sotto
+- **Righe d'intestazione del file vero**: riga 1 = nomi dei 18 trasportatori (A1 = "Ferrara 16/03/2026", B1 = "REV 03/2026"), riga 2 = "Base di Carico | Luogo di Consegna" con note `MIN TAX 20`/`MIN TAX 18` sotto COAP e CONSAR, riga 3 = condizioni. Prima l'import prendeva la riga 2 come riga dei nomi (2 trasportatori finti "MIN TAX …")
+- Le note (`impIsNote`: `MIN TAX …`, `* …`, `Nota…`) non sono mai nomi di trasportatori; `impFindLayout` sceglie fra il layout "per etichette" e quello "per conteggio" (riga con più nomi, escluse le righe di condizioni): vince quello con più colonne (`impLayoutByLabels` vs `impLayoutByCount`)
+- **Intestazioni ripetute a ogni pagina** (righe con gli stessi nomi, es. righe 52-53 e 90 del file vero): ignorate in silenzio (`impIsHeaderRow`, nota nella finestra); la nota `* MIN TAX 9 ton` è riportata nella finestra ma non salvata
+- **Asterisco di nota** sulle località (`Tarmassia IdS (VR) *`): tolto (`impStar`) per il confronto, come nell'archivio
+- **Intervallo** `500-550 €`: si usa il **valore di mezzo** (525), come già fa l'archivio per CIRIONI Mercatino Conca → Ponzano R. (prima era il primo valore)
+- **Numero senza unità sotto 100** (es. COAP `32,7`, `27,5`): letto come **€/ton** (stessa regola già usata da `builtinTariffe` per COAP); da 100 in su è €/vg; se l'unità è scritta vale quella. La finestra dice quanti
+- **Risultato sul file vero**: 18 trasportatori, 189 prezzi, 0 non lette, **188 già presenti e 1 diverso** (COAP Bientina → Verolavecchia: file 32,7 €/ton, archivio 32,5 €/ton), 0 nuove
+
+**Scelta "Mantieni le mie" / "Sovrascrivi"** (richiesta di Fil dopo il collaudo: *"quelle che ci sono già devono essere sovrascritte, le altre non devono essere toccate… mantieni tariffe oppure sovrascrivi tariffe"*). Due pulsanti affiancati sotto i riquadri dei conteggi (`impModeKeep`, `impModeOver`; compaiono solo se c'è almeno un prezzo diverso). Stato in `_impPlan.over` e `_impPlan.overProt` (si azzerano a ogni apertura: di partenza **Mantieni**, il pulsante dice "Niente da importare" se non ci sono nuove)
+- **Mantieni le mie**: si aggiungono solo le nuove, i prezzi di adesso restano
+- **Sovrascrivi**: le tariffe già presenti con prezzo (o condizioni) diverso prendono prezzo/condizioni/provvisorio/data/rev del file; **note e altri campi restano**. Quelle che nel file non ci sono non si toccano mai (l'import non cancella mai niente)
+- La casella **"Sovrascrivi anche le N inserite o modificate da me, o più recenti"** compare solo con Sovrascrivi e se ci sono protette; spenta di default. Se acceso, anche quelle prendono il prezzo del file (il record sovrascritto è quello `Manuale`/più recente della chiave)
+- Il pulsante dice "Importa: N nuove + M sovrascritte"; i titoli degli elenchi cambiano ("verranno sovrascritte" / "restano le tue" / "non toccate"); il riepilogo e l'Annulla dicono cosa è successo
+
+**Elenchi della finestra** (grafica, richiesta di Fil dopo la consegna: "fai 4 e 5"):
+- Ogni riga (`impRowHtml`/`impDiffRow`): a sinistra tratta e trasportatore (+ nota: condizioni cambiate, motivo 🔒), a destra il **prezzo nuovo in grassetto** e sotto "vecchio barrato ▲/▼ differenza". Il vecchio layout andava a capo su 3 righe a 340 px. Classi `.imp-rl`, `.imp-rr`, `.imp-rr1`, `.imp-rr2`, `.imp-r3`
+- Gli elenchi (`impSecHtml(key,…)`, chiavi `diff`/`prot`/`new`/`skip`, id `impSec_<chiave>`) partono così: aperto solo "prezzo diverso" (serve una decisione), altrimenti "nuove"; il resto chiuso. Aprire/chiudere a mano toccando il titolo (`impSecClick`) si **ricorda** in `_impPlan.openSec` anche dopo un cambio di scelta o di data
+- I riquadri **Nuove / Prezzo diverso / Non lette** sono pulsanti (`impTNew`, `impTDiff`, `impTSkip`): `impGoto(kind)` apre quell'elenco, chiude gli altri e ci scorre (`scrollIntoView` smooth). Se il numero è 0 il riquadro è spento (`disabled`). "Già presenti" non ha elenco. "Prezzo diverso" va alle "non toccate" se non ci sono altre differenze
+- Titolo dell'elenco in modalità Mantieni: "N con prezzo diverso"; in Sovrascrivi: "N verranno sovrascritte"
+
+**Protezione (le tariffe tue o più recenti si sovrascrivono solo se lo chiedi)** — `impProtect(list, refDate)` → `{why, rec}`, `impRefDate()`:
+- Un "prezzo diverso" è **protetto 🔒** se, fra i record dell'archivio con la stessa chiave, **uno ha `rev==='Manuale'`** (inserita o modificata a mano) **oppure `data` più recente** (`>`, formato AAAA-MM-GG) della data del campo "📅 Data delle tariffe" (default: 1° del mese della REV del file, altrimenti oggi)
+- Le protette sono in un elenco a parte con il motivo e il prezzo che resta; contano nel riquadro "Prezzo diverso" ma entrano nell'aggiornamento solo con la casella di cui sopra (`impToUpdate`). `impApply` aggiorna solo `impToUpdate(c, p)`
+- Cambiando la data nella finestra (`onchange="impRender()"`) il confronto si rifà: una data più vecchia protegge di più, una più nuova di meno
+- Le tariffe **uguali** non si toccano mai; le **nuove** (chiave assente) si aggiungono
+- `saveEditTratta()` (modalità singola e multipla) ora marca `rev='Manuale'` le tariffe di cui cambia davvero prezzo/unità/condizioni/provvisorio/trattabile/nota/data (`trSig()`); prima non lo faceva, quindi le modifiche a mano non erano riconoscibili. Effetto collaterale voluto: anche "Ricarica REV 03/2026" ora le tiene (come dice già il suo messaggio)
+- Limite: le modifiche fatte prima di questa versione non si possono distinguere; per quelle valgono anteprima, casella "Aggiorna" spenta di default e Annulla
+
+**Confronto** — chiave `impKey` = base | destinazione | trasportatore | unità, normalizzata (`impNorm`: maiuscole, spazi doppi, spazi intorno alle parentesi). Il trasportatore del file si riporta all'ortografia già in archivio (es. `Branchini` → `BRANCHINI`). Esiti:
+| Esito | Significato | Cosa succede |
+|-------|-------------|--------------|
+| **Già presente** | stessa chiave e stesso prezzo (±0,005); condizioni uguali oppure vuote nel file. Se in archivio la chiave ha più prezzi basta che uno coincida | non si tocca |
+| **Nuova** | la chiave non c'è (anche: stessa tratta ma altra unità €/vg · €/ton · €/mc) | si aggiunge |
+| **Prezzo diverso** | la chiave c'è, il prezzo (o le condizioni di pagamento) cambia | si mostra "vecchio → nuovo ▲/▼"; si sovrascrive **solo** scegliendo "Sovrascrivi" (di partenza è "Mantieni le mie") **e** la tariffa non è protetta |
+| **🔒 Non toccata** | prezzo diverso ma la tariffa in archivio è `Manuale` o più recente del file | resta com'è, anche con "Sovrascrivi", salvo la casella "Sovrascrivi anche le mie…" |
+| **Ripetuta nel file** | stessa chiave due volte | si tiene la prima, la nota dice quante |
+| **Non letta** | cella con testo che non è un prezzo ("su richiesta"), riga senza destinazione/base | elencata con numero di riga, non importata |
+
+**Record scritti**: nuove → `{from,to,carrier,price,unit,conditions,rev,data[,provisional]}`. `rev` = `REV MM/AAAA` letta dalle prime righe del file, altrimenti `Excel`; `data` = campo "📅 Data delle tariffe" della finestra (proposta: 1° del mese della REV, altrimenti oggi). Aggiornate → cambiano solo `price`, `conditions` (se il file le ha), `provisional`, `data`, `rev` (diventa quella del file: se era `Manuale` e l'utente ha chiesto di sovrascrivere anche le sue, non lo è più); **note e altri campi restano**, il record non si sostituisce più per intero
+
+**Formati di tabella riconosciuti** (`impFindLayout`, `impFindCondRow`, `impFindRev`):
+- riga "Base di Carico | Luogo di Consegna | trasportatori…" con le condizioni (`BB 60 gg FM`, `RIBA 30`) sotto, come scrive l'esportazione dell'app (il file esportato si reimporta: tutto "già presente")
+- nomi sulla riga 1 e "Base di Carico | Luogo di Consegna | condizioni" sulla riga 2 (formato listino)
+- nessuna riga di etichette (basta una riga di nomi con, sotto, righe di prezzi) e anche con soli 2–3 trasportatori
+- base di carico **vuota** = celle unite: si usa quella della riga sopra (segnalato nella finestra)
+- Se la riga ha condizioni e la riga sopra nomi, la maggioranza decide (`impCondLike`): un trasportatore con "RIBA" nel nome non viene scambiato per una condizione
+- **Non riconosciuto** (nessuna riga di nomi, nessun prezzo): niente finestra, errore chiaro nel registro e avviso; non cambia niente
+
+**Celle prezzo** (`impParseCell`, `impNum`): `550` · `550,00` · `550,00 €/vg` · `31 €/ton` · `12 €/mc` · `1.250,00` (migliaia con il punto) · `1,250.50` · due prezzi nella stessa cella separati da ` / `, `;` o a capo (**come li scrive l'esportazione**: `550,00 €/vg / 12,00 €/ton`) · `500-550` / `500-550 €` (si prende il valore di mezzo, segnalato) · numero solo sotto 100 = €/ton (segnalato) · `⚠️`/`prov` = provvisorio · vuoti e segni (`-`, `—`, `n.d.`, `x`, 0) ignorati senza errore · numeri negativi o testo senza numeri = non letti
+
+| Funzione | Descrizione |
+|----------|-------------|
+| `impClean`, `impNorm`, `impKey`, `impNum`, `impToday` | utility di testo/numero |
+| `impParseCell(raw)` | una cella → `{items:[{price,unit,prov}], bad, range, guess}` |
+| `impFindLayout(data)` (= `impLayoutByLabels` / `impLayoutByCount`), `impFindCondRow`, `impFindRev`, `impCarrierCols`, `impLooksData`, `impCondLike`, `impIsNote`, `impStar`, `impIsHeaderRow` | riconoscimento della tabella |
+| `impParse(data)` | piano completo (non scrive) |
+| `impClassify(items, refDate)` | nuove / uguali / diverse / **protette** / ripetute rispetto a `DB.trasporti` |
+| `impProtect(list, refDate)`, `impRefDate()` | protezione (Manuale o più recente) e data di riferimento |
+| `impShow()` (apre) / `impRender()` (ridisegna: conteggi, scelta, elenchi con `esc()`, max 60 righe per elenco, note), `impRefreshBtn()` | finestra e pulsante "Importa: N nuove + M sovrascritte" |
+| `impSetMode(over)`, `impSetProt(on)`, `impToUpdate(c, p)` | scelta Mantieni/Sovrascrivi, casella "anche le mie", elenco delle tariffe che verranno aggiornate |
+| `impApply()`, `impCancel()` | scrive (con Annulla) / chiude senza toccare niente |
+| `sheetToMatrix(ws)` | foglio SheetJS → righe × colonne |
+
+Variabile di stato: `_impPlan`. `importMode` e `selectImportMode` sono stati eliminati.
+
+**Collaudo**: `test7.js` (**159 prove**, con il file vero opzionale: `node test7.js app.js xl/layouts.json real/real.json`; sezioni Q = protezione, F = formato "Ferrara", M = Mantieni/Sovrascrivi, U = elenchi e riquadri), `browser_giro5c_test.py` (44 prove in Chromium: righe con prezzo a destra senza overflow, tocco sui riquadri e scorrimento, stato degli elenchi, area di tocco ≥ 44 px, 4 combinazioni tema/larghezza), `browser_giro5b_test.py` (48 prove in Chromium: protezione, scelta Sovrascrivi, cambio data, "Modifica tratta" → Manuale, file stile Ferrara, 4 combinazioni tema/larghezza), `test7.js` base (93 prove: celle, formati su file `.xlsx` veri creati con openpyxl da `gen_xlsx.py` — celle unite, sezioni, "n.d.", intervalli, ⚠️ —, confronto, doppioni, giro completo esporta → reimporta, scrittura/Annulla, 1600 prezzi in < 1,5 s, `esc()`), `browser_giro5_test.py` (Chromium: finestra, conteggi, import, Annulla, errore, 340 e 393 px, scuro e chiaro) e audit di contrasto (0 problemi). **Limite del collaudo**: nel sandbox non si può scaricare SheetJS, quindi il passaggio "file .xlsx → tabella" è stato fatto con openpyxl e con un finto `XLSX`; il resto del flusso è reale. Il file di Fil è stato poi fornito (.xls): letto convertendolo con LibreOffice e provato con `real_check.js`; il passaggio reale SheetJS su `.xls` resta non provato qui. Se un altro listino non venisse riconosciuto va mandato per aggiungere il formato
+
+**Non supportato (ancora)**: elenco "piatto" con una riga per prezzo (colonne Da · A · Trasportatore · Prezzo · Unità)
+
+### Backlog dall'audit (non ancora fatto)
+- [ ] **Import prodotti sopra ai KarMa incorporati**: duplica ~42 voci (chiave `prodKey` con note diverse) e perde il "+M%" delle formule (`56+M%` → 56). Proposta: confronto per prodotto+tipo+fornitore/acquirente+luogo+prezzo+unità ignorando la nota "→/da", anteprima come per le tariffe, "+M%" in nota. Aspetta il via di Fil
+- [x] ~~**Backup in un tocco** e **annulla**~~ — fatto nel giro 4
+- [x] ~~**Tema** chiaro/scuro con toni smorzati~~ — fatto nel giro 3. Resta da valutare: font leggermente più grandi
+- [ ] **Schede tratta più compatte**: il prezzo migliore compare due volte (riga e barra), la pill data si ripete su ogni riga
+- [ ] Grafica: barra di navigazione in basso, icone SVG al posto delle emoji, allineamento dei campi nei modal, Import più semplice
+- [x] ~~**Offline vero**~~ — fatto nel giro 4 (service worker + SheetJS caricata solo quando serve). Resta: SheetJS in locale (oggi la prima importazione/esportazione Excel richiede internet una volta)
+- [x] ~~Drive: conflitti fra dispositivi, riconnessione, banner~~ — fatto nel giro 4
+- [ ] Record identificati dalla posizione nell'array (fragile): servirebbe un `id` stabile
+- [ ] `esc()` non è ancora applicato a tutto (restano alcune viste secondarie: stampa A3, export)
+- [ ] Ricerca/filtri ridisegnano tutto a ogni tasto
+- [ ] Codice morto: `renderViewMargine`, `deleteProdotto`, `formatPrice`, `isDataVecchia`, `parsePrice` (alcune servono per funzioni future: badge prezzo vecchio). Il giro 4 ha eliminato `_showConflictModal`, `tryAutoReconnect` e le vecchie funzioni Drive
+- [ ] CSS: 46 selettori definiti più volte, le regole successive sovrascrivono quelle documentate; blocco migrazione v3 mai raggiungibile
+- [ ] `ws['!freeze']` nell'export Excel probabilmente non ha effetto (SheetJS CE non scrive i riquadri bloccati) — da verificare
+- [ ] Storico prezzi con ▲/▼
