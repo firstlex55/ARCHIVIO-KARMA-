@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Tariffe">
-  <meta name="theme-color" content="#151a22">
+  <meta name="theme-color" content="#0b0f16">
 <meta charset="UTF-8">
   <meta name="app-version" content="1.0.0">
   <meta name="app-name" content="Archivio Tariffe">
@@ -32,20 +32,21 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 /* ===== TEMA — scuro morbido (predefinito) e chiaro morbido ===== */
+/* ===== TEMA — scuro navy saturo (predefinito, come prima) e chiaro ===== */
 :root{
   color-scheme:dark;
-  --bg:#151a22; --s1:#1b212b; --s2:#222934; --s3:#2a323f;
-  --b1:#323b4a; --b2:#404b5e;
-  --green:#5cc4a0; --green2:#3fae88; --green-t:#8fd9bd;
-  --amber:#e6a064;
-  --red:#e88e8e; --red-t:#f0b0b0;
-  --blue:#7fa9dc; --blue-t:#a6c4ea;
-  --gold:#deb65c;
-  --t1:#e6e9ef; --t2:#b9c1cf; --t3:#9aa5b8; --t4:#66728a;
-  --on-accent:#12171f;
-  --hd1:#181e28; --hd2:#1e2531;
-  --green-rgb:92,196,160; --amber-rgb:230,160,100; --red-rgb:232,142,142; --blue-rgb:127,169,220; --gold-rgb:222,182,92;
-  --ink-rgb:255,255,255; --shade-rgb:0,0,0; --panel-rgb:21,26,34; --pill-rgb:42,50,63;
+  --bg:#0b0f16; --s1:#111720; --s2:#171f2e; --s3:#1e2840;
+  --b1:#243048; --b2:#2e3d5c;
+  --green:#34d399; --green2:#10b981; --green-t:#86efac;
+  --amber:#fb923c;
+  --red:#f87171; --red-t:#fca5a5;
+  --blue:#60a5fa; --blue-t:#7cb9ff;
+  --gold:#fbbf24;
+  --t1:#f5f8ff; --t2:#c2cfea; --t3:#8197ba; --t4:#4a5568;
+  --on-accent:#0b0f16;
+  --hd1:#0d1520; --hd2:#111c2e; --hd3:#0d1a28;
+  --green-rgb:52,211,153; --amber-rgb:251,146,60; --red-rgb:248,113,113; --blue-rgb:96,165,250; --gold-rgb:251,191,36;
+  --ink-rgb:255,255,255; --shade-rgb:0,0,0; --panel-rgb:10,18,32; --pill-rgb:36,48,72;
   --gdim:rgba(var(--green-rgb),.10);
   --amberdim:rgba(var(--amber-rgb),.14); --ambersolid:rgba(var(--amber-rgb),.22);
   --reddim:rgba(var(--red-rgb),.12); --bluedim:rgba(var(--blue-rgb),.12);
@@ -55,19 +56,19 @@
   color-scheme:light;
   --bg:#e4e7ec; --s1:#edeff3; --s2:#f4f5f8; --s3:#dde1e8;
   --b1:#cdd3dc; --b2:#b8c0cc;
-  --green:#146a4c; --green2:#115a41; --green-t:#115a41;
-  --amber:#7d4309;
-  --red:#a93232; --red-t:#932b2b;
-  --blue:#214f90; --blue-t:#1b4580;
-  --gold:#7a5206;
+  --green:#046c49; --green2:#03593b; --green-t:#03593b;
+  --amber:#883b07;
+  --red:#b8231e; --red-t:#a31f1a;
+  --blue:#185abf; --blue-t:#144ca3;
+  --gold:#815703;
   --t1:#222936; --t2:#414b5a; --t3:#4f5b6b; --t4:#8b94a1;
   --on-accent:#ffffff;
-  --hd1:#eceff3; --hd2:#f4f5f8;
-  --green-rgb:20,106,76; --amber-rgb:125,67,9; --red-rgb:169,50,50; --blue-rgb:33,79,144; --gold-rgb:122,82,6;
+  --hd1:#eceff3; --hd2:#f4f5f8; --hd3:#eceff3;
+  --green-rgb:4,108,73; --amber-rgb:136,59,7; --red-rgb:184,35,30; --blue-rgb:24,90,191; --gold-rgb:129,87,3;
   --ink-rgb:34,41,54; --shade-rgb:40,50,70; --panel-rgb:237,239,243; --pill-rgb:221,225,232;
 }
 html{background:var(--bg);}
-.header::before{opacity:.55;}
+:root[data-theme="light"] .header::before{opacity:.55;}
 /* interruttore tema */
 .h-theme{display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border-radius:50%;border:1.5px solid var(--b2);background:var(--s2);color:var(--t2);cursor:pointer;flex-shrink:0;transition:all .15s;}
 .h-theme:active{transform:scale(.94);}
@@ -82,7 +83,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px;}
 
 /* HEADER */
-.header{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,var(--hd1) 0%,var(--hd2) 50%,var(--hd1) 100%);border-bottom:1px solid rgba(var(--green-rgb),.15);padding:0 12px;height:58px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 16px rgba(var(--shade-rgb),.4);}
+.header{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,var(--hd1) 0%,var(--hd2) 50%,var(--hd3) 100%);border-bottom:1px solid rgba(var(--green-rgb),.15);padding:0 12px;height:58px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 16px rgba(var(--shade-rgb),.4);}
 .header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,var(--green) 30%,var(--blue) 60%,var(--amber) 80%,transparent 100%);}
 .header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--green-rgb),.2),transparent);}
 .h-logo{font-size:30px;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(var(--green-rgb),.35));}
@@ -1254,9 +1255,189 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
 .btn[disabled]{opacity:.45;cursor:default;pointer-events:none;}
 @media(max-width:360px){.imp-n{font-size:18px;}.imp-l{font-size:9px;}}
 
+
+/* ═══ PRODOTTI — Giro 7: schede, data "prezzo del", unità separate, menu dettagli ═══ */
+.pi{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+.pc{background:var(--s1);border:1px solid var(--b1);border-radius:20px;margin-bottom:12px;box-shadow:inset 0 1px 0 rgba(var(--ink-rgb),.04);}
+.pc.open{border-color:var(--b2);}
+.pc-head{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;background:none;border:0;border-radius:20px;color:inherit;font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.pc-head:active{background:rgba(var(--ink-rgb),.04);}
+.pc-ico{width:48px;height:48px;border-radius:14px;background:var(--s3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;flex:none;}
+.pc-tt{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+.pc-name{font-size:16px;font-weight:700;line-height:1.2;color:var(--t1);overflow-wrap:anywhere;}
+.pc.open .pc-name{font-size:17px;}
+.pc-sub{font-size:12px;color:var(--t3);}
+.pc-chev{color:var(--t3);transition:transform .15s;}
+.pc.open .pc-chev{transform:rotate(180deg);}
+.pc-body{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px;}
+.pc-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;background:var(--bg);border:1px solid var(--b1);border-radius:14px;}
+.pc-tab{height:42px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--t3);font:inherit;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.pc-tab .n{font-size:12px;font-weight:600;border-radius:999px;padding:1px 8px;background:var(--s3);color:var(--t2);}
+.pc-tab.on{font-weight:700;}
+.pc-tab.on .n{background:transparent;color:inherit;font-weight:700;box-shadow:inset 0 0 0 1px currentColor;}
+.pc-tab.on.buy{background:rgba(var(--green-rgb),.14);border-color:rgba(var(--green-rgb),.45);color:var(--green-t);}
+.pc-tab.on.sell{background:rgba(var(--amber-rgb),.14);border-color:rgba(var(--amber-rgb),.45);color:var(--amber);}
+.pc-one{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:13px;font-weight:700;}
+.pc-one.buy{color:var(--green);}
+.pc-one.sell{color:var(--amber);}
+.pc-one .n{font-size:12px;font-weight:600;color:var(--t3);}
+.pc-cap{font-size:12px;color:var(--t3);}
+.pc-list{display:flex;flex-direction:column;}
+.pc-gh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding-top:6px;padding-bottom:2px;}
+.pc-gh.gap{margin-top:10px;}
+.pc-gt{font-size:13px;font-weight:700;color:var(--t2);}
+.pc-gn{font-size:12px;color:var(--t3);}
+.pr-row{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:5px;align-items:center;width:100%;padding:12px 0;background:none;border:0;border-top:1px solid var(--s3);color:inherit;font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.pr-row:active{background:rgba(var(--ink-rgb),.05);}
+.pr-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
+.pr-ent{font-size:15px;font-weight:700;color:var(--t1);overflow-wrap:anywhere;}
+.pr-tag{font-size:11px;font-weight:700;color:var(--on-accent);border-radius:999px;padding:2px 8px;white-space:nowrap;}
+.pr-tag.buy{background:var(--green);}
+.pr-tag.sell{background:var(--amber);}
+.pr-price{font-size:22px;font-weight:700;line-height:1;text-align:right;white-space:nowrap;}
+.pr-price.buy{color:var(--green);}
+.pr-price.sell{color:var(--amber);}
+.pr-unit{font-size:11px;font-weight:600;color:var(--t3);margin-left:3px;}
+.pr-loc{font-size:12px;color:var(--blue-t);display:flex;align-items:center;gap:4px;min-width:0;}
+.pr-date{font-size:12px;color:var(--t3);text-align:right;white-space:nowrap;}
+.pr-chips{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;}
+.pr-chip{font-size:11px;font-weight:600;color:var(--t2);background:var(--s3);border-radius:999px;padding:3px 9px;display:inline-flex;align-items:center;gap:4px;}
+.pr-free{grid-column:1/-1;font-size:12px;color:var(--t3);overflow-wrap:anywhere;}
+.pc-head:focus-visible,.pc-tab:focus-visible,.pr-row:focus-visible,.psh-btn:focus-visible,.psh-x:focus-visible,.psh-pen:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+/* menu dettagli di una voce */
+.psheet-bd{position:fixed;inset:0;background:rgba(var(--shade-rgb),.7);z-index:190;display:flex;align-items:flex-end;justify-content:center;}
+.psheet-bd.hidden{display:none;}
+.psheet{width:100%;max-width:480px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--s1);border-top:1px solid var(--b2);border-radius:24px 24px 0 0;padding:10px 16px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;box-shadow:0 -14px 40px rgba(var(--shade-rgb),.5);animation:pshUp .18s ease-out;}
+@keyframes pshUp{from{transform:translateY(28px);opacity:.4;}to{transform:none;opacity:1;}}
+@media (prefers-reduced-motion:reduce){.psheet{animation:none;}.pc-chev{transition:none;}}
+.psh-grab{width:40px;height:4px;border-radius:2px;background:var(--b2);align-self:center;flex:none;}
+.psh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.psh-who{display:flex;flex-direction:column;gap:6px;min-width:0;}
+.psh-kind{align-self:flex-start;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;}
+.psh-kind.buy{color:var(--green);background:rgba(var(--green-rgb),.14);}
+.psh-kind.sell{color:var(--amber);background:rgba(var(--amber-rgb),.14);}
+.psh-name{font-size:24px;font-weight:700;line-height:1.15;color:var(--t1);overflow-wrap:anywhere;}
+.psh-loc{font-size:13px;color:var(--blue-t);display:flex;align-items:center;gap:4px;}
+.psh-x{width:44px;height:44px;border-radius:50%;border:1px solid var(--b1);background:var(--s2);color:var(--t2);display:flex;align-items:center;justify-content:center;padding:0;flex:none;cursor:pointer;}
+.psh-price{background:var(--s2);border:1px solid var(--b1);border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.psh-big{font-size:38px;font-weight:700;line-height:1;white-space:nowrap;}
+.psh-big.buy{color:var(--green);}
+.psh-big.sell{color:var(--amber);}
+.psh-big small{font-size:14px;font-weight:600;color:var(--t3);margin-left:5px;}
+.psh-when{display:flex;flex-direction:column;align-items:flex-end;gap:4px;text-align:right;}
+.psh-when b{font-size:14px;font-weight:700;color:var(--t2);}
+.psh-when span{font-size:12px;color:var(--t3);}
+.psh-sec{font-size:13px;font-weight:700;color:var(--t2);}
+.psh-box{background:var(--s2);border:1px solid var(--b1);border-radius:16px;padding:2px 16px;margin-top:6px;}
+.psh-line{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid var(--b1);}
+.psh-line:first-child{border-top:0;}
+.psh-lab{width:64px;flex:none;font-size:12px;color:var(--t3);padding-top:3px;}
+.psh-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;}
+.psh-it{display:flex;align-items:center;gap:6px;min-height:22px;}
+.psh-itt{flex:1;min-width:0;font-size:15px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:6px;overflow-wrap:anywhere;}
+.psh-itt .pi{color:var(--t3);}
+.psh-itt .pi.pin{color:var(--blue-t);}
+.psh-itp{font-size:15px;font-weight:700;white-space:nowrap;}
+.psh-itp.buy{color:var(--green);}
+.psh-itp.sell{color:var(--amber);}
+.psh-itp small{font-size:11px;font-weight:600;color:var(--t3);}
+.psh-pen{width:44px;height:44px;margin:-12px -12px -12px -2px;border:0;background:none;color:var(--t2);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;flex:none;border-radius:50%;}
+.psh-note{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0 2px;font-size:13px;}
+.psh-note b{font-weight:700;color:var(--t2);flex:none;}
+.psh-note span{color:var(--t3);text-align:right;overflow-wrap:anywhere;}
+.psh-acts{display:flex;flex-direction:column;gap:10px;margin-top:2px;}
+.psh-btn{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;font:inherit;font-weight:600;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent;}
+.psh-btn.main{height:52px;border:0;background:var(--green);color:var(--on-accent);font-size:16px;font-weight:700;}
+.psh-btn.sec{height:48px;border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-size:15px;}
+.psh-btn.danger{height:48px;border:1px solid rgba(var(--red-rgb),.5);background:var(--s2);color:var(--red);font-size:15px;}
+.psh-btn:active{transform:scale(.98);}
+.psh-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+
+/* ═══ AGGIORNA PREZZI — Giro 8 ═══ */
+.agg-bd{position:fixed;inset:0;background:var(--bg);z-index:195;display:flex;flex-direction:column;}
+.agg-bd.hidden{display:none;}
+.agg-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));background:var(--s1);border-bottom:1px solid var(--b1);flex:none;}
+.agg-x{width:44px;height:44px;border-radius:50%;border:1px solid var(--b1);background:var(--s2);color:var(--t2);display:flex;align-items:center;justify-content:center;padding:0;flex:none;cursor:pointer;}
+.agg-title{flex:1;min-width:0;font-size:17px;font-weight:700;color:var(--t1);}
+.agg-save{height:44px;padding:0 18px;border-radius:12px;border:1px solid transparent;background:var(--green);color:var(--on-accent);font:inherit;font-size:15px;font-weight:700;cursor:pointer;flex:none;white-space:nowrap;}
+.agg-save:disabled{background:var(--s3);border-color:var(--b2);color:var(--t2);cursor:default;}
+.agg-save:not(:disabled):active{transform:scale(.97);}
+.agg-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;}
+.agg-seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;background:var(--s1);border:1px solid var(--b1);border-radius:14px;}
+.agg-seg button{height:40px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--t3);font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:0;}
+.agg-seg button.on{background:rgba(var(--green-rgb),.14);border-color:rgba(var(--green-rgb),.45);color:var(--green-t);font-weight:700;}
+.agg-lab{display:block;font-size:12px;color:var(--t3);margin-bottom:5px;}
+.agg-who{width:100%;height:46px;font-size:15px;font-weight:600;}
+.agg-opts{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;}
+.agg-opts .inp{height:44px;font-size:15px;}
+.agg-mini{height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--b2);background:var(--s3);color:var(--t1);font:inherit;font-size:13px;font-weight:700;cursor:pointer;flex:none;}
+.agg-hint{font-size:13px;color:var(--t3);line-height:1.45;padding:4px 2px;}
+.agg-list{display:flex;flex-direction:column;gap:8px;}
+.agg-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px;background:var(--s1);border:1px solid var(--b1);border-radius:14px;}
+.agg-row.chg{border-color:rgba(var(--green-rgb),.6);background:rgba(var(--green-rgb),.07);}
+.agg-t{font-size:15px;font-weight:700;color:var(--t1);overflow-wrap:anywhere;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.agg-k{font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;}
+.agg-k.buy{color:var(--green-t);background:rgba(var(--green-rgb),.14);}
+.agg-k.sell{color:var(--amber);background:rgba(var(--amber-rgb),.14);}
+.agg-s{font-size:12px;color:var(--t3);margin-top:3px;overflow-wrap:anywhere;}
+.agg-s b{font-weight:700;color:var(--t2);}
+.agg-r{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.agg-in{width:108px;height:46px;box-sizing:border-box;text-align:right;font:inherit;font-size:19px;font-weight:700;background:var(--s2);border:1.5px solid var(--b2);border-radius:10px;color:var(--t1);padding:0 10px;outline:none;}
+.agg-in::placeholder{color:var(--t3);font-weight:600;}
+.agg-in:focus{border-color:var(--green);}
+.agg-in.bad{border-color:var(--red);}
+.agg-d{font-size:12px;font-weight:700;color:var(--t2);min-height:15px;text-align:right;}
+.agg-d.warn{color:var(--amber);}
+.agg-d.bad{color:var(--red);}
+.agg-x:focus-visible,.agg-save:focus-visible,.agg-seg button:focus-visible,.agg-mini:focus-visible,.agg-in:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+.ic-btn.wide{width:auto;padding:0 12px;gap:6px;font-size:12px;font-weight:700;}
+.agg-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--t3);padding:0 2px;}
+.agg-head .agg-mini{height:36px;}
+/* voce nuova (＋) */
+.agg-news{display:flex;flex-direction:column;gap:8px;}
+.agg-news:empty{display:none;}
+.agg-add{width:100%;height:50px;border-radius:14px;border:1.5px dashed var(--b2);background:transparent;color:var(--t2);font:inherit;font-size:15px;font-weight:700;cursor:pointer;padding:0;}
+.agg-add:active{background:rgba(var(--ink-rgb),.05);}
+.agg-new{display:flex;flex-direction:column;gap:8px;padding:12px;background:var(--s1);border:1px solid var(--b2);border-radius:14px;}
+.agg-new.chg{border-color:rgba(var(--green-rgb),.6);background:rgba(var(--green-rgb),.07);}
+.agg-nh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px;font-weight:700;color:var(--t1);}
+.agg-nh span{min-width:0;overflow-wrap:anywhere;}
+.agg-nx{width:44px;height:44px;margin:-8px -8px -8px 0;border-radius:50%;border:0;background:none;color:var(--t2);display:flex;align-items:center;justify-content:center;padding:0;flex:none;cursor:pointer;}
+.agg-new .inp{height:44px;font-size:15px;background:var(--s2);}
+.agg-new .agg-in{width:100%;}
+.agg-ng{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+.agg-nm{text-align:left;}
+.agg-add:focus-visible,.agg-nx:focus-visible,.agg-new .inp:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+/* schermi stretti (340 px): con il pulsante 💶 la barra di Trasporti usciva a destra del riquadro */
+@media (max-width:370px){.search-card-bar{gap:4px;padding:8px;}.vpill{padding:6px 4px;font-size:10.5px;}}
+@media (max-width:330px){.vpill{padding:6px 3px;font-size:10px;}.search-card-bar .ic-btn{width:30px;}}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+<clipPath id="pi-mc"><path d="M5 38C8 26 15 17 24 15C33 17 40 26 43 38Z"></path></clipPath>
+<symbol id="pi-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></symbol>
+<symbol id="pi-arr" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></symbol>
+<symbol id="pi-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></symbol>
+<symbol id="pi-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"></path></symbol>
+<symbol id="pi-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></symbol>
+<symbol id="pi-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></symbol>
+<symbol id="pi-cip" viewBox="0 0 48 48"><path d="M5 38C8 26 15 17 24 15C33 17 40 26 43 38Z" fill="#d0a06a"></path><g clip-path="url(#pi-mc)"><rect x="14" y="29" width="7" height="3.4" rx=".8" fill="#7a4d22" transform="rotate(-20 17.5 30.7)"></rect><rect x="20" y="22" width="7" height="3.4" rx=".8" fill="#e9c58f" transform="rotate(14 23.5 23.7)"></rect><rect x="28" y="30" width="7" height="3.4" rx=".8" fill="#7a4d22" transform="rotate(-8 31.5 31.7)"></rect><rect x="17" y="34" width="6" height="3" rx=".8" fill="#e9c58f" transform="rotate(10 20 35.5)"></rect><rect x="26" y="25" width="6" height="3" rx=".8" fill="#7a4d22" transform="rotate(-26 29 26.5)"></rect><rect x="22" y="28" width="6" height="3" rx=".8" fill="#e9c58f" transform="rotate(28 25 29.5)"></rect><rect x="33" y="34" width="5" height="3" rx=".8" fill="#e9c58f" transform="rotate(20 35.5 35.5)"></rect><rect x="9" y="34" width="5" height="3" rx=".8" fill="#7a4d22" transform="rotate(-12 11.5 35.5)"></rect></g></symbol>
+<symbol id="pi-seg" viewBox="0 0 48 48"><path d="M5 38C8 26 15 17 24 15C33 17 40 26 43 38Z" fill="#e6cf9d"></path><g clip-path="url(#pi-mc)"><circle cx="13" cy="35" r=".9" fill="#9b7f45"></circle><circle cx="17" cy="32" r=".9" fill="#9b7f45"></circle><circle cx="21" cy="35" r=".9" fill="#9b7f45"></circle><circle cx="25" cy="32" r=".9" fill="#9b7f45"></circle><circle cx="29" cy="35" r=".9" fill="#9b7f45"></circle><circle cx="33" cy="32" r=".9" fill="#9b7f45"></circle><circle cx="37" cy="35" r=".9" fill="#9b7f45"></circle><circle cx="19" cy="27" r=".9" fill="#9b7f45"></circle><circle cx="23" cy="24" r=".9" fill="#9b7f45"></circle><circle cx="27" cy="27" r=".9" fill="#9b7f45"></circle><circle cx="31" cy="30" r=".9" fill="#9b7f45"></circle><circle cx="15" cy="37" r=".9" fill="#9b7f45"></circle><circle cx="24" cy="20" r=".9" fill="#9b7f45"></circle><circle cx="24" cy="29" r=".9" fill="#9b7f45"></circle><circle cx="20" cy="31" r=".9" fill="#9b7f45"></circle><circle cx="15" cy="33" r=".7" fill="#f6e6bd"></circle><circle cx="23" cy="34" r=".7" fill="#f6e6bd"></circle><circle cx="31" cy="33" r=".7" fill="#f6e6bd"></circle><circle cx="27" cy="30" r=".7" fill="#f6e6bd"></circle><circle cx="21" cy="26" r=".7" fill="#f6e6bd"></circle><circle cx="35" cy="36" r=".7" fill="#f6e6bd"></circle><circle cx="25" cy="22" r=".7" fill="#f6e6bd"></circle><circle cx="19" cy="36" r=".7" fill="#f6e6bd"></circle></g></symbol>
+<symbol id="pi-lfa" viewBox="0 0 48 48"><path d="M5 38C8 26 15 17 24 15C33 17 40 26 43 38Z" fill="#d9bf5a"></path><g clip-path="url(#pi-mc)"><ellipse cx="16" cy="32" rx="2.3" ry="1" fill="#8a6f14" transform="rotate(-30 16 32)"></ellipse><ellipse cx="22" cy="26" rx="2.3" ry="1" fill="#8a6f14" transform="rotate(25 22 26)"></ellipse><ellipse cx="28" cy="31" rx="2.3" ry="1" fill="#8a6f14" transform="rotate(-20 28 31)"></ellipse><ellipse cx="33" cy="35" rx="2.3" ry="1" fill="#8a6f14" transform="rotate(35 33 35)"></ellipse><ellipse cx="20" cy="36" rx="2.3" ry="1" fill="#8a6f14" transform="rotate(10 20 36)"></ellipse><ellipse cx="26" cy="21" rx="2.3" ry="1" fill="#8a6f14" transform="rotate(-40 26 21)"></ellipse><ellipse cx="12" cy="36" rx="2.3" ry="1" fill="#8a6f14" transform="rotate(-15 12 36)"></ellipse><ellipse cx="38" cy="37" rx="2.3" ry="1" fill="#8a6f14" transform="rotate(20 38 37)"></ellipse><ellipse cx="24" cy="32" rx="2.3" ry="1" fill="#f3e08e" transform="rotate(50 24 32)"></ellipse><ellipse cx="30" cy="27" rx="2.3" ry="1" fill="#f3e08e" transform="rotate(15 30 27)"></ellipse></g></symbol>
+<symbol id="pi-lri" viewBox="0 0 48 48"><path d="M5 38C8 26 15 17 24 15C33 17 40 26 43 38Z" fill="#ece0b0"></path><g clip-path="url(#pi-mc)"><ellipse cx="15" cy="34" rx="2" ry=".9" fill="#9c8f55" transform="rotate(-25 15 34)"></ellipse><ellipse cx="21" cy="29" rx="2" ry=".9" fill="#9c8f55" transform="rotate(30 21 29)"></ellipse><ellipse cx="27" cy="33" rx="2" ry=".9" fill="#9c8f55" transform="rotate(-10 27 33)"></ellipse><ellipse cx="32" cy="30" rx="2" ry=".9" fill="#9c8f55" transform="rotate(40 32 30)"></ellipse><ellipse cx="24" cy="24" rx="2" ry=".9" fill="#9c8f55" transform="rotate(-35 24 24)"></ellipse><ellipse cx="36" cy="36" rx="2" ry=".9" fill="#9c8f55" transform="rotate(15 36 36)"></ellipse><ellipse cx="19" cy="37" rx="2" ry=".9" fill="#9c8f55" transform="rotate(20 19 37)"></ellipse><ellipse cx="25" cy="37" rx="2" ry=".9" fill="#fff6d2" transform="rotate(-20 25 37)"></ellipse><ellipse cx="29" cy="26" rx="2" ry=".9" fill="#fff6d2" transform="rotate(10 29 26)"></ellipse></g></symbol>
+<symbol id="pi-pul" viewBox="0 0 48 48"><path d="M5 38C8 26 15 17 24 15C33 17 40 26 43 38Z" fill="#b8a070"></path><g clip-path="url(#pi-mc)" stroke="#6f5a30" stroke-width="1.3" stroke-linecap="round"><path d="M14 35l4-2"></path><path d="M22 29l4 2"></path><path d="M28 36l4-2"></path><path d="M20 25l3-2"></path><path d="M31 29l3-2"></path><path d="M17 38l4-1"></path><path d="M24 33l3 2"></path><path d="M35 36l3-1"></path></g></symbol>
+<symbol id="pi-sfm" viewBox="0 0 48 48"><path d="M5 38C8 26 15 17 24 15C33 17 40 26 43 38Z" fill="#9fb784"></path><g clip-path="url(#pi-mc)"><circle cx="14" cy="36" r=".7" fill="#5d7547"></circle><circle cx="18" cy="33" r=".7" fill="#5d7547"></circle><circle cx="22" cy="36" r=".7" fill="#5d7547"></circle><circle cx="26" cy="33" r=".7" fill="#5d7547"></circle><circle cx="30" cy="36" r=".7" fill="#5d7547"></circle><circle cx="34" cy="33" r=".7" fill="#5d7547"></circle><circle cx="38" cy="36" r=".7" fill="#5d7547"></circle><circle cx="20" cy="28" r=".7" fill="#5d7547"></circle><circle cx="24" cy="25" r=".7" fill="#5d7547"></circle><circle cx="28" cy="28" r=".7" fill="#5d7547"></circle><circle cx="32" cy="30" r=".7" fill="#5d7547"></circle><circle cx="24" cy="20" r=".7" fill="#5d7547"></circle><circle cx="16" cy="30" r=".7" fill="#d3e6bd"></circle><circle cx="24" cy="30" r=".7" fill="#d3e6bd"></circle><circle cx="30" cy="33" r=".7" fill="#d3e6bd"></circle><circle cx="21" cy="22" r=".7" fill="#d3e6bd"></circle><circle cx="36" cy="37" r=".7" fill="#d3e6bd"></circle><circle cx="12" cy="37" r=".7" fill="#d3e6bd"></circle></g></symbol>
+<symbol id="pi-sfs" viewBox="0 0 48 48"><path d="M5 38C8 26 15 17 24 15C33 17 40 26 43 38Z" fill="#b8805e"></path><g clip-path="url(#pi-mc)"><circle cx="14" cy="36" r=".7" fill="#6e4128"></circle><circle cx="18" cy="33" r=".7" fill="#6e4128"></circle><circle cx="22" cy="36" r=".7" fill="#6e4128"></circle><circle cx="26" cy="33" r=".7" fill="#6e4128"></circle><circle cx="30" cy="36" r=".7" fill="#6e4128"></circle><circle cx="34" cy="33" r=".7" fill="#6e4128"></circle><circle cx="38" cy="36" r=".7" fill="#6e4128"></circle><circle cx="20" cy="28" r=".7" fill="#6e4128"></circle><circle cx="24" cy="25" r=".7" fill="#6e4128"></circle><circle cx="28" cy="28" r=".7" fill="#6e4128"></circle><circle cx="32" cy="30" r=".7" fill="#6e4128"></circle><circle cx="24" cy="20" r=".7" fill="#6e4128"></circle><circle cx="16" cy="30" r=".7" fill="#e0b496"></circle><circle cx="24" cy="30" r=".7" fill="#e0b496"></circle><circle cx="30" cy="33" r=".7" fill="#e0b496"></circle><circle cx="21" cy="22" r=".7" fill="#e0b496"></circle><circle cx="36" cy="37" r=".7" fill="#e0b496"></circle><circle cx="12" cy="37" r=".7" fill="#e0b496"></circle></g></symbol>
+<symbol id="pi-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"></path></symbol>
+<symbol id="pi-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"></path></symbol>
+<symbol id="pi-sh" viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"></path></symbol>
+<symbol id="pi-bin" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path></symbol>
+<symbol id="pi-gen" viewBox="0 0 48 48"><path d="M5 38C8 26 15 17 24 15C33 17 40 26 43 38Z" fill="#9aa8c2"></path><g clip-path="url(#pi-mc)"><circle cx="14" cy="36" r=".8" fill="#5d6b87"></circle><circle cx="19" cy="32" r=".8" fill="#5d6b87"></circle><circle cx="25" cy="35" r=".8" fill="#5d6b87"></circle><circle cx="31" cy="32" r=".8" fill="#5d6b87"></circle><circle cx="36" cy="36" r=".8" fill="#5d6b87"></circle><circle cx="22" cy="26" r=".8" fill="#5d6b87"></circle><circle cx="28" cy="27" r=".8" fill="#5d6b87"></circle><circle cx="24" cy="21" r=".8" fill="#5d6b87"></circle><circle cx="17" cy="37" r=".7" fill="#dbe3f2"></circle><circle cx="27" cy="37" r=".7" fill="#dbe3f2"></circle><circle cx="33" cy="29" r=".7" fill="#dbe3f2"></circle><circle cx="20" cy="29" r=".7" fill="#dbe3f2"></circle></g></symbol>
+</defs>
+</svg>
+
 
 <div class="header">
   <div class="h-logo">🚛</div>
@@ -1355,6 +1536,7 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
       <div class="search-spacer"></div>
       <button class="ic-btn" onclick="clearSearch()" title="Reset">↺</button>
       <button class="ic-btn" onclick="exportFilteredExcel()" title="Excel">⬇️</button>
+      <button type="button" class="ic-btn" onclick="aggOpen('trasporti')" title="Aggiorna prezzi" aria-label="Aggiorna prezzi">💶</button>
       <button class="ic-btn primary" onclick="openAddTariffaModal()">＋</button>
     </div>
   </div>
@@ -1377,6 +1559,7 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
     </div>
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
       <input class="inp" id="prodSearch" placeholder="🔍 Cerca..." oninput="filterProdotti()" style="flex:1;height:38px;font-size:13px;">
+      <button type="button" class="ic-btn wide" onclick="aggOpen('prodotti')" title="Aggiorna prezzi" style="height:38px;">💶 Aggiorna</button>
       <button class="ic-btn primary" onclick="openAddProdottoModal()" title="Aggiungi" style="height:38px;width:38px;font-size:20px;flex-shrink:0;">＋</button>
     </div>
     <div class="prod-view-wrap">
@@ -1414,6 +1597,7 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
     </div>
     <div class="card">
       <div class="card-title">🌾 Import prezzi prodotti</div>
+      <div class="import-hint">Il file si controlla prima: ti mostro cosa è <b>nuovo</b>, cosa c'è <b>già</b> e cosa ha un <b>prezzo diverso</b>. Niente cambia finché non confermi.</div>
       <div class="drop-zone" id="dropZoneProdotti">
         <input type="file" id="fileInputProdotti" accept=".xlsx,.xls,.csv" onchange="handleFileImport(event,'prodotti')">
         <div class="drop-icon">📂</div><div class="drop-text">Trascina o clicca</div><div class="drop-sub">.xlsx · .xls · .csv</div>
@@ -1422,6 +1606,7 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
         <div style="font-size:11px;color:var(--t2);margin-bottom:8px;">Oppure carica il listino integrato:</div>
         <button class="btn btn-primary" onclick="loadKarmaData()" style="width:100%;">🌾 Carica Listino KarMa 03/2026</button>
       </div>
+      <div class="import-hint" style="margin:8px 0 0;">Colonne: <b>Prodotto</b> · <b>Fornitore</b> · <b>Provenienza</b> · <b>Destinazione</b> · <b>Acquirente</b> · <b>Costo Acquisto</b> · <b>Prezzo Vendita</b>. Un prezzo come 56+M% si legge come 56 e nella nota resta scritto +M%.</div>
       <div class="log-box hidden" id="logProdotti"></div>
     </div>
     <div class="card">
@@ -1517,6 +1702,36 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
     <div class="modal-actions" style="flex-direction:column;gap:6px;">
       <button class="btn btn-primary" style="width:100%;" id="impGo" onclick="impApply()">Importa</button>
       <button class="btn btn-secondary" style="width:100%;" id="impCancel" onclick="impCancel()">Annulla (non cambia niente)</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONTROLLO IMPORT PRODOTTI -->
+<div class="modal-backdrop hidden" id="modalImportProd">
+  <div class="modal" style="max-width:520px;max-height:92vh;overflow-y:auto;">
+    <div class="modal-title">📋 Controllo del file prodotti</div>
+    <div class="imp-file" id="ipFile"></div>
+    <div class="imp-stats">
+      <button type="button" class="imp-stat st-new" id="ipTNew" onclick="ipGoto('new')" aria-label="Mostra i prezzi nuovi"><div class="imp-n" id="ipNNew">0</div><div class="imp-l">Nuovi</div></button>
+      <div class="imp-stat st-same"><div class="imp-n" id="ipNSame">0</div><div class="imp-l">Già presenti</div></div>
+      <button type="button" class="imp-stat st-diff" id="ipTDiff" onclick="ipGoto('diff')" aria-label="Mostra i prezzi diversi"><div class="imp-n" id="ipNDiff">0</div><div class="imp-l">Prezzo diverso</div></button>
+      <button type="button" class="imp-stat st-skip" id="ipTSkip" onclick="ipGoto('skip')" aria-label="Mostra le righe non lette"><div class="imp-n" id="ipNSkip">0</div><div class="imp-l">Non lette</div></button>
+    </div>
+    <div class="imp-mode" id="ipModeRow">
+      <div class="imp-mode-t">Prezzi già presenti ma diversi: <b id="ipNMode">0</b></div>
+      <div class="imp-seg">
+        <button type="button" class="imp-segb on" id="ipModeKeep" aria-pressed="true" onclick="ipSetMode(false)">Mantieni i miei</button>
+        <button type="button" class="imp-segb" id="ipModeOver" aria-pressed="false" onclick="ipSetMode(true)">Sovrascrivi</button>
+      </div>
+      <div class="imp-mode-h" id="ipModeHint"></div>
+      <label class="imp-opt" id="ipProtRow" style="display:none;"><input type="checkbox" id="ipUpdProt" onchange="ipSetProt(this.checked)"><span>Sovrascrivi anche i <b id="ipNProt">0</b> inseriti o modificati da me, o più recenti del file<small>Di solito è meglio di no.</small></span></label>
+    </div>
+    <div class="imp-lists" id="ipLists"></div>
+    <div class="imp-notes" id="ipNotes" style="display:none;"></div>
+    <div class="imp-date"><label for="ipData">📅 Data dei prezzi</label><input class="inp" type="date" id="ipData" onchange="ipRender()"></div>
+    <div class="modal-actions" style="flex-direction:column;gap:6px;">
+      <button class="btn btn-primary" style="width:100%;" id="ipGo" onclick="ipApply()">Importa</button>
+      <button class="btn btn-secondary" style="width:100%;" id="ipCancel" onclick="ipCancel()">Annulla (non cambia niente)</button>
     </div>
   </div>
 </div>
@@ -1898,7 +2113,7 @@ function applyTheme(pref) {
   root.setAttribute('data-theme', t);
   root.setAttribute('data-theme-pref', pref);
   var meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', t === 'light' ? '#e4e7ec' : '#151a22');
+  if (meta) meta.setAttribute('content', t === 'light' ? '#e4e7ec' : '#0b0f16');
   var btn = document.getElementById('themeBtn');
   if (btn) {
     var label = 'Tema: ' + THEME_NAMES[pref] + (pref === 'auto' ? ' (ora ' + (t === 'light' ? 'chiaro' : 'scuro') + ')' : '') + ' — tocca per cambiare';
@@ -3073,95 +3288,535 @@ function parsePrice(raw) {
   return {price: null, unit: ''};
 }
 
-// ===================== IMPORT PRODOTTI =====================
+// ===================== IMPORT PRODOTTI (si controlla PRIMA di scrivere) =====================
+// Come per le tariffe: il file si legge, ogni prezzo si confronta con l'archivio e ti mostro cosa è nuovo, cosa c'è già e cosa
+// ha un prezzo diverso. Niente cambia finché non confermi. Le voci già in archivio (anche quelle del listino KarMa incorporato)
+// non si duplicano: per i prezzi di ACQUISTO contano prodotto + fornitore + luogo + unità + consegna; per le VENDITE prodotto +
+// cliente + luogo + unità + fornitore di provenienza. La parte "→ …" / "da …" della nota serve a riconoscere la consegna / il
+// fornitore, non a distinguere due voci.
+var _ipPlan = null;
+
+function ipClean(s) { return String(s == null ? '' : s).replace(/[\s ]+/g, ' ').replace(/^\s+|\s+$/g, ''); }
+function ipHas(x) {
+  if (x === '' || x === null || x === undefined) return false;
+  var t = ipClean(x);
+  return t !== '' && t !== '-' && t !== '—' && t !== '–';
+}
+// nome senza le parentesi (anche annidate), per confrontare "Ponzano" con "Ponzano RM" o "Ardenghi (Dosolo (MN))" con "Ardenghi"
+function ipPlain(s) {
+  var t = String(s == null ? '' : s).toLowerCase(), prev;
+  do { prev = t; t = t.replace(/\([^()]*\)/g, ' '); } while (t !== prev);
+  return t.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
+}
+function ipLoose(a, b) {
+  a = ipPlain(a); b = ipPlain(b);
+  if (!a || !b) return false;
+  return a === b || a.indexOf(b) === 0 || b.indexOf(a) === 0;
+}
+function ipKey(prodotto, tipo, entity, luogo, unita) {
+  return [impNorm(prodotto), tipo, impNorm(entity), impNorm(luogo), unita || '€/ton'].join('|');
+}
+function ipHead(note) { return String(note || '').split(' · ')[0].replace(/^\s+|\s+$/g, ''); }
+// consegne scritte nella nota ("→ A / B"); null = la nota non dice dove si consegna
+function ipDests(note) {
+  var h = ipHead(note);
+  if (h.charAt(0) !== '→') return null;
+  return h.slice(1).split('/').map(ipPlain).filter(function(x) { return x; });
+}
+// fornitori scritti nella nota ("da X (luogo)" o "da A / B / C"); null = la nota non lo dice
+function ipSuppliers(note) {
+  var m = ipHead(note).match(/^da\s+(.+)$/i);
+  if (!m) return null;
+  return m[1].split('/').map(ipPlain).filter(function(x) { return x; });
+}
+function ipDestCovered(rec, dest) {
+  if (!dest) return true;
+  var ds = ipDests(rec.note);
+  if (ds === null) return true;                 // la voce in archivio non dice dove si consegna: non serve un'altra identica
+  for (var i = 0; i < ds.length; i++) if (ipLoose(ds[i], dest)) return true;
+  return false;
+}
+function ipSupplierCovered(rec, forn) {
+  if (!forn) return true;
+  var ss = ipSuppliers(rec.note);
+  if (ss === null) return true;
+  for (var i = 0; i < ss.length; i++) if (ipLoose(ss[i], forn)) return true;
+  return false;
+}
+// "56", "56+M%", "14,00 €/mc", "1.250,50"
+function ipPrice(raw) {
+  if (!ipHas(raw)) return null;
+  var s = ipClean(raw), v = impNum(s);
+  if (isNaN(v) || v <= 0) return null;
+  return { v: Math.round(v * 100) / 100, u: /mc/i.test(s) ? '€/mc' : '€/ton', mfl: /\+\s*m\s*%/i.test(s) };
+}
+
+function ipParse(data) {
+  var res = { items: [], skipped: [], nRows: 0, error: '', notes: { mfl: 0 } };
+  if (!data || data.length < 2) { res.error = 'Il file è vuoto'; return res; }
+  var hi = -1, headers = [], r;
+  for (r = 0; r < Math.min(6, data.length) && hi < 0; r++) {
+    var hs = (data[r] || []).map(function(h) { return h == null ? '' : ipClean(h).toLowerCase(); });
+    if (hs.indexOf('prodotto') >= 0) { hi = r; headers = hs; }
+  }
+  if (hi < 0) { res.error = 'Colonna "Prodotto" non trovata'; return res; }
+  var colProd = headers.indexOf('prodotto'), colForn = -1, colProv = -1, colDest = -1, colAcq = -1, colCosto = -1, colVend = -1;
+  headers.forEach(function(h, i) {
+    if (h.indexOf('fornitore') >= 0) colForn = i;
+    if (h.indexOf('provenienza') >= 0 || h === 'origine') colProv = i;
+    if (h.indexOf('destinazione') >= 0) colDest = i;
+    if (h.indexOf('acquirente') >= 0 || h.indexOf('cliente') >= 0) colAcq = i;
+    if (h.indexOf('costo acquisto') >= 0) colCosto = i;
+    if (h.indexOf('prezzo vendita') >= 0) colVend = i;
+  });
+  if (colCosto < 0 && colVend < 0) { res.error = 'Non trovo le colonne "Costo acquisto" e "Prezzo vendita"'; return res; }
+  function cell(row, c) { return c >= 0 && ipHas(row[c]) ? ipClean(row[c]) : ''; }
+  for (r = hi + 1; r < data.length; r++) {
+    var row = data[r];
+    if (!row || !ipHas(row[colProd])) continue;
+    res.nRows++;
+    var prodotto = ipClean(row[colProd]), forn = cell(row, colForn), prov = cell(row, colProv), dest = cell(row, colDest), acq = cell(row, colAcq);
+    var made = 0, bad = [];
+    if (colCosto >= 0 && ipHas(row[colCosto])) {
+      var pa = ipPrice(row[colCosto]);
+      if (pa) {
+        var na = (dest ? '→ ' + dest : '') + (pa.mfl ? (dest ? ' · ' : '') + ipClean(row[colCosto]) : '');
+        res.items.push({ row: r + 1, tipo: 'acquisto', prodotto: prodotto, entity: forn, luogo: prov, prezzo: pa.v, unita: pa.u, dest: dest, fornitore: forn, prov: prov, mfl: pa.mfl, note: na });
+        made++; if (pa.mfl) res.notes.mfl++;
+      } else bad.push('costo "' + ipClean(row[colCosto]) + '" non leggibile');
+    }
+    if (colVend >= 0 && ipHas(row[colVend])) {
+      var pv = ipPrice(row[colVend]);
+      if (pv) {
+        var nv = (forn ? 'da ' + forn + (prov ? ' (' + prov + ')' : '') : '') + (pv.mfl ? (forn ? ' · ' : '') + ipClean(row[colVend]) : '');
+        res.items.push({ row: r + 1, tipo: 'vendita', prodotto: prodotto, entity: acq, luogo: dest, prezzo: pv.v, unita: pv.u, dest: dest, fornitore: forn, prov: prov, mfl: pv.mfl, note: nv });
+        made++; if (pv.mfl) res.notes.mfl++;
+      } else bad.push('prezzo di vendita "' + ipClean(row[colVend]) + '" non leggibile');
+    }
+    if (!made) res.skipped.push({ row: r + 1, text: prodotto + (forn ? ' · ' + forn : '') + (dest ? ' → ' + dest : ''), why: bad.length ? bad.join('; ') : 'nessun prezzo' });
+  }
+  if (!res.items.length) res.error = 'Non ho trovato nessun prezzo da importare';
+  return res;
+}
+
+function ipProtect(targets, refDate, it) {
+  var i, r;
+  if (it.tipo === 'vendita') {
+    for (i = 0; i < targets.length; i++) { var ss = ipSuppliers(targets[i].note); if (ss && ss.length > 1) return { why: 'multi', rec: targets[i] }; }
+  }
+  for (i = 0; i < targets.length; i++) { r = targets[i]; if (r.source === 'manual' || r.edited) return { why: 'manuale', rec: r }; }
+  if (refDate) {
+    for (i = 0; i < targets.length; i++) {
+      var d = String(targets[i].data || '');
+      if (/^\d{4}-\d{2}-\d{2}$/.test(d) && d > refDate) return { why: 'recente', rec: targets[i] };
+    }
+  }
+  return null;
+}
+function ipRefDate() {
+  var f = _el('ipData'), v = f ? String(f.value || '') : '';
+  return /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : impToday();
+}
+// Confronto con l'archivio di adesso (si rifà anche al momento di importare)
+function ipClassify(items, refDate) {
+  var idx = {}, i, k, p;
+  for (i = 0; i < DB.prodotti.length; i++) {
+    p = DB.prodotti[i];
+    if (!p) continue;
+    k = ipKey(p.prodotto, p.tipo, p.entity, p.luogo, p.unita);
+    if (!idx.hasOwnProperty(k)) idx[k] = [];
+    idx[k].push(p);
+  }
+  var seen = {}, res = { nuove: [], uguali: [], diverse: [], protette: [], doppie: 0, doppieDiverse: 0 };
+  for (i = 0; i < items.length; i++) {
+    var it = items[i];
+    k = ipKey(it.prodotto, it.tipo, it.entity, it.luogo, it.unita);
+    var sk = k + '|' + (it.tipo === 'acquisto' ? ipPlain(it.dest) : ipPlain(it.fornitore) + '|' + impNorm(it.prov));
+    if (seen.hasOwnProperty(sk)) { res.doppie++; if (Math.abs(seen[sk].prezzo - it.prezzo) > 0.004) res.doppieDiverse++; continue; }
+    seen[sk] = it;
+    var list = idx.hasOwnProperty(k) ? idx[k] : [];
+    var targets = list.filter(function(r) { return it.tipo === 'acquisto' ? ipDestCovered(r, it.dest) : ipSupplierCovered(r, it.fornitore); });
+    it.known = list.length > 0;
+    if (!targets.length) { res.nuove.push(it); continue; }
+    var same = false;
+    for (var j = 0; j < targets.length && !same; j++) if (Math.abs((Number(targets[j].prezzo) || 0) - it.prezzo) < 0.005) same = true;
+    if (same) { res.uguali.push(it); continue; }
+    var pr = ipProtect(targets, refDate, it);
+    if (pr) res.protette.push({ it: it, ex: targets, why: pr.why, rec: pr.rec });
+    else res.diverse.push({ it: it, ex: targets });
+  }
+  return res;
+}
+
+function ipRowHtml(it, rightTop, rightSub, extra) {
+  var l3 = '';
+  if (it.tipo === 'acquisto') { if (it.dest) l3 = '→ ' + esc(it.dest); }
+  else if (it.fornitore) l3 = 'da ' + esc(it.fornitore) + (it.prov ? ' (' + esc(it.prov) + ')' : '');
+  if (it.mfl) l3 += (l3 ? ' · ' : '') + '<b>+M%</b>: prezzo base, margine da aggiungere';
+  if (extra) l3 += (l3 ? '<br>' : '') + extra;
+  return '<div class="imp-row"><div class="imp-rl"><div class="imp-r1">' + esc(it.prodotto) + ' · ' + (it.tipo === 'acquisto' ? 'acquisto' : 'vendita') + '</div>' +
+    '<div class="imp-r2"><b>' + esc(it.entity || '—') + '</b>' + (it.luogo ? ' · ' + esc(it.luogo) : '') + '</div>' + (l3 ? '<div class="imp-r3">' + l3 + '</div>' : '') + '</div>' +
+    '<div class="imp-rr"><div class="imp-rr1">' + rightTop + '</div>' + (rightSub ? '<div class="imp-rr2">' + rightSub + '</div>' : '') + '</div></div>';
+}
+function ipWhy(w, d) {
+  if (w === 'multi') return '🔒 prezzo valido per più fornitori insieme: cambialo a mano';
+  if (w === 'manuale') return '🔒 inserito o modificato da te';
+  return '🔒 più recente del file (' + esc(String((d.rec && d.rec.data) || '').split('-').reverse().join('/')) + ')';
+}
+function ipDiffRow(d, extraWhy) {
+  var o = Number(d.ex[0].prezzo) || 0, n = d.it.prezzo, dl = n - o;
+  var sub = '<span class="imp-old">' + shareMoney(o) + '</span> <span class="imp-delta ' + (dl > 0 ? 'up' : 'dn') + '">' + (dl > 0 ? '▲ +' : '▼ ') + shareMoney(dl) + '</span>';
+  var extra = d.ex.length > 1 ? d.ex.length + ' voci in archivio con questo prezzo' : '';
+  if (extraWhy) extra += (extra ? '<br>' : '') + '<span class="imp-why">' + extraWhy + '</span>';
+  return ipRowHtml(d.it, impMoney(n, d.it.unita), sub, extra);
+}
+function ipSecHtml(key, title, body, defOpen) {
+  var st = _ipPlan && _ipPlan.openSec ? _ipPlan.openSec : {};
+  var open = st.hasOwnProperty(key) ? st[key] : defOpen;
+  return '<details class="imp-sec" id="ipSec_' + key + '"' + (open ? ' open' : '') + '><summary onclick="ipSecClick(\'' + key + '\', this)">' + title + '</summary><div class="imp-rows">' + body + '</div></details>';
+}
+function ipSecClick(key, el) {
+  if (!_ipPlan) return;
+  if (!_ipPlan.openSec) _ipPlan.openSec = {};
+  var d = el && el.parentNode;
+  _ipPlan.openSec[key] = !(d && d.open);
+}
+function ipGoto(kind) {
+  var p = _ipPlan;
+  if (!p || !p.cls) return;
+  var cnt = { diff: p.cls.diverse.length, prot: p.cls.protette.length, 'new': p.cls.nuove.length, skip: p.skipped.length };
+  var key = kind;
+  if (key === 'diff' && !cnt.diff && cnt.prot) key = 'prot';
+  if (!cnt[key]) return;
+  p.openSec = { diff: false, prot: false, 'new': false, skip: false };
+  p.openSec[key] = true;
+  ipRender();
+  var e = _el('ipSec_' + key);
+  if (e && e.scrollIntoView) { try { e.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) { e.scrollIntoView(true); } }
+}
+function ipOverable(c, p) {                      // le voci protette che con la casella si possono sovrascrivere ("multi" mai)
+  return c.protette.filter(function(d) { return d.why !== 'multi'; });
+}
+function ipToUpdate(c, p) {
+  var arr = [];
+  if (p && p.over) {
+    arr = c.diverse.slice();
+    if (p.overProt) arr = arr.concat(ipOverable(c, p));
+  }
+  return arr;
+}
+function ipRefreshBtn() {
+  var p = _ipPlan, b = _el('ipGo'), x = _el('ipCancel');
+  if (!p || !p.cls || !b) return;
+  var n = p.cls.nuove.length, m = ipToUpdate(p.cls, p).length, parts = [];
+  if (n) parts.push(n + (n === 1 ? ' nuovo' : ' nuovi'));
+  if (m) parts.push(m + (m === 1 ? ' sovrascritto' : ' sovrascritti'));
+  b.textContent = parts.length ? 'Importa: ' + parts.join(' + ') : 'Niente da importare';
+  b.disabled = !parts.length;
+  if (x) x.textContent = parts.length ? 'Annulla (non cambia niente)' : 'Chiudi';
+}
+function ipRender() {
+  var p = _ipPlan;
+  if (!p) return;
+  var c = ipClassify(p.items, ipRefDate());
+  p.cls = c;
+  var nDiff = c.diverse.length, nProt = c.protette.length, nOver = ipOverable(c, p).length;
+  if (!nDiff && !nProt) p.over = false;
+  if (!nOver || !p.over) p.overProt = false;
+  var set = function(id, v) { var e = _el(id); if (e) e.textContent = String(v); };
+  set('ipNNew', c.nuove.length); set('ipNSame', c.uguali.length); set('ipNDiff', nDiff + nProt); set('ipNSkip', p.skipped.length);
+  var tiles = { ipTNew: c.nuove.length, ipTDiff: nDiff + nProt, ipTSkip: p.skipped.length };
+  for (var tk in tiles) { if (tiles.hasOwnProperty(tk)) { var te = _el(tk); if (te) te.disabled = !tiles[tk]; } }
+  var h = '';
+  if (nDiff) h += ipSecHtml('diff', (p.over ? '✏️ ' + nDiff + ' verranno sovrascritti' : '✏️ ' + nDiff + ' con prezzo diverso'), impRowsHtml(c.diverse, function(d) { return ipDiffRow(d, ''); }, 60), true);
+  if (nProt) h += ipSecHtml('prot', (p.overProt ? '✏️ ' + nProt + ' tuoi o più recenti: ' + nOver + ' verranno sovrascritti' : '🔒 ' + nProt + ' non toccati (tuoi, più recenti o a più fornitori)'), impRowsHtml(c.protette, function(d) {
+    return ipDiffRow(d, ipWhy(d.why, d) + ((p.overProt && d.why !== 'multi') ? '' : ' · resta ' + shareMoney(Number(d.ex[0].prezzo) || 0)));
+  }, 60), !nDiff && !c.nuove.length);
+  if (c.nuove.length) h += ipSecHtml('new', '➕ ' + c.nuove.length + ' nuovi', impRowsHtml(c.nuove, function(it) {
+    return ipRowHtml(it, impMoney(it.prezzo, it.unita), '', it.known ? 'stesso prezzo già in archivio, ma ' + (it.tipo === 'acquisto' ? 'consegna nuova' : 'fornitore nuovo') : '');
+  }, 60), !nDiff && !nProt);
+  if (p.skipped.length) h += ipSecHtml('skip', '⚠️ ' + p.skipped.length + ' non lette', impRowsHtml(p.skipped, function(s) {
+    return '<div class="imp-row"><div class="imp-rl"><div class="imp-r1">Riga ' + s.row + '</div><div class="imp-r2">"' + esc(s.text) + '" — ' + esc(s.why) + '</div></div></div>';
+  }, 40), false);
+  var l = _el('ipLists');
+  if (l) l.innerHTML = h;
+  var notes = [];
+  if (p.notes.mfl) notes.push(p.notes.mfl + (p.notes.mfl === 1 ? ' prezzo con "+M%" (es. 56+M%): importato il numero, e nella nota resta scritto +M%' : ' prezzi con "+M%" (es. 56+M%): importato il numero, e nella nota resta scritto +M%'));
+  if (c.doppie) notes.push(c.doppie + (c.doppie === 1 ? ' riga ripetuta nel file' : ' righe ripetute nel file') + (c.doppieDiverse ? ' (' + c.doppieDiverse + ' con prezzo diverso: tengo la prima)' : ' (ignorate)'));
+  var n = _el('ipNotes');
+  if (n) { n.innerHTML = notes.length ? 'ℹ️ ' + notes.join(' · ') : ''; n.style.display = notes.length ? '' : 'none'; }
+  var mr = _el('ipModeRow');
+  if (mr) mr.style.display = (nDiff + nProt) ? '' : 'none';
+  set('ipNMode', nDiff + nProt);
+  var bk = _el('ipModeKeep'), bo = _el('ipModeOver');
+  if (bk) { bk.className = 'imp-segb' + (p.over ? '' : ' on'); bk.setAttribute('aria-pressed', p.over ? 'false' : 'true'); }
+  if (bo) { bo.className = 'imp-segb' + (p.over ? ' on' : ''); bo.setAttribute('aria-pressed', p.over ? 'true' : 'false'); }
+  var hint;
+  if (!p.over) hint = 'Restano i prezzi di adesso. Aggiungo solo le voci nuove.';
+  else {
+    hint = nDiff ? (nDiff === 1 ? 'Il prezzo diverso diventa quello del file.' : 'I ' + nDiff + ' prezzi diversi diventano quelli del file.') : '';
+    if (nProt && !p.overProt) hint += (hint ? ' ' : '') + (nProt === 1 ? 'La voce tua o più recente resta com\'è' : 'Le ' + nProt + ' voci tue, più recenti o a più fornitori restano come sono') + (nOver ? ' (puoi sovrascrivere anche quelle qui sotto).' : '.');
+  }
+  hint += ' Le voci che nel file non ci sono non si toccano mai.';
+  set('ipModeHint', hint);
+  var pr = _el('ipProtRow'), pc = _el('ipUpdProt');
+  if (pr) pr.style.display = (p.over && nOver) ? '' : 'none';
+  if (pc) pc.checked = !!p.overProt;
+  set('ipNProt', nOver);
+  ipRefreshBtn();
+}
+function ipSetMode(over) {
+  if (!_ipPlan) return;
+  _ipPlan.over = (over === true || over === 'over');
+  if (!_ipPlan.over) _ipPlan.overProt = false;
+  ipRender();
+}
+function ipSetProt(on) {
+  if (!_ipPlan) return;
+  _ipPlan.overProt = !!on && _ipPlan.over;
+  ipRender();
+}
+function ipShow() {
+  var p = _ipPlan;
+  if (!p) return;
+  p.over = false; p.overProt = false; p.openSec = {};
+  var f = _el('ipFile');
+  if (f) f.textContent = p.filename + ' · ' + p.nRows + ' righe · ' + p.items.length + ' prezzi letti';
+  var d = _el('ipData');
+  if (d) d.value = impToday();
+  ipRender();
+  var m = _el('modalImportProd');
+  if (m) { m.classList.remove('hidden'); var box = m.querySelector ? m.querySelector('.modal') : null; if (box) box.scrollTop = 0; }
+}
+
 function importProdotti(data, filename) {
   var log = document.getElementById('logProdotti');
   if (log) { log.classList.remove('hidden'); log.innerHTML = ''; }
   addLog(log, '📂 ' + filename, 'ok');
-
-  if (!data || data.length < 2) { addLog(log, '⚠️ File vuoto', 'warn'); return; }
-
-  var headers = data[0].map(function(h){ return h ? String(h).trim().toLowerCase() : ''; });
-  addLog(log, '📋 Colonne: ' + data[0].filter(Boolean).slice(0,7).join(', '), 'ok');
-
-  var colProd  = headers.indexOf('prodotto');
-  var colForn  = -1, colProv = -1, colDest = -1, colAcq = -1, colCosto = -1, colVend = -1;
-
-  headers.forEach(function(h, i) {
-    if (h.includes('fornitore'))                             colForn  = i;
-    if (h.includes('provenienza') || h === 'origine')       colProv  = i;
-    if (h.includes('destinazione'))                         colDest  = i;
-    if (h.includes('acquirente') || h.includes('cliente'))  colAcq   = i;
-    if (h.includes('costo acquisto'))                        colCosto = i;
-    if (h.includes('prezzo vendita'))                        colVend  = i;
-  });
-
-  if (colProd < 0) {
-    addLog(log, '❌ Colonna "Prodotto" non trovata', 'err'); return;
+  var plan = ipParse(data);
+  if (plan.error) {
+    _ipPlan = null;
+    addLog(log, '❌ ' + plan.error, 'err');
+    showToast('❌ ' + plan.error, 'warn');
+    return;
   }
+  plan.filename = filename;
+  _ipPlan = plan;
+  addLog(log, '📋 ' + plan.nRows + ' righe, ' + plan.items.length + ' prezzi letti', 'ok');
+  ipShow();
+  var c = _ipPlan.cls;
+  addLog(log, '🔎 Nuovi ' + c.nuove.length + ' · già presenti ' + c.uguali.length + ' · prezzo diverso ' + (c.diverse.length + c.protette.length) + (c.protette.length ? ' (di cui ' + c.protette.length + ' tuoi/più recenti/a più fornitori: non si toccano)' : '') + ' · non lette ' + plan.skipped.length, 'ok');
+}
 
-  var added = 0, already = 0;
-  var _us = undoSnapshot();
-  // Prezzi già in archivio PRIMA dell'import: se il file li ripete identici, non si duplicano
-  var existing = {};
-  DB.prodotti.forEach(function(p){ existing[prodKey(p)] = 1; });
-
-  for (var ri = 1; ri < data.length; ri++) {
-    var row = data[ri];
-    if (!row || !row[colProd]) continue;
-    var prodotto = String(row[colProd]).trim();
-    if (!prodotto) continue;
-
-    var fornitore  = colForn >= 0 && row[colForn] ? String(row[colForn]).trim() : '';
-    var prov       = colProv >= 0 && row[colProv] ? String(row[colProv]).trim() : '';
-    var dest       = colDest >= 0 && row[colDest] ? String(row[colDest]).trim() : '';
-    var acquirente = colAcq  >= 0 && row[colAcq]  ? String(row[colAcq]).trim()  : '';
-
-    // ── Record ACQUISTO ──
-    if (colCosto >= 0 && row[colCosto] !== '' && row[colCosto] !== null && row[colCosto] !== undefined) {
-      var costoRaw = String(row[colCosto]).trim();
-      var unit = costoRaw.toLowerCase().includes('mc') ? '€/mc' : '€/ton';
-      var costo = parseFloat(costoRaw.replace(',', '.').replace(/[^0-9.]/g, ''));
-      if (!isNaN(costo) && costo > 0) {
-        var recA = {
-          prodotto: prodotto, tipo: 'acquisto',
-          entity: fornitore, luogo: prov,
-          prezzo: costo, unita: unit, note: '', data: '', source: 'import'
-        };
-        if (existing[prodKey(recA)]) { already++; }
-        else { DB.prodotti.push(recA); added++; }
-      }
-    }
-
-    // ── Record VENDITA — uno per riga, anche se stesso acquirente ──
-    if (colVend >= 0 && row[colVend] !== '' && row[colVend] !== null && row[colVend] !== undefined) {
-      var vendRaw = String(row[colVend]).trim();
-      var unitV = vendRaw.toLowerCase().includes('mc') ? '€/mc' : '€/ton';
-      var vend = parseFloat(vendRaw.replace(',', '.').replace(/[^0-9.]/g, ''));
-      if (!isNaN(vend) && vend > 0) {
-        var recV = {
-          prodotto: prodotto, tipo: 'vendita',
-          entity: acquirente, luogo: dest,
-          prezzo: vend, unita: unitV,
-          note: fornitore ? 'da ' + fornitore : '', data: '', source: 'import'
-        };
-        if (existing[prodKey(recV)]) { already++; }
-        else { DB.prodotti.push(recV); added++; }
-      }
+function ipApply() {
+  var p = _ipPlan;
+  if (!p) { closeModal('modalImportProd'); return; }
+  var dv = _el('ipData') ? String(_el('ipData').value || '') : '';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dv)) dv = impToday();
+  var c = ipClassify(p.items, ipRefDate());
+  var list = ipToUpdate(c, p);
+  var n = c.nuove.length, m = list.length, i, j;
+  var log = document.getElementById('logProdotti');
+  closeModal('modalImportProd');
+  if (!n && !m) {
+    _ipPlan = null;
+    if (log) addLog(log, 'ℹ️ Niente da importare: ' + c.uguali.length + ' già presenti', 'warn');
+    showToast('Import: niente di nuovo (' + c.uguali.length + ' già presenti)', 'warn');
+    return;
+  }
+  var snap = undoSnapshot();
+  for (i = 0; i < n; i++) {
+    var it = c.nuove[i];
+    DB.prodotti.push({ prodotto: it.prodotto, tipo: it.tipo, entity: it.entity, luogo: it.luogo, prezzo: it.prezzo, unita: it.unita, note: it.note, data: dv, source: 'import' });
+  }
+  for (i = 0; i < m; i++) {
+    var d = list[i];
+    for (j = 0; j < d.ex.length; j++) {
+      var ex = d.ex[j];
+      ex.prezzo = d.it.prezzo; ex.data = dv;
+      if (ex.source === 'karma') ex.edited = true;      // se no, il prossimo aggiornamento del listino KarMa rimetterebbe il prezzo vecchio
     }
   }
-
   save(); refreshAll();
-  addLog(log, '✅ Aggiunti: ' + added + ' prezzi (acquisti + vendite per riga)', 'ok');
-  if (already) addLog(log, '↩️ Già presenti e saltati: ' + already + ' (identici a quelli in archivio)', 'warn');
-  if (added > 0) undoToast('import prodotti da ' + filename, _us, '✅ Prodotti importati: ' + added + (already ? ' (' + already + ' già presenti)' : ''), 'ok');
-  else showToast('Import: nessun prodotto nuovo (' + already + ' già presenti)', 'warn');
+  _ipPlan = null;
+  var parts = [];
+  if (n) parts.push(n + (n === 1 ? ' nuovo' : ' nuovi'));
+  if (m) parts.push(m + (m === 1 ? ' sovrascritto' : ' sovrascritti'));
+  var keptDiff = c.diverse.length - (p.over ? c.diverse.length : 0);
+  var keptProt = c.protette.length - (p.overProt ? ipOverable(c, p).length : 0);
+  var summary = parts.join(', ') + ' · ' + c.uguali.length + ' già presenti';
+  if (keptDiff) summary += ' · ' + keptDiff + ' con prezzo diverso lasciati come sono';
+  if (keptProt) summary += ' · ' + keptProt + ' tuoi/più recenti non toccati';
+  if (log) addLog(log, '✅ ' + summary, 'ok');
+  undoToast('import prodotti da ' + p.filename, snap, '✅ Import: ' + summary, 'ok');
+}
+function ipCancel() {
+  var log = document.getElementById('logProdotti');
+  if (_ipPlan && log) addLog(log, '↩️ Import annullato: non è stato cambiato niente', 'warn');
+  _ipPlan = null;
+  closeModal('modalImportProd');
 }
 
 function filterProdotti() {
+  prodUI.open = {};
   refreshProdotti();
 }
 
+
+// ═══════════════════════════════════════════════════════
+// PRODOTTI — vista per prodotto (Giro 7)
+// Schede chiuse con icona, nome e conteggi. Aperta: due schede "Dove compro" / "A chi vendo",
+// una lista alla volta, €/ton e €/mc in gruppi separati, "prezzo del ..." su ogni riga.
+// Toccando una riga si apre il menu dettagli (Modifica / Condividi / Elimina).
+// ═══════════════════════════════════════════════════════
+var prodUI = { open: {}, tab: {} };   // stato delle schede: solo in memoria, si azzera alla chiusura
+var _prodNames = [];                  // indice -> nome prodotto (gli onclick usano solo numeri)
+var _prodGroups = [];                 // indice -> riga mostrata (serve al menu dettagli)
+
+function prodIconId(name) {
+  var n = String(name || '').toLowerCase();
+  if (n.indexOf('cippato') >= 0) return 'pi-cip';
+  if (n.indexOf('segatura') >= 0) return 'pi-seg';
+  if (n.indexOf('pula') >= 0) return 'pi-pul';
+  if (n.indexOf('lolla') >= 0) return n.indexOf('riso') >= 0 ? 'pi-lri' : 'pi-lfa';
+  if (n.indexOf('sfarinato') >= 0) return n.indexOf('sorgo') >= 0 ? 'pi-sfs' : 'pi-sfm';
+  return 'pi-gen';
+}
+function piSvg(id, size, cls) {
+  return '<svg class="pi' + (cls ? ' ' + cls : '') + '" width="' + size + '" height="' + size +
+    '" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#' + id + '"></use></svg>';
+}
+function prodFmt(v) {
+  return Number(v).toLocaleString('it-IT', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
+
+// Mese del listino KarMa in uso ("03/2026"): i prezzi del listino hanno solo il mese, non il giorno
+function prodListinoMese() {
+  var m = /(\d{1,2}\/\d{4})/.exec(String((DB && DB.karmaRev) || KARMA_REV || ''));
+  return m ? m[1] : '';
+}
+// Data da scrivere dopo "prezzo del": giorno preciso se c'è, altrimenti il mese del listino KarMa
+function prodDataLabel(p) {
+  if (p.data) return formatData(p.data);
+  if (p.source === 'karma') return prodListinoMese();
+  return '';
+}
+
+function prodIndexOf(p) {
+  var gi = DB.prodotti.indexOf(p);
+  if (gi >= 0) return gi;
+  for (var i = 0; i < DB.prodotti.length; i++) {
+    var q = DB.prodotti[i];
+    if (q && q.prodotto === p.prodotto && q.entity === p.entity && q.prezzo === p.prezzo && q.tipo === p.tipo) return i;
+  }
+  return -1;
+}
+
+// Legge il campo Note: "→ Fiscaglia (FE) / Ponzano RM" = consegne, "da Incontrato (Bientina (PI))" = provenienza,
+// qualsiasi altro testo = nota libera.
+function prodRoute(note) {
+  var s = String(note == null ? '' : note).replace(/^\s+|\s+$/g, '');
+  var out = { kind: 'free', full: [], short: [], free: s };
+  if (!s) return out;
+  var body = null, m;
+  if ((m = /^(?:→|->)\s*([\s\S]*)$/.exec(s))) { out.kind = 'to'; body = m[1]; }
+  else if ((m = /^da\s+([\s\S]*)$/i.exec(s))) { out.kind = 'from'; body = m[1]; }
+  if (body === null) return out;
+  out.free = '';
+  var parts = body.split(/\s+\/\s+/);
+  for (var i = 0; i < parts.length; i++) {
+    var t = parts[i].replace(/^\s+|\s+$/g, '');
+    if (!t) continue;
+    out.full.push(t);
+    var cut = t.indexOf(' (');
+    out.short.push(out.kind === 'from' && cut > 0 ? t.slice(0, cut) : t);
+  }
+  if (!out.full.length) { out.kind = 'free'; out.free = s; }
+  return out;
+}
+
+// Unisce gli acquisti dello stesso fornitore con lo stesso prezzo (stessa data): le destinazioni diventano etichette.
+// Le vendite restano una riga ciascuna.
+function prodMakeGroups(list, tipo) {
+  var map = {}, out = [];
+  list.forEach(function(p) {
+    var r = prodRoute(p.note);
+    var key = tipo === 'acquisto'
+      ? [p.entity || '', p.luogo || '', p.prezzo, p.unita || '€/ton', p.data || '', p.source || ''].join('|')
+      : '#' + out.length;
+    var g = map[key];
+    if (!g) {
+      g = map[key] = { tipo: tipo, prodotto: p.prodotto, entity: p.entity || '', luogo: p.luogo || '',
+        prezzo: p.prezzo, unita: p.unita || '€/ton', data: p.data || '', source: p.source || '',
+        edited: false, recs: [], idxs: [], routes: [], free: [] };
+      out.push(g);
+    }
+    g.recs.push(p); g.idxs.push(prodIndexOf(p)); g.routes.push(r);
+    if (p.edited) g.edited = true;
+    if (r.free && g.free.indexOf(r.free) < 0) g.free.push(r.free);
+  });
+  return out;
+}
+function prodChipTexts(g) {
+  var seen = {}, out = [];
+  g.routes.forEach(function(r) {
+    if (r.kind === 'free') return;
+    r.short.forEach(function(t) {
+      var k = t.toLowerCase();
+      if (!seen[k]) { seen[k] = 1; out.push(t); }
+    });
+  });
+  return out;
+}
+function prodCount(n, tipo) {
+  if (tipo === 'acquisto') return n + (n === 1 ? ' acquisto' : ' acquisti');
+  return n + (n === 1 ? ' vendita' : ' vendite');
+}
+
+function prodRowsHtml(arr, tipo) {
+  var cls = tipo === 'acquisto' ? 'buy' : 'sell';
+  // l'elenco è già in ordine: acquisti dal più basso, vendite dal più alto
+  var showTag = arr.length > 1 && arr[0].prezzo !== arr[arr.length - 1].prezzo;
+  return arr.map(function(g) {
+    var gi = _prodGroups.push(g) - 1;
+    var dl = prodDataLabel(g);
+    var chips = prodChipTexts(g);
+    var tag = (showTag && g.prezzo === arr[0].prezzo) ? '<span class="pr-tag ' + cls + '">' + (cls === 'buy' ? 'Più basso' : 'Più alto') + '</span>' : '';
+    var h = '<button type="button" class="pr-row ' + cls + '" onclick="openProdSheet(' + gi + ')" aria-haspopup="dialog" aria-label="' +
+      esc((g.entity || 'Senza nome') + ', ' + prodFmt(g.prezzo) + ' ' + g.unita + (dl ? ', prezzo del ' + dl : '') + '. Apri i dettagli') + '">' +
+      '<span class="pr-name"><span class="pr-ent">' + esc(g.entity || '—') + '</span>' + tag + '</span>' +
+      '<span class="pr-price ' + cls + '">' + prodFmt(g.prezzo) + '<span class="pr-unit">' + esc(g.unita) + '</span></span>' +
+      '<span class="pr-loc">' + piSvg('pi-pin', 12) + esc(g.luogo || '') + '</span>' +
+      '<span class="pr-date">' + (dl ? 'prezzo del ' + esc(dl) : '') + '</span>';
+    if (chips.length) {
+      h += '<span class="pr-chips">' + chips.map(function(t) {
+        return '<span class="pr-chip">' + (cls === 'buy' ? piSvg('pi-arr', 10) + esc(t) : 'da ' + esc(t)) + '</span>';
+      }).join('') + '</span>';
+    }
+    if (g.free.length) h += '<span class="pr-free">' + esc(g.free.join(' · ')) + '</span>';
+    return h + '</button>';
+  }).join('');
+}
+
+// Una lista alla volta; se ci sono più unità (€/ton, €/mc) ognuna ha il suo gruppo con il suo titolo
+function prodListHtml(groups, tipo) {
+  var units = [], byU = {};
+  groups.forEach(function(g) {
+    if (!byU[g.unita]) { byU[g.unita] = []; units.push(g.unita); }
+    byU[g.unita].push(g);
+  });
+  function rank(u) { return u === '€/ton' ? 0 : (u === '€/mc' ? 1 : 2); }
+  units.sort(function(a, b) { return (rank(a) - rank(b)) || (a < b ? -1 : (a > b ? 1 : 0)); });
+  var multi = units.length > 1, html = '';
+  units.forEach(function(u, ui) {
+    if (multi) {
+      html += '<div class="pc-gh' + (ui ? ' gap' : '') + '"><span class="pc-gt">Prezzi in ' + esc(u) + '</span>' +
+        '<span class="pc-gn">' + prodCount(byU[u].length, tipo) + '</span></div>';
+    }
+    html += prodRowsHtml(byU[u], tipo);
+  });
+  return { html: html, multi: multi };
+}
 
 function renderViewProdotto(data) {
   if (!data.length)
@@ -3174,98 +3829,79 @@ function renderViewProdotto(data) {
     if (byProd[k][p.tipo]) byProd[k][p.tipo].push(p);
   });
 
-  function prodEmoji(name) {
-    var n = name.toLowerCase();
-    if (n.indexOf('cippato')   >= 0) return '🪵';
-    if (n.indexOf('segatura')  >= 0) return '🪚';
-    if (n.indexOf('lolla')     >= 0) return '🌾';
-    if (n.indexOf('sfarinato') >= 0) return '🌿';
-    if (n.indexOf('pula')      >= 0) return '🌿';
-    return '🌿';
-  }
+  var names = Object.keys(byProd).sort();
+  _prodNames = names.slice();
+  _prodGroups = [];
+  var _qi = document.getElementById('prodSearch');
+  // con un solo prodotto in vista, o durante una ricerca, le schede si aprono da sole
+  var openByDefault = names.length === 1 || !!(_qi && _qi.value);
+  var has = Object.prototype.hasOwnProperty;
 
   var html = '';
-  Object.keys(byProd).sort().forEach(function(prod) {
-    var buys  = (byProd[prod].acquisto || []).sort(function(a,b){ return a.prezzo - b.prezzo; });
-    var sells = (byProd[prod].vendita  || []).sort(function(a,b){ return b.prezzo - a.prezzo; });
+  names.forEach(function(prod, pi) {
+    var buysRaw  = (byProd[prod].acquisto || []).slice().sort(function(a, b) { return (a.prezzo - b.prezzo) || String(a.entity || '').localeCompare(String(b.entity || '')); });
+    var sellsRaw = (byProd[prod].vendita  || []).slice().sort(function(a, b) { return (b.prezzo - a.prezzo) || String(a.entity || '').localeCompare(String(b.entity || '')); });
+    var buys  = prodMakeGroups(buysRaw, 'acquisto');
+    var sells = prodMakeGroups(sellsRaw, 'vendita');
 
-    html += '<div class="prow">';
-    html += '<div class="prow-head">' +
-      '<div class="prow-title">' + prodEmoji(prod) + ' ' + prod + '</div>' +
-      '<div class="prow-badges">' +
-        (buys.length  ? '<span class="prow-badge buy">'  + buys.length  + ' acquist' + (buys.length===1?'o':'i')  + '</span>' : '') +
-        (sells.length ? '<span class="prow-badge sell">' + sells.length + ' vendit'  + (sells.length===1?'a':'e') + '</span>' : '') +
-      '</div>' +
-    '</div>';
+    var isOpen = has.call(prodUI.open, prod) ? !!prodUI.open[prod] : openByDefault;
+    var side = prodUI.tab[prod];
+    if (side !== 'buy' && side !== 'sell') side = buys.length ? 'buy' : 'sell';
+    if (side === 'buy' && !buys.length) side = 'sell';
+    if (side === 'sell' && !sells.length) side = 'buy';
 
-    if (buys.length) {
-      html += '<div class="prow-section-hd buy">💰 ACQUISTO</div>';
-      buys.forEach(function(p, i) {
-        var isBest = i === 0;
-        var prezzo = p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2});
-        var globalIdx = DB.prodotti.indexOf(p);
-        if (globalIdx < 0) {
-          for (var _di=0; _di<DB.prodotti.length; _di++) {
-            var _pp = DB.prodotti[_di];
-            if (_pp && _pp.prodotto===p.prodotto && _pp.entity===p.entity && _pp.prezzo===p.prezzo && _pp.tipo===p.tipo) { globalIdx=_di; break; }
-          }
-        }
-        var dataStr = p.data ? '<div class="prow-date"><span style="width:5px;height:5px;border-radius:50%;background:var(--t4);flex-shrink:0;display:inline-block;"></span>prezzo del ' + formatData(p.data) + '</div>' : '';
-        html += '<div class="prow-line' + (isBest ? ' best-buy' : '') + '" onclick="openEditProdotto(' + globalIdx + ')" style="cursor:pointer;">' +
-          '<div class="prow-line-left">' +
-            '<div class="prow-entity">' + esc(p.entity || '—') + '</div>' +
-            '<div class="prow-loc">📍 ' + esc(p.luogo || '') + '</div>' +
-            (p.note ? '<div class="prow-note">' + esc(p.note) + '</div>' : '') +
-            dataStr +
-          '</div>' +
-          '<div class="prow-line-right">' +
-            '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">' +
-              '<div style="display:flex;align-items:baseline;gap:2px;">' +
-                '<span class="prow-price buy">' + prezzo + '</span>' +
-                '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
-              '</div>' +
-              (isBest ? '<span class="prow-best-badge">★ min</span>' : '') +
-            '</div>' +
-          '</div>' +
+    var sub = [];
+    if (buys.length)  sub.push(prodCount(buys.length, 'acquisto'));
+    if (sells.length) sub.push(prodCount(sells.length, 'vendita'));
+
+    html += '<div class="pc' + (isOpen ? ' open' : '') + '">' +
+      '<button type="button" class="pc-head" id="pchead-' + pi + '" aria-expanded="' + (isOpen ? 'true' : 'false') + '" onclick="toggleProdCard(' + pi + ')">' +
+        '<span class="pc-ico"><svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#' + prodIconId(prod) + '"></use></svg></span>' +
+        '<span class="pc-tt"><span class="pc-name">' + esc(prod) + '</span><span class="pc-sub">' + sub.join(' · ') + '</span></span>' +
+        piSvg('pi-down', 20, 'pc-chev') +
+      '</button>';
+
+    if (isOpen) {
+      var cur = side === 'buy' ? buys : sells;
+      var tipo = side === 'buy' ? 'acquisto' : 'vendita';
+      var list = prodListHtml(cur, tipo);
+      html += '<div class="pc-body">';
+      if (buys.length && sells.length) {
+        html += '<div class="pc-tabs" role="tablist" aria-label="Acquisti o vendite di ' + esc(prod) + '">' +
+          '<button type="button" role="tab" id="pctab-' + pi + '-buy" aria-selected="' + (side === 'buy') + '" class="pc-tab buy' + (side === 'buy' ? ' on' : '') + '" onclick="setProdTab(' + pi + ',\'buy\')">Dove compro<span class="n">' + buys.length + '</span></button>' +
+          '<button type="button" role="tab" id="pctab-' + pi + '-sell" aria-selected="' + (side === 'sell') + '" class="pc-tab sell' + (side === 'sell' ? ' on' : '') + '" onclick="setProdTab(' + pi + ',\'sell\')">A chi vendo<span class="n">' + sells.length + '</span></button>' +
         '</div>';
-      });
-    }
-
-    if (sells.length) {
-      html += '<div class="prow-section-hd sell">📈 VENDITA</div>';
-      sells.forEach(function(p, i) {
-        var isBest = i === 0;
-        var prezzo = p.prezzo.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2});
-        var globalIdx = DB.prodotti.indexOf(p);
-        if (globalIdx < 0) {
-          for (var _di=0; _di<DB.prodotti.length; _di++) {
-            var _pp = DB.prodotti[_di];
-            if (_pp && _pp.prodotto===p.prodotto && _pp.entity===p.entity && _pp.prezzo===p.prezzo && _pp.tipo===p.tipo) { globalIdx=_di; break; }
-          }
-        }
-        var dataStr = p.data ? '<div class="prow-date"><span style="width:5px;height:5px;border-radius:50%;background:var(--t4);flex-shrink:0;display:inline-block;"></span>prezzo del ' + formatData(p.data) + '</div>' : '';
-        html += '<div class="prow-line' + (isBest ? ' best-sell' : '') + '" onclick="openEditProdotto(' + globalIdx + ')" style="cursor:pointer;">' +
-          '<div class="prow-line-left">' +
-            '<div class="prow-entity">' + esc(p.entity || '—') + '</div>' +
-            '<div class="prow-loc">📍 ' + esc(p.luogo || '') + '</div>' +
-            (p.note ? '<div class="prow-note">' + esc(p.note) + '</div>' : '') +
-            dataStr +
-          '</div>' +
-          '<div class="prow-line-right">' +
-            '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">' +
-              '<div style="display:flex;align-items:baseline;gap:2px;">' +
-                '<span class="prow-price sell">' + prezzo + '</span>' +
-                '<span class="prow-unit">' + (p.unita || '€/ton') + '</span>' +
-              '</div>' +
-              (isBest ? '<span class="prow-best-badge sell-badge">★ max</span>' : '') +
-            '</div>' +
-          '</div>' +
-        '</div>';
-      });
+      } else {
+        html += '<div class="pc-one ' + (side === 'buy' ? 'buy' : 'sell') + '"><span>' + (side === 'buy' ? 'Dove compro' : 'A chi vendo') + '</span><span class="n">' + prodCount(cur.length, tipo) + '</span></div>';
+      }
+      html += '<div class="pc-cap">' + (side === 'buy' ? 'Dal prezzo più basso' : 'Dal prezzo più alto') + (list.multi ? ', ogni unità per conto suo' : '') + '</div>';
+      html += '<div class="pc-list" role="tabpanel">' + list.html + '</div>';
+      html += '</div>';
     }
     html += '</div>';
   });
   return html;
+}
+
+function _prodFocus(id) {
+  var el = document.getElementById(id);
+  if (el && el.focus) { try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } }
+}
+function toggleProdCard(i) {
+  var n = _prodNames[i];
+  if (n === undefined) return;
+  var cur = document.getElementById('pchead-' + i);
+  var isOpen = !!(cur && cur.getAttribute('aria-expanded') === 'true');
+  prodUI.open[n] = !isOpen;
+  refreshProdotti();
+  _prodFocus('pchead-' + i);
+}
+function setProdTab(i, side) {
+  var n = _prodNames[i];
+  if (n === undefined) return;
+  prodUI.tab[n] = side;
+  refreshProdotti();
+  _prodFocus('pctab-' + i + '-' + side);
 }
 
 
@@ -3572,17 +4208,25 @@ function deleteProdotto(idx) {
 }
 
 var _editingProdottoIdx = -1;
+// Se la riga toccata raggruppa più consegne dello stesso prezzo, Modifica cambia tutte insieme (le note delle consegne restano)
+var _editingGroup = null;
 
-function openEditProdotto(idx) {
+function openEditProdotto(idx, idxs) {
   var p = DB.prodotti[idx];
   if (!p) return;
   _editingProdottoIdx = idx;
+  _editingGroup = (idxs && idxs.length > 1) ? idxs.slice() : null;
   var el;
   el = document.getElementById('epProdotto'); if(el) el.value = p.prodotto || '';
   el = document.getElementById('epEntity');   if(el) el.value = p.entity || '';
   el = document.getElementById('epLuogo');    if(el) el.value = p.luogo || '';
   el = document.getElementById('epPrezzo');   if(el) el.value = p.prezzo || '';
-  el = document.getElementById('epNote');     if(el) el.value = p.note || '';
+  el = document.getElementById('epNote');
+  if (el) {
+    el.value = _editingGroup ? '' : (p.note || '');
+    el.disabled = !!_editingGroup;
+    el.placeholder = _editingGroup ? 'Le note delle consegne restano come sono' : 'es. da Vender Legnami';
+  }
   el = document.getElementById('epData');     if(el) el.value = p.data || '';
   var unitEl = document.getElementById('epUnita');
   if (unitEl) {
@@ -3597,7 +4241,7 @@ function openEditProdotto(idx) {
     }
   }
   var titleEl = document.getElementById('epTitle');
-  if (titleEl) titleEl.textContent = '✏️ ' + (p.entity || p.prodotto);
+  if (titleEl) titleEl.textContent = '✏️ ' + (p.entity || p.prodotto) + (_editingGroup ? ' — ' + _editingGroup.length + ' consegne insieme' : '');
   document.getElementById('modalEditProdotto').classList.remove('hidden');
 }
 
@@ -3606,37 +4250,658 @@ function saveEditProdotto() {
   if (idx < 0 || !DB.prodotti[idx]) return;
   var prezzo = parseFloat(document.getElementById('epPrezzo').value);
   if (isNaN(prezzo)) { showToast('⚠️ Prezzo non valido', 'warn'); return; }
+  var groupMode = !!_editingGroup;
+  var idxs = [idx];
+  if (groupMode) {
+    idxs = _editingGroup.filter(function(k) { return !!DB.prodotti[k]; });
+    if (idxs.indexOf(idx) < 0) idxs.unshift(idx);
+  }
   var _us = undoSnapshot();
   var _pe = DB.prodotti[idx];
-  var _before = [_pe.prodotto, _pe.entity, _pe.luogo, _pe.prezzo, _pe.unita, _pe.tipo, _pe.note, _pe.data].join('|');
-  DB.prodotti[idx].prodotto = document.getElementById('epProdotto').value.trim() || DB.prodotti[idx].prodotto;
-  DB.prodotti[idx].entity   = document.getElementById('epEntity').value.trim();
-  DB.prodotti[idx].luogo    = document.getElementById('epLuogo').value.trim();
-  DB.prodotti[idx].prezzo   = prezzo;
-  DB.prodotti[idx].unita    = document.getElementById('epUnita').value;
-  DB.prodotti[idx].tipo     = document.getElementById('epTipo').value;
-  DB.prodotti[idx].note     = document.getElementById('epNote').value.trim();
-  DB.prodotti[idx].data     = document.getElementById('epData').value;
-  var _after = [_pe.prodotto, _pe.entity, _pe.luogo, _pe.prezzo, _pe.unita, _pe.tipo, _pe.note, _pe.data].join('|');
-  // Un prezzo KarMa modificato dall'utente non viene più sovrascritto dal listino
-  if (_pe.source === 'karma' && _before !== _after) _pe.edited = true;
+  var vProd = document.getElementById('epProdotto').value.trim();
+  var vEnt  = document.getElementById('epEntity').value.trim();
+  var vLuo  = document.getElementById('epLuogo').value.trim();
+  var vUni  = document.getElementById('epUnita').value;
+  var vTipo = document.getElementById('epTipo').value;
+  var vNote = document.getElementById('epNote').value.trim();
+  var vData = document.getElementById('epData').value;
+  idxs.forEach(function(k) {
+    var p = DB.prodotti[k];
+    var before = [p.prodotto, p.entity, p.luogo, p.prezzo, p.unita, p.tipo, p.note, p.data].join('|');
+    p.prodotto = vProd || p.prodotto;
+    p.entity   = vEnt;
+    p.luogo    = vLuo;
+    p.prezzo   = prezzo;
+    p.unita    = vUni;
+    p.tipo     = vTipo;
+    if (!groupMode) p.note = vNote;
+    p.data     = vData;
+    var after = [p.prodotto, p.entity, p.luogo, p.prezzo, p.unita, p.tipo, p.note, p.data].join('|');
+    // Un prezzo KarMa modificato dall'utente non viene più sovrascritto dal listino
+    if (p.source === 'karma' && before !== after) p.edited = true;
+  });
+  _editingGroup = null;
   saveAndSync(); refreshAll();
   closeModal('modalEditProdotto');
-  undoToast('modifica prezzo prodotto' + (_pe.entity ? ' (' + _pe.entity + ')' : ''), _us, '✅ Prezzo aggiornato', 'ok');
+  undoToast('modifica prezzo prodotto' + (_pe.entity ? ' (' + _pe.entity + ')' : ''), _us, idxs.length > 1 ? '✅ Aggiornati ' + idxs.length + ' prezzi' : '✅ Prezzo aggiornato', 'ok');
+}
+
+// Elimina uno o più prezzi (indici di DB.prodotti), con copia per "Annulla"
+function prodDeleteIdxs(idxs, label) {
+  var list = idxs.filter(function(k) { return !!DB.prodotti[k]; }).sort(function(a, b) { return b - a; });
+  if (!list.length) return false;
+  var _us = undoSnapshot();
+  list.forEach(function(k) {
+    forgetKarma(DB.prodotti[k]);
+    DB.prodotti.splice(k, 1);
+  });
+  saveAndSync(); refreshAll();
+  undoToast('prezzo prodotto eliminato' + (label ? ' (' + label + ')' : ''), _us, list.length > 1 ? '🗑 Eliminati ' + list.length + ' prezzi' : '🗑 Eliminato', 'warn');
+  return true;
 }
 
 function deleteEditProdotto() {
   var idx = _editingProdottoIdx;
   if (idx < 0) return;
-  if (!confirm('Eliminare questo prezzo?')) return;
-  var _us = undoSnapshot();
+  var idxs = _editingGroup ? _editingGroup.slice() : [idx];
+  if (idxs.indexOf(idx) < 0) idxs.push(idx);
+  if (!confirm(idxs.length > 1 ? 'Eliminare questo prezzo con tutte le sue ' + idxs.length + ' consegne?' : 'Eliminare questo prezzo?')) return;
   var _pn = DB.prodotti[idx] ? (DB.prodotti[idx].entity || DB.prodotti[idx].prodotto || '') : '';
-  forgetKarma(DB.prodotti[idx]);
-  DB.prodotti.splice(idx, 1);
-  saveAndSync(); refreshAll();
+  _editingGroup = null; _editingProdottoIdx = -1;
+  prodDeleteIdxs(idxs, _pn);
   closeModal('modalEditProdotto');
-  undoToast('prezzo prodotto eliminato' + (_pn ? ' (' + _pn + ')' : ''), _us, '🗑 Eliminato', 'warn');
 }
+
+// ───────────── Menu dettagli di una riga ─────────────
+var _sheetG = null;
+var _sheetOpener = null;
+
+function prodSheetValid() {
+  var g = _sheetG;
+  if (!g) return false;
+  for (var i = 0; i < g.idxs.length; i++) {
+    if (DB.prodotti[g.idxs[i]] !== g.recs[i]) return false;
+  }
+  return true;
+}
+
+function openProdSheet(gi) {
+  var g = _prodGroups[gi];
+  var box = document.getElementById('prodSheetBody');
+  var bd = document.getElementById('modalProdSheet');
+  if (!g || !box || !bd) return;
+  _sheetG = g;
+  _sheetOpener = document.activeElement || null;
+  var cls = g.tipo === 'acquisto' ? 'buy' : 'sell';
+  var dl = prodDataLabel(g);
+  var src = g.source === 'karma' ? 'Listino KarMa' + (g.edited ? ' · modificato da te' : '')
+          : (g.source === 'import' ? 'Da import' : 'Inserito a mano');
+
+  // Carico e consegne
+  var lines = '';
+  function line(label, items) {
+    return '<div class="psh-line"><span class="psh-lab">' + label + '</span><div class="psh-stack">' + items.join('') + '</div></div>';
+  }
+  function item(iconId, text, price, penIdx, penLabel) {
+    return '<div class="psh-it"><span class="psh-itt">' + (iconId ? piSvg(iconId, 14, iconId === 'pi-pin' ? 'pin' : '') : '') + esc(text) + '</span>' +
+      (price ? '<span class="psh-itp ' + cls + '">' + prodFmt(price) + ' <small>' + esc(g.unita) + '</small></span>' : '') +
+      (penIdx !== null ? '<button type="button" class="psh-pen" aria-label="Modifica ' + esc(penLabel) + '" onclick="prodSheetEdit(' + penIdx + ')">' + piSvg('pi-pen', 18) + '</button>' : '') +
+      '</div>';
+  }
+  if (g.tipo === 'acquisto') {
+    if (g.luogo) lines += line('Carico', [item('pi-pin', g.luogo, 0, null)]);
+    var cons = [];
+    g.recs.forEach(function(rec, k) {
+      g.routes[k].full.forEach(function(t) {
+        cons.push(item('pi-arr', t, rec.prezzo, g.recs.length > 1 ? g.idxs[k] : null, 'la consegna a ' + t));
+      });
+    });
+    if (cons.length) lines += line('Consegne', cons);
+  } else {
+    var froms = [], seen = {};
+    g.routes.forEach(function(r) {
+      if (r.kind !== 'from') return;
+      r.full.forEach(function(t) { var kk = t.toLowerCase(); if (!seen[kk]) { seen[kk] = 1; froms.push(item('pi-arr', t, 0, null)); } });
+    });
+    if (froms.length) lines += line('Carico', froms);
+    if (g.luogo) lines += line('Consegna', [item('pi-pin', g.luogo, g.prezzo, null)]);
+  }
+
+  var noteTxt = g.free.length ? g.free.join(' · ') : 'Nessuna nota';
+  box.innerHTML =
+    '<div class="psh-grab"></div>' +
+    '<div class="psh-top">' +
+      '<div class="psh-who">' +
+        '<span class="psh-kind ' + cls + '">' + esc(g.prodotto) + ' · ' + (cls === 'buy' ? 'Acquisto' : 'Vendita') + '</span>' +
+        '<span class="psh-name" id="prodSheetTitle">' + esc(g.entity || '—') + '</span>' +
+        (g.luogo ? '<span class="psh-loc">' + piSvg('pi-pin', 13) + esc(g.luogo) + '</span>' : '') +
+      '</div>' +
+      '<button type="button" class="psh-x" id="prodSheetClose" aria-label="Chiudi" onclick="closeProdSheet()">' + piSvg('pi-x', 20) + '</button>' +
+    '</div>' +
+    '<div class="psh-price">' +
+      '<span class="psh-big ' + cls + '">' + prodFmt(g.prezzo) + '<small>' + esc(g.unita) + '</small></span>' +
+      '<div class="psh-when"><b>' + (dl ? 'prezzo del ' + esc(dl) : 'data non indicata') + '</b><span>' + esc(src) + '</span></div>' +
+    '</div>' +
+    (lines ? '<div><div class="psh-sec">Carico e consegne</div><div class="psh-box">' + lines + '</div></div>' : '') +
+    '<div class="psh-note"><b>Note</b><span>' + esc(noteTxt) + '</span></div>' +
+    '<div class="psh-acts">' +
+      '<button type="button" class="psh-btn main" onclick="prodSheetEditGroup()">' + piSvg('pi-pen', 18) + ' Modifica</button>' +
+      '<div class="psh-2">' +
+        '<button type="button" class="psh-btn sec" onclick="prodSheetShare()">' + piSvg('pi-sh', 18) + ' Condividi</button>' +
+        '<button type="button" class="psh-btn danger" onclick="prodSheetDelete()">' + piSvg('pi-bin', 18) + ' Elimina</button>' +
+      '</div>' +
+    '</div>';
+  box.setAttribute('aria-labelledby', 'prodSheetTitle');
+  bd.classList.remove('hidden');
+  _prodFocus('prodSheetClose');
+}
+
+function closeProdSheet() {
+  var bd = document.getElementById('modalProdSheet');
+  if (bd) bd.classList.add('hidden');
+  _sheetG = null;
+  var op = _sheetOpener; _sheetOpener = null;
+  if (op && op.focus && document.body.contains(op)) { try { op.focus({ preventScroll: true }); } catch (e) {} }
+}
+
+function prodSheetEditGroup() {
+  var g = _sheetG;
+  if (!g) return;
+  if (!prodSheetValid()) { closeProdSheet(); showToast('I dati sono cambiati: riapri la voce', 'warn'); return; }
+  var first = g.idxs[0], all = g.idxs.slice();
+  _sheetOpener = null;
+  closeProdSheet();
+  openEditProdotto(first, all.length > 1 ? all : null);
+}
+function prodSheetEdit(idx) {
+  if (!_sheetG) return;
+  if (!prodSheetValid()) { closeProdSheet(); showToast('I dati sono cambiati: riapri la voce', 'warn'); return; }
+  _sheetOpener = null;
+  closeProdSheet();
+  openEditProdotto(idx);
+}
+function prodSheetDelete() {
+  var g = _sheetG;
+  if (!g) return;
+  if (!prodSheetValid()) { closeProdSheet(); showToast('I dati sono cambiati: riapri la voce', 'warn'); return; }
+  var n = g.idxs.length;
+  if (!confirm('Eliminare il prezzo di ' + (g.entity || 'questa voce') + (n > 1 ? ' con tutte le sue ' + n + ' consegne' : '') + '?')) return;
+  var idxs = g.idxs.slice(), label = g.entity || g.prodotto;
+  _sheetOpener = null;
+  closeProdSheet();
+  prodDeleteIdxs(idxs, label);
+}
+
+function prodSheetText(g) {
+  var dl = prodDataLabel(g);
+  var out = [];
+  out.push(g.prodotto + ' · ' + (g.tipo === 'acquisto' ? 'acquisto' : 'vendita'));
+  out.push((g.entity || '—') + (g.luogo ? ' (' + g.luogo + ')' : ''));
+  out.push(prodFmt(g.prezzo) + ' ' + g.unita + (dl ? ' · prezzo del ' + dl : ''));
+  var dest = [];
+  g.routes.forEach(function(r) { if (r.kind !== 'free') r.full.forEach(function(t) { if (dest.indexOf(t) < 0) dest.push(t); }); });
+  if (dest.length) out.push((g.tipo === 'acquisto' ? 'Consegne: ' : 'Merce da: ') + dest.join(', '));
+  if (g.free.length) out.push('Note: ' + g.free.join(' · '));
+  return out.join('\n');
+}
+function prodSheetShare() {
+  var g = _sheetG;
+  if (!g) return;
+  var text = prodSheetText(g);
+  if (typeof navigator !== 'undefined' && navigator.share) {
+    try {
+      var pr = navigator.share({ text: text });
+      if (pr && pr.catch) pr.catch(function() {});
+    } catch (e) {}
+    return;
+  }
+  function fallback() {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    showToast(ok ? '📋 Testo copiato' : 'Non riesco a copiare', ok ? 'ok' : 'warn');
+  }
+  if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { showToast('📋 Testo copiato', 'ok'); }, fallback);
+  } else {
+    fallback();
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if ((e.key === 'Escape' || e.keyCode === 27)) {
+    var bd = document.getElementById('modalProdSheet');
+    if (bd && !bd.classList.contains('hidden')) closeProdSheet();
+  }
+});
+
+
+// ═══════════════════════════════════════════════════════
+// AGGIORNA PREZZI (Giro 8)
+// Scegli di chi vuoi aggiornare i prezzi (un trasportatore, un fornitore, un cliente): compaiono le sue voci
+// già in archivio e scrivi SOLO i prezzi che cambiano. Un solo salvataggio, con la data dei prezzi e con Annulla.
+// ═══════════════════════════════════════════════════════
+var _agg = { tab: 'trasporti', who: '', items: [] };
+var _aggOpener = null;
+
+function aggParse(s) {
+  var t = String(s == null ? '' : s).replace(/^\s+|\s+$/g, '');
+  if (!t) return null;                       // vuoto = non cambia
+  var v = impNum(t);
+  return (isNaN(v) || v <= 0) ? NaN : Math.round(v * 100) / 100;   // NaN = non valido
+}
+function aggFmtIn(v) { return String(Math.round(v * 100) / 100).replace('.', ','); }
+
+// Voci di un trasportatore (tab Trasporti) o di un fornitore/cliente (tab Prodotti)
+function aggItemsFor(tab, who) {
+  var out = [];
+  if (!who) return out;
+  if (tab === 'trasporti') {
+    DB.trasporti.filter(function(t) { return t && t.carrier === who; })
+      .sort(function(a, b) { return String(a.from).localeCompare(String(b.from)) || String(a.to).localeCompare(String(b.to)); })
+      .forEach(function(t) {
+        var dl = t.data ? 'tariffa del ' + formatData(t.data) : '';
+        var sub = [t.unit || '€/vg'];
+        if (dl) sub.push(dl);
+        if (t.conditions) sub.push(t.conditions);
+        if (t.provisional) sub.push('da confermare');
+        out.push({ kind: 't', ref: t, title: (t.from || '—') + ' → ' + (t.to || '—'), tag: '', price: Number(t.price) || 0,
+          unit: t.unit || '€/vg', sub: sub.join(' · ') });
+      });
+    return out;
+  }
+  var mine = DB.prodotti.filter(function(p) { return p && String(p.entity || '—') === who; });
+  var buckets = {}, order = [];
+  mine.forEach(function(p) {
+    var k = p.prodotto + '|' + p.tipo;
+    if (!buckets[k]) { buckets[k] = { prodotto: p.prodotto, tipo: p.tipo, list: [] }; order.push(k); }
+    buckets[k].list.push(p);
+  });
+  order.sort(function(a, b) {
+    var x = buckets[a], y = buckets[b];
+    return String(x.prodotto).localeCompare(String(y.prodotto)) || (x.tipo < y.tipo ? -1 : (x.tipo > y.tipo ? 1 : 0));
+  });
+  order.forEach(function(k) {
+    var bk = buckets[k];
+    bk.list.sort(function(a, b) { return a.prezzo - b.prezzo; });
+    prodMakeGroups(bk.list, bk.tipo).forEach(function(g) {
+      var dl = prodDataLabel(g);
+      var chips = prodChipTexts(g);
+      var sub = [g.unita];
+      if (g.luogo) sub.push(g.luogo);
+      if (chips.length) sub.push((g.tipo === 'acquisto' ? '→ ' : 'da ') + chips.join(g.tipo === 'acquisto' ? ', ' : ', '));
+      if (dl) sub.push('prezzo del ' + dl);
+      if (g.free.length) sub.push(g.free.join(' · '));
+      out.push({ kind: 'p', recs: g.recs, title: g.prodotto, tag: g.tipo === 'acquisto' ? 'buy' : 'sell',
+        price: g.prezzo, unit: g.unita, sub: sub.join(' · ') });
+    });
+  });
+  return out;
+}
+
+function aggWhoOptions(tab) {
+  var counts = {}, kinds = {}, names = [];
+  if (tab === 'trasporti') {
+    DB.trasporti.forEach(function(t) {
+      if (!t || !t.carrier) return;
+      if (!counts[t.carrier]) { counts[t.carrier] = 0; names.push(t.carrier); }
+      counts[t.carrier]++;
+    });
+  } else {
+    DB.prodotti.forEach(function(p) {
+      if (!p) return;
+      var e = String(p.entity || '—');
+      if (!counts[e]) { counts[e] = 0; kinds[e] = {}; names.push(e); }
+      counts[e]++; kinds[e][p.tipo] = 1;
+    });
+  }
+  names.sort(function(a, b) { return a.localeCompare(b); });
+  return names.map(function(n) {
+    var label = n;
+    if (tab === 'prodotti') label += ' · ' + (kinds[n].acquisto && kinds[n].vendita ? 'fornitore e cliente' : (kinds[n].acquisto ? 'fornitore' : 'cliente'));
+    return { value: n, label: label + ' (' + aggItemsFor(tab, n).length + ')' };
+  });
+}
+
+function aggDirty() {
+  for (var i = 0; i < _agg.items.length; i++) {
+    var el = document.getElementById('aggin-' + i);
+    if (el && el.value.replace(/\s/g, '')) return true;
+  }
+  var ns = aggNewAll();
+  for (var j = 0; j < ns.length; j++) if (ns[j].st.state !== 'empty') return true;
+  return false;
+}
+
+function aggOpen(tab) {
+  var bd = document.getElementById('modalAggiorna');
+  if (!bd) return;
+  _aggOpener = document.activeElement || null;
+  var d = document.getElementById('aggDate'); if (d) d.value = impToday();
+  bd.classList.remove('hidden');
+  aggSetTab(tab === 'prodotti' ? 'prodotti' : 'trasporti', tab !== 'prodotti' ? (activePill || '') : '', true);
+  var w = document.getElementById('aggWho');
+  if (w && w.focus) { try { w.focus({ preventScroll: true }); } catch (e) { w.focus(); } }
+}
+
+function aggSetTab(tab, who, force) {
+  if (!force && aggDirty() && !confirm('Hai prezzi scritti e non salvati. Li perdi se cambi: continuo?')) return;
+  _agg.tab = tab;
+  var bt = document.getElementById('aggTabT'), bp = document.getElementById('aggTabP');
+  if (bt) { bt.classList.toggle('on', tab === 'trasporti'); bt.setAttribute('aria-pressed', tab === 'trasporti' ? 'true' : 'false'); }
+  if (bp) { bp.classList.toggle('on', tab === 'prodotti'); bp.setAttribute('aria-pressed', tab === 'prodotti' ? 'true' : 'false'); }
+  var lab = document.getElementById('aggWhoLab');
+  if (lab) lab.textContent = tab === 'trasporti' ? 'Quale trasportatore vuoi aggiornare?' : 'Quale fornitore o cliente vuoi aggiornare?';
+  var sel = document.getElementById('aggWho');
+  if (sel) {
+    var opts = aggWhoOptions(tab);
+    sel.innerHTML = '<option value="">— scegli —</option>' + opts.map(function(o) { return '<option value="' + esc(o.value) + '">' + esc(o.label) + '</option>'; }).join('');
+    sel.value = '';
+    if (who) {
+      for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === who) { sel.value = who; break; }
+    }
+    _agg.who = sel.value;
+  }
+  aggRender();
+}
+
+function aggWhoChange() {
+  var sel = document.getElementById('aggWho');
+  if (!sel) return;
+  if (aggDirty() && !confirm('Hai prezzi scritti e non salvati. Li perdi se cambi: continuo?')) { sel.value = _agg.who; return; }
+  _agg.who = sel.value;
+  aggRender();
+}
+
+function aggRender() {
+  var box = document.getElementById('aggList');
+  if (!box) return;
+  _agg.items = aggItemsFor(_agg.tab, _agg.who);
+  var add = '';
+  if (_agg.who) {
+    add = '<div class="agg-news" id="aggNews"></div><button type="button" class="agg-add" onclick="aggAddNew()">＋ ' +
+      (_agg.tab === 'trasporti' ? 'Aggiungi una tratta nuova' : 'Aggiungi un prodotto nuovo') + '</button>';
+  }
+  if (!_agg.who) {
+    box.innerHTML = '<div class="agg-hint">Scegli di chi vuoi aggiornare i prezzi: compaiono quelli già in archivio. Scrivi solo i prezzi che cambiano, il resto resta com\'è.</div>';
+  } else if (!_agg.items.length) {
+    box.innerHTML = '<div class="agg-hint">Nessuna voce per questa scelta.</div>' + add;
+  } else {
+    var n = _agg.items.length;
+    box.innerHTML = '<div class="agg-head"><span>' + n + (n === 1 ? ' voce' : ' voci') + '. Scrivi solo i prezzi che cambiano.</span><button type="button" class="agg-mini" onclick="aggClear()">Azzera</button></div>' + _agg.items.map(function(it, i) {
+      return '<div class="agg-row" id="aggr-' + i + '">' +
+        '<div><div class="agg-t"><span>' + esc(it.title) + '</span>' + (it.tag ? '<span class="agg-k ' + it.tag + '">' + (it.tag === 'buy' ? 'acquisto' : 'vendita') + '</span>' : '') + '</div>' +
+        '<div class="agg-s"><b>ora ' + prodFmt(it.price) + '</b> · ' + esc(it.sub) + '</div></div>' +
+        '<div class="agg-r"><input class="agg-in" id="aggin-' + i + '" type="text" inputmode="decimal" autocomplete="off" enterkeyhint="' + (i === n - 1 ? 'done' : 'next') + '"' +
+          ' placeholder="' + esc(prodFmt(it.price)) + '" aria-label="Nuovo prezzo: ' + esc(it.title) + '" oninput="aggInput(' + i + ')" onkeydown="aggKey(event,' + i + ')">' +
+        '<span class="agg-d" id="aggd-' + i + '"></span></div></div>';
+    }).join('') + add;
+  }
+  aggCount();
+}
+
+function aggChanges() {
+  var out = [];
+  for (var i = 0; i < _agg.items.length; i++) {
+    var el = document.getElementById('aggin-' + i);
+    if (!el) continue;
+    var v = aggParse(el.value);
+    if (v === null || isNaN(v)) continue;
+    if (Math.abs(v - _agg.items[i].price) < 0.0001) continue;
+    out.push({ i: i, v: v });
+  }
+  return out;
+}
+function aggNewReady() {
+  return aggNewAll().filter(function(x) { return x.st.state === 'ok'; });
+}
+function aggCount() {
+  var n = aggChanges().length + aggNewReady().length;
+  var b = document.getElementById('aggSave');
+  if (b) { b.disabled = n === 0; b.textContent = n ? 'Salva ' + n : 'Salva'; b.setAttribute('aria-label', n ? 'Salva ' + n + (n === 1 ? ' modifica' : ' modifiche') : 'Salva (nessuna modifica)'); }
+  return n;
+}
+
+function aggInput(i) {
+  var it = _agg.items[i], el = document.getElementById('aggin-' + i), d = document.getElementById('aggd-' + i), row = document.getElementById('aggr-' + i);
+  if (!it || !el || !d || !row) return;
+  var v = aggParse(el.value);
+  d.className = 'agg-d'; d.textContent = ''; el.classList.remove('bad'); row.classList.remove('chg');
+  if (v === null) { aggCount(); return; }
+  if (isNaN(v)) { d.className = 'agg-d bad'; d.textContent = 'non valido'; el.classList.add('bad'); aggCount(); return; }
+  if (Math.abs(v - it.price) < 0.0001) { d.textContent = 'uguale a ora'; aggCount(); return; }
+  var diff = Math.round((v - it.price) * 100) / 100;
+  var txt = (diff > 0 ? '+' : '') + diff.toLocaleString('it-IT', { maximumFractionDigits: 2 }) + ' €';
+  // salto grande (almeno un quarto del prezzo di ora): avviso per un errore di battitura
+  if (it.price && Math.abs(diff) / it.price >= 0.25) { d.className = 'agg-d warn'; txt = '⚠ ' + txt + ': controlla'; }
+  d.textContent = txt;
+  row.classList.add('chg');
+  aggCount();
+}
+
+function aggKey(e, i) {
+  if (e.key !== 'Enter' && e.keyCode !== 13) return;
+  e.preventDefault();
+  var next = document.getElementById('aggin-' + (i + 1));
+  if (next) { next.focus(); if (next.select) next.select(); }
+  else if (e.target && e.target.blur) e.target.blur();
+}
+
+function aggClear() {
+  for (var i = 0; i < _agg.items.length; i++) {
+    var el = document.getElementById('aggin-' + i);
+    if (el) { el.value = ''; aggInput(i); }
+  }
+}
+
+function aggSave() {
+  var ch = aggChanges();
+  var all = aggNewAll();
+  var nw = all.filter(function(x) { return x.st.state === 'ok'; });
+  if (!ch.length && !nw.length) return;
+  var bad = false;
+  for (var j = 0; j < _agg.items.length; j++) { var e0 = document.getElementById('aggin-' + j); if (e0 && isNaN(aggParse(e0.value))) { bad = true; e0.focus(); break; } }
+  if (bad) { showToast('C\'è un prezzo non valido: correggilo o cancellalo', 'warn'); return; }
+  for (var q = 0; q < all.length; q++) {
+    if (all[q].st.state === 'bad') {
+      showToast('Voce nuova: ' + all[q].st.msg.charAt(0).toLowerCase() + all[q].st.msg.slice(1), 'warn');
+      var fe = document.getElementById('aggn-' + all[q].k + '-' + (all[q].st.field || 'f')); if (fe && fe.focus) fe.focus();
+      return;
+    }
+  }
+  // i dati devono essere ancora quelli mostrati (es. dopo un Annulla o una sincronizzazione)
+  for (var k = 0; k < ch.length; k++) {
+    var it = _agg.items[ch[k].i];
+    var ok = it.kind === 't' ? DB.trasporti.indexOf(it.ref) >= 0 : it.recs.every(function(p) { return DB.prodotti.indexOf(p) >= 0; });
+    if (!ok) { showToast('I dati sono cambiati: riapri Aggiorna prezzi', 'warn'); aggClose(true); return; }
+  }
+  var dEl = document.getElementById('aggDate');
+  var dv = (dEl && /^\d{4}-\d{2}-\d{2}$/.test(dEl.value)) ? dEl.value : impToday();
+  var _us = undoSnapshot();
+  ch.forEach(function(c) {
+    var it2 = _agg.items[c.i];
+    if (it2.kind === 't') { it2.ref.price = c.v; it2.ref.data = dv; it2.ref.rev = 'Manuale'; }
+    else it2.recs.forEach(function(p) { p.prezzo = c.v; p.data = dv; if (p.source === 'karma') p.edited = true; });
+  });
+  nw.forEach(function(x) {
+    var r = x.st.rec; r.data = dv;
+    if (_agg.tab === 'trasporti') DB.trasporti.push(r); else DB.prodotti.push(r);
+  });
+  var who = _agg.who;
+  saveAndSync(); refreshAll();
+  aggClose(true);
+  var msg = '✅ ';
+  if (ch.length) msg += 'Aggiornati ' + ch.length + (ch.length === 1 ? ' prezzo' : ' prezzi');
+  if (nw.length) msg += (ch.length ? ' e aggiunt' + (nw.length === 1 ? 'a ' : 'e ') : 'Aggiunt' + (nw.length === 1 ? 'a ' : 'e ')) + nw.length + (nw.length === 1 ? ' voce nuova' : ' voci nuove');
+  msg += ' (prezzi del ' + formatData(dv) + ')';
+  undoToast('aggiornamento prezzi (' + who + ')', _us, msg, 'ok');
+}
+
+// ── Voce nuova (＋): una tratta nuova di questo trasportatore, o un prodotto nuovo di questo fornitore/cliente ──
+var _aggNseq = 0;
+function aggFillLists() {
+  function set(id, arr) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var seen = {}, out = [];
+    arr.forEach(function(v) { v = String(v || '').replace(/^\s+|\s+$/g, ''); if (v && !seen[v]) { seen[v] = 1; out.push(v); } });
+    out.sort(function(a, b) { return a.localeCompare(b); });
+    el.innerHTML = out.map(function(v) { return '<option value="' + esc(v) + '">'; }).join('');
+  }
+  set('aggListFrom', DB.trasporti.map(function(t) { return t.from; }));
+  set('aggListTo', DB.trasporti.map(function(t) { return t.to; }));
+  set('aggListProd', DB.prodotti.map(function(p) { return p.prodotto; }));
+  set('aggListLuogo', DB.prodotti.map(function(p) { return p.luogo; }).concat(DB.trasporti.map(function(t) { return t.from; }), DB.trasporti.map(function(t) { return t.to; })));
+}
+// tipo e luogo più usati da questa persona (precompilati, si possono cambiare)
+function aggDefaults() {
+  var tipi = {}, i, p;
+  for (i = 0; i < DB.prodotti.length; i++) { p = DB.prodotti[i]; if (p && String(p.entity || '—') === _agg.who) tipi[p.tipo] = (tipi[p.tipo] || 0) + 1; }
+  var tipo = (tipi.vendita && !tipi.acquisto) ? 'vendita' : 'acquisto';
+  var luoghi = {}, luogo = '', n = 0;
+  for (i = 0; i < DB.prodotti.length; i++) {
+    p = DB.prodotti[i];
+    if (p && String(p.entity || '—') === _agg.who && p.tipo === tipo && p.luogo) luoghi[p.luogo] = (luoghi[p.luogo] || 0) + 1;
+  }
+  for (var k in luoghi) if (luoghi[k] > n) { n = luoghi[k]; luogo = k; }
+  return { tipo: tipo, luogo: luogo };
+}
+function aggAddNew() {
+  if (!_agg.who) return;
+  var box = document.getElementById('aggNews');
+  if (!box) return;
+  var k = ++_aggNseq, id = 'aggn-' + k;
+  var t = _agg.tab === 'trasporti';
+  var h = '<div class="agg-new" id="' + id + '" data-k="' + k + '">' +
+    '<div class="agg-nh"><span>' + (t ? 'Tratta nuova' : 'Prodotto nuovo') + ' · ' + esc(_agg.who) + '</span>' +
+    '<button type="button" class="agg-nx" aria-label="Togli questa voce nuova" onclick="aggRemoveNew(' + k + ')"><svg class="pi" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#pi-x"></use></svg></button></div>';
+  function fld(f, label, inner) { return '<div><label class="agg-lab" for="' + id + '-' + f + '">' + label + '</label>' + inner + '</div>'; }
+  function txt(f, ph, list) {
+    return '<input class="inp" id="' + id + '-' + f + '" type="text" autocomplete="off" placeholder="' + esc(ph) + '"' + (list ? ' list="' + list + '"' : '') +
+      ' oninput="aggNewInput(' + k + ')" onkeydown="aggNewKey(event,' + k + ')">';
+  }
+  var price = '<input class="agg-in" id="' + id + '-p" type="text" inputmode="decimal" autocomplete="off" placeholder="0" oninput="aggNewInput(' + k + ')" onkeydown="aggNewKey(event,' + k + ')">';
+  if (t) {
+    h += fld('f', 'Da (partenza)', txt('f', 'es. Bientina (PI)', 'aggListFrom')) +
+         fld('t', 'A (destinazione)', txt('t', 'es. Ponzano R. (RM)', 'aggListTo')) +
+         '<div class="agg-ng">' + fld('p', 'Prezzo', price) +
+         fld('u', 'Unità', '<select class="inp" id="' + id + '-u" onchange="aggNewInput(' + k + ')"><option value="€/vg">€/viaggio</option><option value="€/ton">€/ton</option><option value="€/mc">€/mc</option></select>') + '</div>' +
+         fld('c', 'Condizioni (facoltativo)', txt('c', 'es. BB 60 gg FM', ''));
+  } else {
+    var df = aggDefaults();
+    h += fld('f', 'Prodotto', txt('f', 'es. Cippato', 'aggListProd')) +
+         fld('t', 'Che cosa fai con lui?', '<select class="inp" id="' + id + '-t" onchange="aggNewInput(' + k + ')"><option value="acquisto"' + (df.tipo === 'acquisto' ? ' selected' : '') + '>Acquisto: compro da lui</option><option value="vendita"' + (df.tipo === 'vendita' ? ' selected' : '') + '>Vendita: vendo a lui</option></select>') +
+         fld('l', 'Luogo (facoltativo)', txt('l', 'es. Dosolo (MN)', 'aggListLuogo')) +
+         '<div class="agg-ng">' + fld('p', 'Prezzo', price) +
+         fld('u', 'Unità', '<select class="inp" id="' + id + '-u" onchange="aggNewInput(' + k + ')"><option>€/ton</option><option>€/mc</option><option>€/q</option><option>€/kg</option><option>€/vg</option></select>') + '</div>' +
+         fld('c', 'Note (facoltativo)', txt('c', 'es. → Ponzano RM', ''));
+  }
+  h += '<div class="agg-d agg-nm" id="' + id + '-m" aria-live="polite"></div></div>';
+  box.insertAdjacentHTML('beforeend', h);
+  aggFillLists();
+  if (!t) { var le = document.getElementById(id + '-l'); if (le) le.value = aggDefaults().luogo; }
+  var fe = document.getElementById(id + '-f');
+  if (fe) { try { fe.focus({ preventScroll: true }); } catch (e) { fe.focus(); } }
+  var row = document.getElementById(id);
+  if (row && row.scrollIntoView) { try { row.scrollIntoView({ block: 'center' }); } catch (e2) {} }
+  aggCount();
+}
+function aggRemoveNew(k) {
+  var el = document.getElementById('aggn-' + k);
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+  aggCount();
+}
+function aggNewVal(k, f) {
+  var el = document.getElementById('aggn-' + k + '-' + f);
+  return el ? String(el.value).replace(/^\s+|\s+$/g, '') : '';
+}
+// stato di tutte le voci nuove, nell'ordine in cui sono sulla schermata
+function aggNewAll() {
+  var out = [], seen = {};
+  var nodes = document.querySelectorAll('#aggNews .agg-new');
+  var t = _agg.tab === 'trasporti';
+  for (var i = 0; i < nodes.length; i++) {
+    var k = nodes[i].getAttribute('data-k');
+    out.push({ k: k, st: t ? aggNewStateT(k, seen) : aggNewStateP(k, seen) });
+  }
+  return out;
+}
+function aggLow(s) { return String(s || '').replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '').toLowerCase(); }
+function aggNewStateT(k, seen) {
+  var from = aggNewVal(k, 'f'), to = aggNewVal(k, 't'), p = aggNewVal(k, 'p'), cond = aggNewVal(k, 'c'), unit = aggNewVal(k, 'u') || '€/vg';
+  if (!from && !to && !p && !cond) return { state: 'empty' };
+  var price = aggParse(p);
+  if (!from) return { state: 'bad', msg: 'Manca: da dove parte', field: 'f' };
+  if (!to) return { state: 'bad', msg: 'Manca: dove arriva', field: 't' };
+  if (price === null) return { state: 'bad', msg: 'Manca: il prezzo', field: 'p' };
+  if (isNaN(price)) return { state: 'bad', msg: 'Prezzo non valido', field: 'p' };
+  to = normalizeDest(to);
+  var key = aggLow(from) + '|' + aggLow(to) + '|' + unit;
+  var dup = DB.trasporti.some(function(t) { return t && t.carrier === _agg.who && aggLow(t.from) + '|' + aggLow(t.to) + '|' + (t.unit || '€/vg') === key; });
+  if (dup) return { state: 'bad', msg: 'Questa tratta c\'è già (stessa unità): scrivi il prezzo nella riga sopra', field: 'f' };
+  if (seen[key]) return { state: 'bad', msg: 'Hai già scritto questa tratta qui sopra', field: 'f' };
+  seen[key] = 1;
+  return { state: 'ok', rec: { from: from, to: to, carrier: _agg.who, price: price, unit: unit, conditions: cond, provisional: false, note: '', data: '', rev: 'Manuale' } };
+}
+function aggNewStateP(k, seen) {
+  var prod = aggNewVal(k, 'f'), tipo = aggNewVal(k, 't') || 'acquisto', luogo = aggNewVal(k, 'l'), p = aggNewVal(k, 'p'), note = aggNewVal(k, 'c'), unit = aggNewVal(k, 'u') || '€/ton';
+  if (!prod && !p && !note) return { state: 'empty' };
+  var price = aggParse(p);
+  if (!prod) return { state: 'bad', msg: 'Manca: il nome del prodotto', field: 'f' };
+  if (price === null) return { state: 'bad', msg: 'Manca: il prezzo', field: 'p' };
+  if (isNaN(price)) return { state: 'bad', msg: 'Prezzo non valido', field: 'p' };
+  var ent = _agg.who === '—' ? '' : _agg.who;
+  var key = [aggLow(prod), tipo, aggLow(luogo), unit, price, aggLow(note)].join('|');
+  var dup = DB.prodotti.some(function(r) {
+    return r && String(r.entity || '—') === _agg.who && [aggLow(r.prodotto), r.tipo, aggLow(r.luogo), r.unita, Number(r.prezzo), aggLow(r.note)].join('|') === key;
+  });
+  if (dup) return { state: 'bad', msg: 'C\'è già una voce identica: non serve aggiungerla', field: 'f' };
+  if (seen[key]) return { state: 'bad', msg: 'Hai già scritto questa voce qui sopra', field: 'f' };
+  seen[key] = 1;
+  return { state: 'ok', rec: { prodotto: prod, tipo: tipo, entity: ent, luogo: luogo, prezzo: price, unita: unit, data: '', note: note, source: 'manual' } };
+}
+function aggNewInput() {
+  var all = aggNewAll();
+  all.forEach(function(x) {
+    var row = document.getElementById('aggn-' + x.k), m = document.getElementById('aggn-' + x.k + '-m');
+    if (!row || !m) return;
+    row.classList.toggle('chg', x.st.state === 'ok');
+    m.className = 'agg-d agg-nm' + (x.st.state === 'bad' ? ' bad' : '');
+    m.textContent = x.st.state === 'bad' ? x.st.msg : (x.st.state === 'ok' ? 'Verrà aggiunta' : '');
+  });
+  aggCount();
+}
+function aggNewKey(e) {
+  if (e.key !== 'Enter' && e.keyCode !== 13) return;
+  e.preventDefault();
+  var row = e.target && e.target.closest ? e.target.closest('.agg-new') : null;
+  if (!row) return;
+  var inputs = row.querySelectorAll('input');
+  for (var i = 0; i < inputs.length; i++) {
+    if (inputs[i] === e.target) {
+      if (inputs[i + 1]) { inputs[i + 1].focus(); if (inputs[i + 1].select) inputs[i + 1].select(); }
+      else if (e.target.blur) e.target.blur();
+      return;
+    }
+  }
+}
+
+function aggClose(force) {
+  if (!force && aggDirty() && !confirm('Hai prezzi scritti e non salvati. Chiudo e li perdo?')) return;
+  var bd = document.getElementById('modalAggiorna');
+  if (bd) bd.classList.add('hidden');
+  _agg.items = []; _agg.who = '';
+  var op = _aggOpener; _aggOpener = null;
+  if (op && op.focus && document.body.contains(op)) { try { op.focus({ preventScroll: true }); } catch (e) {} }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' || e.keyCode === 27) {
+    var bd = document.getElementById('modalAggiorna');
+    if (bd && !bd.classList.contains('hidden')) aggClose();
+  }
+});
 
 
 function importDataJSON() { document.getElementById('jsonImportInput').click(); }
@@ -4302,6 +5567,7 @@ function setPill(carrier) {
 
 function setProdottoFilter(p) {
   activeProdottoFilter = p;
+  prodUI.open = {};
   refreshProdotti();
 }
 
@@ -5098,9 +6364,9 @@ function undoLast() {
   }
   DB = restored;
   normalizeDB();
-  editingTratta = null; _editingProdottoIdx = -1;
+  editingTratta = null; _editingProdottoIdx = -1; _editingGroup = null; _sheetG = null; _agg.items = []; _agg.who = '';
   // le finestre aperte puntano a righe che potrebbero non esserci più
-  var ids = ['modalEditTratta', 'modalEditProdotto', 'modalProdotto', 'modalClear', 'modalEntity', 'modalShare'];
+  var ids = ['modalEditTratta', 'modalEditProdotto', 'modalProdSheet', 'modalAggiorna', 'modalProdotto', 'modalClear', 'modalEntity', 'modalShare'];
   for (var i = 0; i < ids.length; i++) { var m = _el(ids[i]); if (m && m.classList) m.classList.add('hidden'); }
   save();
   refreshAll();
@@ -5878,6 +7144,31 @@ init();
 ;</script>
 
 <!-- MODAL MODIFICA PRODOTTO -->
+<div class="agg-bd hidden" id="modalAggiorna" role="dialog" aria-modal="true" aria-labelledby="aggTitle">
+  <div class="agg-bar">
+    <button type="button" class="agg-x" aria-label="Chiudi" onclick="aggClose()"><svg class="pi" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#pi-x"></use></svg></button>
+    <div class="agg-title" id="aggTitle">Aggiorna prezzi</div>
+    <button type="button" class="agg-save" id="aggSave" onclick="aggSave()" disabled>Salva</button>
+  </div>
+  <div class="agg-body">
+    <div class="agg-seg">
+      <button type="button" id="aggTabT" class="on" aria-pressed="true" onclick="aggSetTab('trasporti','')">🚛 Trasporti</button>
+      <button type="button" id="aggTabP" aria-pressed="false" onclick="aggSetTab('prodotti','')">🌾 Prodotti</button>
+    </div>
+    <div>
+      <label class="agg-lab" id="aggWhoLab" for="aggWho">Quale trasportatore vuoi aggiornare?</label>
+      <select class="inp agg-who" id="aggWho" onchange="aggWhoChange()"></select>
+    </div>
+    <div class="agg-opts">
+      <div><label class="agg-lab" for="aggDate">Data dei prezzi</label><input class="inp" type="date" id="aggDate"></div>
+    </div>
+    <div class="agg-list" id="aggList"></div>
+  </div>
+  <datalist id="aggListFrom"></datalist><datalist id="aggListTo"></datalist><datalist id="aggListProd"></datalist><datalist id="aggListLuogo"></datalist>
+</div>
+<div class="psheet-bd hidden" id="modalProdSheet" onclick="if(event.target===this)closeProdSheet()">
+  <div class="psheet" id="prodSheetBody" role="dialog" aria-modal="true"></div>
+</div>
 <div class="modal-backdrop hidden" id="modalEditProdotto">
   <div class="modal" style="max-width:440px;">
     <div class="modal-title" id="epTitle">&#9998;&#65039; Modifica prezzo</div>
