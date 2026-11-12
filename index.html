@@ -284,6 +284,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 select.inp{cursor:pointer;}
 .form-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
 .form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:130px;}
+.form-row.stack{flex-direction:column;flex-wrap:nowrap;gap:8px;}
+.form-row.stack>.form-group{flex:none;min-width:0;width:100%;}
 .form-label{font-size:12.5px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;}
 
 /* DROP ZONE */
@@ -316,7 +318,8 @@ select.inp{cursor:pointer;}
 .sec-head .sp{flex:1;}
 
 /* MODAL */
-.modal-backdrop{position:fixed;inset:0;background:rgba(var(--shade-rgb),.75);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;}
+.modal-backdrop{position:fixed;left:0;right:0;top:var(--vvt,0px);height:var(--vvh,100%);background:rgba(var(--shade-rgb),.75);display:flex;z-index:200;padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.modal-backdrop>.modal{margin:auto;flex-shrink:0;}
 .modal-backdrop.hidden{display:none;}
 .modal{background:linear-gradient(145deg,var(--s1) 0%,var(--s2) 100%);border:1px solid var(--b2);border-radius:16px;padding:20px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(var(--shade-rgb),.6);}
 .modal-title{font-size:16.5px;font-weight:700;margin-bottom:14px;}
@@ -826,7 +829,7 @@ select.inp{cursor:pointer;}
   position: absolute; top: calc(100% + 2px); left: 0; right: 0;
   background: var(--s1); border: 1.5px solid var(--green);
   border-radius: 10px; box-shadow: 0 8px 24px rgba(var(--shade-rgb),.5);
-  z-index: 600; max-height: 38vh; overflow-y: auto;
+  z-index: 600; max-height: min(38vh, 240px); overflow-y: auto;
   -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
 }
 .mp-ac.hidden { display: none; }
@@ -1754,7 +1757,7 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
   </div>
   <div class="cpills" id="carrierPills"></div>
   <select id="searchCarrier" onchange="filterRoutes()" style="display:none;"><option value="">Tutti</option></select>
-  <div id="viewRapida"><div id="resultsContainer"><div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.</div></div></div></div>
+  <div id="viewRapida"><div id="resultsContainer"><div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa qui.<br>Tocca <strong>Drive</strong> in alto per ritrovare i tuoi dati, oppure vai su <strong>Import</strong>.</div></div></div></div>
   <div id="viewConfronto" style="display:none;">
     <select class="inp" id="confrontoSelect" onchange="renderConfronto()" style="margin-bottom:12px;font-weight:600;"><option value="">— Seleziona una tratta —</option></select>
     <div id="confrontoContainer"><div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Seleziona una tratta.</div></div></div>
@@ -1791,7 +1794,7 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
 
     </div>
     <div class="ptabs-wrap"><div class="ptabs" id="prodottiTabs" style="display:flex;gap:6px;"></div></div>
-    <div id="prodottiContainer"><div class="empty"><div class="empty-icon"><svg class="pit-prod" width="44" height="44" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#pi-prod"></use></svg></div><div class="empty-text">Nessun prezzo inserito.</div></div></div>
+    <div id="prodottiContainer"><div class="empty"><div class="empty-icon"><svg class="pit-prod" width="44" height="44" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#pi-prod"></use></svg></div><div class="empty-text">Nessun prezzo qui.<br>Tocca <strong>Drive</strong> in alto per ritrovare i tuoi dati, oppure vai su <strong>Import</strong>.</div></div></div>
   </div>
 </div>
 
@@ -1815,10 +1818,6 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
         <input type="file" id="fileInputProdotti" accept=".xlsx,.xls,.csv" onchange="handleFileImport(event,'prodotti')">
         <div class="drop-icon">📂</div><div class="drop-text">Trascina o clicca</div><div class="drop-sub">.xlsx · .xls · .csv</div>
       </div>
-      <div style="margin-top:10px;padding:10px;background:var(--s3);border:1px solid var(--b2);border-radius:9px;text-align:center;">
-        <div style="font-size:13.5px;color:var(--t2);margin-bottom:8px;">Oppure carica il listino integrato:</div>
-        <button class="btn btn-primary" onclick="loadKarmaData()" style="width:100%;">🌾 Carica Listino KarMa 03/2026</button>
-      </div>
       <div class="import-hint" style="margin:8px 0 0;">Colonne: <b>Prodotto</b> · <b>Fornitore</b> · <b>Provenienza</b> · <b>Destinazione</b> · <b>Acquirente</b> · <b>Costo Acquisto</b> · <b>Prezzo Vendita</b>. Un prezzo come 56+M% si legge come 56 e nella nota resta scritto +M%.</div>
       <div class="log-box hidden" id="logProdotti"></div>
     </div>
@@ -1834,7 +1833,6 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
     <div class="card">
       <div class="card-title">⚙️ Gestione dati</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-primary" onclick="reloadBuiltinData()" style="width:100%;margin-top:8px;background:linear-gradient(135deg,var(--green2),var(--green));color:var(--on-accent);font-weight:700;">🔄 Carica Tariffe REV 03/2026 (incorporato)</button>
         <button class="btn btn-secondary btn-sm" onclick="exportFilteredExcel()">⬇️ Excel</button>
         <button class="btn btn-secondary btn-sm" onclick="clearProdottiManuali()">🗑 Svuota manuali</button>
         <button class="btn btn-danger btn-sm" onclick="confirmClear()">🗑 Svuota tutto</button>
@@ -1909,6 +1907,7 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
       <div class="imp-mode-h" id="impModeHint"></div>
       <label class="imp-opt" id="impProtRow" style="display:none;"><input type="checkbox" id="impUpdProt" onchange="impSetProt(this.checked)"><span>Sovrascrivi anche le <b id="impNProt">0</b> inserite o modificate da me, o più recenti del file<small>Di solito è meglio di no.</small></span></label>
     </div>
+    <label class="imp-opt" id="impRemRow" style="display:none;"><input type="checkbox" id="impRem" onchange="impSetRem(this.checked)"><span><span id="impRemTitle">Togli anche le <b id="impNRem">0</b> tariffe che nel file non ci sono più</span><small id="impRemHint"></small></span></label>
     <div class="imp-lists" id="impLists"></div>
     <div class="imp-notes" id="impNotes" style="display:none;"></div>
     <div class="imp-date"><label for="impData">📅 Data delle tariffe</label><input class="inp" type="date" id="impData" onchange="impRender()"></div>
@@ -1939,6 +1938,7 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
       <div class="imp-mode-h" id="ipModeHint"></div>
       <label class="imp-opt" id="ipProtRow" style="display:none;"><input type="checkbox" id="ipUpdProt" onchange="ipSetProt(this.checked)"><span>Sovrascrivi anche i <b id="ipNProt">0</b> inseriti o modificati da me, o più recenti del file<small>Di solito è meglio di no.</small></span></label>
     </div>
+    <label class="imp-opt" id="ipRemRow" style="display:none;"><input type="checkbox" id="ipRem" onchange="ipSetRem(this.checked)"><span><span id="ipRemTitle">Togli anche i <b id="ipNRem">0</b> prezzi che nel file non ci sono più</span><small id="ipRemHint"></small></span></label>
     <div class="imp-lists" id="ipLists"></div>
     <div class="imp-notes" id="ipNotes" style="display:none;"></div>
     <div class="imp-date"><label for="ipData">📅 Data dei prezzi</label><input class="inp" type="date" id="ipData" onchange="ipRender()"></div>
@@ -1970,13 +1970,13 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
 <div class="modal-backdrop hidden" id="modalTariffa">
   <div class="modal">
     <div class="modal-title">➕ Aggiungi tariffa</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Base di carico</label><input class="inp" id="mtFrom" placeholder="es. Canossa (RE)" list="listFromModal"><datalist id="listFromModal"></datalist></div>
-      <div class="form-group"><label class="form-label">Destinazione</label><input class="inp" id="mtTo" placeholder="es. Verolavecchia (BS)" list="listToModal"><datalist id="listToModal"></datalist></div>
+    <div class="form-row stack">
+      <div class="form-group" style="position:relative;"><label class="form-label" for="mtFrom">Base di carico</label><input class="inp" id="mtFrom" placeholder="es. Pontelungo (RE)" autocomplete="off" oninput="taSearch('From')" onfocus="taOpen('From')" onblur="acSafeClose(taClose,'From')"><div class="mp-ac hidden" id="mtAcFrom"></div></div>
+      <div class="form-group" style="position:relative;"><label class="form-label" for="mtTo">Destinazione</label><input class="inp" id="mtTo" placeholder="es. Campoalto (BS)" autocomplete="off" oninput="taSearch('To')" onfocus="taOpen('To')" onblur="acSafeClose(taClose,'To')"><div class="mp-ac hidden" id="mtAcTo"></div></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Trasportatore</label><input class="inp" id="mtCarrier" placeholder="Nome" list="listCarrierModal" oninput="autoFillCondizioni()" onchange="autoFillCondizioni()"><datalist id="listCarrierModal"></datalist></div>
-      <div class="form-group"><label class="form-label">Condizioni</label><input class="inp" id="mtConditions" placeholder="es. BB 60 gg FM"></div>
+    <div class="form-row stack">
+      <div class="form-group" style="position:relative;"><label class="form-label" for="mtCarrier">Trasportatore</label><input class="inp" id="mtCarrier" placeholder="Nome" autocomplete="off" oninput="taSearch('Carrier');autoFillCondizioni()" onchange="autoFillCondizioni()" onfocus="taOpen('Carrier')" onblur="acSafeClose(taClose,'Carrier')"><div class="mp-ac hidden" id="mtAcCarrier"></div></div>
+      <div class="form-group"><label class="form-label" for="mtConditions">Condizioni</label><input class="inp" id="mtConditions" placeholder="es. BB 60 gg FM"></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Prezzo</label><input class="inp" id="mtPrice" type="number" step="0.01" placeholder="0.00"></div>
@@ -2286,8 +2286,6 @@ var DB = {
 
 
 // ===================== COSTANTI E UTILITÀ DATI =====================
-var KARMA_REV = 'KarMa 03/2026';
-var PDF_REV = 'REV 03/2026';
 
 // Testo sicuro per l'HTML: nomi con < > & " ' non rompono più la pagina
 function esc(s) {
@@ -2297,7 +2295,7 @@ function esc(s) {
 }
 
 // Testo sicuro dentro un onclick con la stringa tra apici singoli: gestisce apostrofi,
-// backslash e virgolette (es. "Colle Val d'Elsa (SI)"). Va usato SOLO tra apici singoli.
+// backslash e virgolette (es. "Valle dell'Orso (SI)"). Va usato SOLO tra apici singoli.
 function jq(s) {
   return esc(String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"));
 }
@@ -2379,41 +2377,6 @@ function normalizeDB() {
   }
 }
 
-// Carica i prezzi del listino KarMa incorporato.
-//  reset=true  → ricarica completa (azione esplicita): i prezzi KarMa tornano originali
-//  reset=false → aggiornamento di revisione: rispetta i prezzi KarMa che l'utente
-//                ha modificato o cancellato
-// I prodotti manuali o importati da Excel non vengono mai toccati.
-function applyKarma(reset) {
-  var keep = [], kept = {}, i, p;
-  for (i = 0; i < DB.prodotti.length; i++) {
-    p = DB.prodotti[i];
-    if (p.source !== 'karma' || (!reset && p.edited)) {
-      keep.push(p);
-      if (p.source === 'karma' && p.kk) kept[p.kk] = 1;
-    }
-  }
-  if (reset || !DB.karmaHidden) DB.karmaHidden = {};
-  var hidden = DB.karmaHidden;
-  var added = 0;
-  for (i = 0; i < KARMA_DATA.length; i++) {
-    var k = KARMA_DATA[i];
-    if (!k.prodotto || !k.prezzo || k.prezzo <= 0) continue;
-    var kk = karmaKey(k);
-    if (kept[kk] || hidden[kk]) continue;
-    keep.push({
-      prodotto: k.prodotto, tipo: k.tipo || 'acquisto',
-      entity: k.entity || '', luogo: k.luogo || '',
-      prezzo: k.prezzo, unita: k.unita || '€/ton',
-      note: k.note || '', data: '', source: 'karma', kk: kk
-    });
-    added++;
-  }
-  DB.prodotti = keep;
-  DB.karmaRev = KARMA_REV;
-  return added;
-}
-
 // Se si cancella un prezzo KarMa, il listino non deve più rimetterlo
 function forgetKarma(p) {
   if (p && p.source === 'karma' && p.kk) {
@@ -2422,24 +2385,9 @@ function forgetKarma(p) {
   }
 }
 
-// Tariffe incorporate (REV 03/2026) pronte all'uso
-function builtinTariffe() {
-  return PDF_DATA.map(function(r) {
-    var t = Object.assign({}, r);
-    if (!t.data) t.data = '2026-03-01';
-    t.to = normalizeDest(t.to);
-    if (t.carrier==='COAP' && t.from==='Bientina (PI)' && t.to==='Verolavecchia (BS)' && t.unit==='€/vg' && t.price<100) {
-      t.price = 32.5; t.unit = '€/ton';
-    }
-    return t;
-  });
-}
 var activeProdottoFilter = '';
 
-// ===================== DATI PDF PRECARICATI (REV 02/2026) =====================
-var PDF_DATA = [{"from": "Andalo Valtellino (SO)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 470.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "CEVOLO Trasporti", "price": 580.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Ravenna (RA)", "carrier": "PADANA TRASPORTI", "price": 510.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 630.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "CEVOLO Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 600.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 32.5, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 32.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Bientina (PI)", "to": "Verolavecchia (BS)", "carrier": "UDERZO", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Barberino Tavernelle (FI)", "to": "Mezzano (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 400.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 400.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 520.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 510.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 425.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 440.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Canossa (RE)", "to": "Verolavecchia (BS)", "carrier": "RUFFINI", "price": 350.0, "unit": "€/vg", "conditions": "", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 790.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 780.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Caprarola (VT)", "to": "Mezzano (RA)", "carrier": "UNITRAG", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castelfranco Emilia (MO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelfranco Emilia (MO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 410.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 400.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 500.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 420.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 715.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 715.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castel S. Nicolo-Cetica (AR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 715.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 480.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Castelvetro (PC)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 790.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 1000.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cortemilia (CN)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 820.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "C.M. TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "FRAULINI TRASPORTI", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ravenna (RA)", "carrier": "UDERZO", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "CEVOLO Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "C.M. TRASPORTI", "price": 32.5, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 600.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 32.5, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Verolavecchia (BS)", "carrier": "UDERZO", "price": 31.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "CEVOLO Trasporti", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Colle Val d'Elsa (SI)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "ASCHIERI TRASPORTI", "price": 410.0, "unit": "€/vg", "conditions": "BB 30 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 310.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 380.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "S. Leo (RN)", "carrier": "COAP", "price": 620.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 520.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "COAP", "price": 460.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "CONECO", "price": 650.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Portogruaro (VE)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Cremona (CR) - cantieri", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 850.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "COAP", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 400.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 390.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 450.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 365.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 340.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 330.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "S. Leo (RN)", "carrier": "COAP", "price": 600.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "S. Leo (RN)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 16.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Dosolo (MN)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 750.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Firenzuola (FI)", "to": "Mezzano (RA)", "carrier": "C.M. TRASPORTI", "price": 400.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Firenzuola (FI)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 450.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 280.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "CONSAR 2026", "price": 420.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Migliaro / Fiscaglia (FE)", "carrier": "PADANA TRASPORTI", "price": 410.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "COAP", "price": 460.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "CONECO", "price": 600.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 510.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Portogruaro (VE)", "carrier": "PADANA TRASPORTI", "price": 600.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 360.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 21.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 290.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 800.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Fossacaprara (CR)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 750.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 240.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 270.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 18.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 18.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 420.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Grezzana (VR)", "to": "Verolavecchia (BS)", "carrier": "STEGAGNO", "price": 420.0, "unit": "€/vg", "conditions": "RIB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Imola (BO)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 250.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Imola (BO)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 255.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 200.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 250.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 250.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Mezzano (RA)", "carrier": "PADANA TRASPORTI", "price": 300.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 25.0, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "CONECO", "price": 400.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 450.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Tarmassia IdS (VR)", "carrier": "PADANA TRASPORTI", "price": 330.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 425.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 445.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Jolanda di Savoia (FE)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 450.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "C.M. TRASPORTI", "price": 250.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONECO", "price": 300.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 310.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mantova (MN) - cantieri", "to": "Bagnolo di Po (RO)", "carrier": "PADANA TRASPORTI", "price": 290.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "A.L.B. Srl TRASPORTI", "price": 500.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CIRIONI Trasporti", "price": 525.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "COAP", "price": 27.5, "unit": "€/ton", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CONECO", "price": 700.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 550.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 28.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Verolavecchia (BS)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Mercatino Conca (PU)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 715.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "AVIO TRASPORTI", "price": 380.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 365.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Tarmassia IdS (VR)", "carrier": "PADANA TRASPORTI", "price": 320.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "AVIO TRASPORTI", "price": 460.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 470.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 480.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Mezzocorona (TN)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 400.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Mondovì (CN)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 650.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "ALBA TRASPORTI", "price": 550.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "C.L.P. Trasporti", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Ponzano R. (RM)", "carrier": "UNITRAG", "price": 24.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Tarmassia IdS (VR)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 500.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 540.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 650.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "Ravenna - LLOYDD", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 600.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Bagnolo di Po (RO)", "carrier": "CONSAR 2026", "price": 320.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Portogruaro (VE)", "carrier": "CONSAR 2026", "price": 460.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Anna di Alfaedo (VR)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 19.0, "unit": "€/ton", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "COAP", "price": 350.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "CONECO", "price": 300.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "CONSAR 2026", "price": 330.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Mezzano (RA)", "carrier": "PADANA TRASPORTI", "price": 350.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Tarmassia IdS (VR)", "carrier": "CONSAR 2026", "price": 300.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 370.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "CONECO", "price": 500.0, "unit": "€/vg", "conditions": "RIBA 90 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 370.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "S.Felice sul Panaro (MO)", "to": "Verolavecchia (BS)", "carrier": "PADANA TRASPORTI", "price": 350.0, "unit": "€/vg", "conditions": "RIB 90 gg FM", "rev": "REV 03/2026"}, {"from": "San Giorgio di Piano (BO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 330.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "San Giorgio di Piano (BO)", "to": "Verolavecchia (BS)", "carrier": "CONSAR 2026", "price": 390.0, "unit": "€/vg", "conditions": "BB 120 gg FM", "rev": "REV 03/2026"}, {"from": "Tirano (SO)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 650.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Tirano (SO)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 700.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}, {"from": "Vione - Stadolina (BS)", "to": "Verolavecchia (BS)", "carrier": "BRANCHINI", "price": 700.0, "unit": "€/vg", "conditions": "BB 60 gg FM", "rev": "REV 03/2026"}, {"from": "Vione - Stadolina (BS)", "to": "Verolavecchia (BS)", "carrier": "COAP", "price": 700.0, "unit": "€/vg", "conditions": "BB 90 gg FM", "rev": "REV 03/2026"}];
 
-var KARMA_DATA = [{"prodotto": "Cippato", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 38.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 38.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da Ardenghi (Dosolo (MN))"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 65.0, "unita": "€/ton", "data": "", "note": "→ Bagnolo di Po (RO)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 65.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Carnovale", "luogo": "Colle Val d'Elsa (SI)", "prezzo": 50.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da Carnovale (Colle Val d'Elsa (SI))"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 55.0, "unita": "€/ton", "data": "", "note": "→ Fiscaglia (FE)"}, {"prodotto": "Cippato", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 55.0, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Cippato", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 95.0, "unita": "€/ton", "data": "", "note": "da Incontrato (Bientina (PI))"}, {"prodotto": "Lolla di Farro", "tipo": "acquisto", "entity": "Poggio al Farro", "luogo": "Firenzuola (FI)", "prezzo": 1.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Lolla di Farro", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 80.0, "unita": "€/ton", "data": "", "note": "da Poggio al Farro (Firenzuola (FI))"}, {"prodotto": "Lolla di Riso", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "Jolanda di Savoia (FE)", "prezzo": 30.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Lolla di Riso", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 70.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (Jolanda di Savoia (FE))"}, {"prodotto": "Pula/lolla mix cereali", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "S. Felice sul P.ro (MO)", "prezzo": 50.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Pula/lolla mix cereali", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 85.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (S. Felice sul P.ro (MO))"}, {"prodotto": "Sfarinato cereali mix", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "S. Felice sul P.ro (MO)", "prezzo": 130.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Sfarinato cereali mix", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 155.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (S. Felice sul P.ro (MO))"}, {"prodotto": "Sfarinato sorgo/b", "tipo": "acquisto", "entity": "B.F. Agro Ind.le", "luogo": "Jolanda di Savoia (FE)", "prezzo": 75.0, "unita": "€/ton", "data": "", "note": "→ Mezzano (RA)"}, {"prodotto": "Sfarinato sorgo/b", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Mezzano (RA)", "prezzo": 100.0, "unita": "€/ton", "data": "", "note": "da B.F. Agro Ind.le (Jolanda di Savoia (FE))"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Ardenghi", "luogo": "Dosolo (MN)", "prezzo": 55, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Aschieri", "luogo": "Fossacaprara (CR)", "prezzo": 120, "unita": "€/ton", "data": "", "note": ""}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Carnovale", "luogo": "Colle Val d'Elsa (SI)", "prezzo": 60, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Covi Eredi", "luogo": "Pesaro Urbino", "prezzo": 72.5, "unita": "€/ton", "data": "", "note": "→ Ponzano RM"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Incontrato", "luogo": "Bientina (PI)", "prezzo": 78, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Sicem Saga", "luogo": "Ciano d'Enza (RE)", "prezzo": 17, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Tacchella", "luogo": "Grezzana (VR)", "prezzo": 50, "unita": "€/ton", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "ToscoImballaggi", "luogo": "Cetica (AR)", "prezzo": 50, "unita": "€/ton", "data": "", "note": "→ Verolavecchia / Ponzano"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Ind. L. Tirano", "luogo": "Tirano (SO)", "prezzo": 14, "unita": "€/mc", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Segheria L. Vivo", "luogo": "Vione-Stadolina (BS)", "prezzo": 15, "unita": "€/mc", "data": "", "note": "→ Verolavecchia (BS)"}, {"prodotto": "Segatura", "tipo": "acquisto", "entity": "Vender Legnami", "luogo": "Mezzocorona (TN)", "prezzo": 17, "unita": "€/mc", "data": "", "note": "→ Tarmassia / Verolavecchia"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 115, "unita": "€/ton", "data": "", "note": "da Covi Eredi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "SICEM srl", "luogo": "Ponzano RM", "prezzo": 110, "unita": "€/ton", "data": "", "note": "da Carnovale / Incontrato / ToscoImballaggi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "Trucioli&Derivati", "luogo": "Tarmassia (VR)", "prezzo": 20, "unita": "€/mc", "data": "", "note": "da Vender Legnami"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 120, "unita": "€/ton", "data": "", "note": "da Incontrato"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 110, "unita": "€/ton", "data": "", "note": "da Carnovale"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 105, "unita": "€/ton", "data": "", "note": "da Ind. L. Tirano"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 105, "unita": "€/ton", "data": "", "note": "da Segheria L. Vivo"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 105, "unita": "€/ton", "data": "", "note": "da ToscoImballaggi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 90, "unita": "€/ton", "data": "", "note": "da Tacchella"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 85, "unita": "€/ton", "data": "", "note": "da Ardenghi"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 70, "unita": "€/ton", "data": "", "note": "da Sicem Saga"}, {"prodotto": "Segatura", "tipo": "vendita", "entity": "AGROGI", "luogo": "Verolavecchia (BS)", "prezzo": 19.5, "unita": "€/mc", "data": "", "note": "da Vender Legnami"}];
 
 // ===================== INIT =====================
 
@@ -2449,17 +2397,197 @@ function abbrev(name) {
     .replace(/ s\.r\.l\./gi,'').trim().substring(0,8).toUpperCase();
 }
 
-function normalizeDest(dest) {
-  if (!dest) return dest;
-  var map = {
-    'Migliaro (FE)': 'Migliaro / Fiscaglia (FE)',
-    'Fiscaglia (FE)': 'Migliaro / Fiscaglia (FE)',
-    'Migliaro\/Fiscaglia (FE)': 'Migliaro / Fiscaglia (FE)',
-    'Ponzano R.(RM)': 'Ponzano R. (RM)',
-    'Ponzano Romano (RM)': 'Ponzano R. (RM)',
-  };
-  return map[dest] || dest;
+// i luoghi scritti in modi diversi li unisce placesTidy() (qui sotto), partendo dai dati che hai tu
+function normalizeDest(dest) { return dest; }
+
+// ───────────────────────── LUOGHI SCRITTI IN MODI DIVERSI ─────────────────────────
+// "Rivabella" e "Rivabella (RA)" sono lo stesso posto: nell'archivio ne resta uno solo, quello con la sigla della provincia.
+// Due paesi con lo stesso nome ma province diverse (es. Castelverde PC / MO) restano separati.
+function placeTidyName(s) {
+  var t = String(s == null ? '' : s).replace(/\s+/g, ' ').replace(/^ | $/g, '');
+  t = t.replace(/\s*\(\s*([^()]*?)\s*\)\s*$/, function(m, p) { return ' (' + (/^[A-Za-z]{2}$/.test(p) ? p.toUpperCase() : p) + ')'; });
+  return t.replace(/^ /, '');
 }
+function placeFold(s) {
+  var t = String(s == null ? '' : s).toLowerCase();
+  if (t.normalize) { try { t = t.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) {} }
+  return t;
+}
+function placeKey(s) {
+  return placeFold(entTown(s)).replace(/\s*\/\s*/g, '/').replace(/\s*[-–]\s*/g, '-');
+}
+function placeProv(s) {
+  var m = /\(([^()]*)\)\s*$/.exec(String(s == null ? '' : s));
+  return m ? m[1].replace(/\s+/g, '').toUpperCase() : '';
+}
+// tutti i modi in cui è scritto ogni luogo nell'archivio trasporti (+ quello appena digitato, che non conta come uso)
+function placeGroups(extra) {
+  var g = Object.create(null);
+  function add(n, inc) {
+    n = placeTidyName(n);
+    var k = placeKey(n);
+    if (!k) return;
+    var o = g['k:' + k] || (g['k:' + k] = Object.create(null));
+    o[n] = (o[n] || 0) + inc;
+  }
+  DB.trasporti.forEach(function(t) {
+    if (!t) return;
+    if (typeof t.from === 'string') add(t.from, 1);
+    if (typeof t.to === 'string') add(t.to, 1);
+  });
+  DB.prodotti.forEach(function(p) {
+    if (p && typeof p.luogo === 'string') add(p.luogo, 1);
+  });
+  if (extra) add(extra, 0);
+  return g;
+}
+// per ogni scrittura, quella da tenere: la più usata, con la sigla se c'è
+function placeResolve(o) {
+  var list = Object.keys(o), provs = [], map = Object.create(null);
+  list.forEach(function(n) { var p = placeProv(n); if (p && provs.indexOf(p) < 0) provs.push(p); });
+  function best(arr) {
+    var b = null;
+    arr.forEach(function(n) {
+      var sn = o[n] + (n.indexOf('/') >= 0 ? 1000000 : 0), sb = b === null ? 0 : o[b] + (b.indexOf('/') >= 0 ? 1000000 : 0);
+      if (b === null || sn > sb || (sn === sb && (n.length > b.length || (n.length === b.length && n < b)))) b = n;
+    });
+    return b;
+  }
+  if (provs.length <= 1) {
+    var c = best(provs.length ? list.filter(function(n) { return placeProv(n) === provs[0]; }) : list);
+    list.forEach(function(n) { map[n] = c; });
+  } else {
+    var canon = {};
+    provs.forEach(function(pv) { canon[pv] = best(list.filter(function(n) { return placeProv(n) === pv; })); });
+    list.forEach(function(n) { var pv = placeProv(n); map[n] = pv ? canon[pv] : n; });
+  }
+  return map;
+}
+function placeProvs(o) {
+  var out = [];
+  Object.keys(o).forEach(function(n) { var p = placeProv(n); if (p && out.indexOf(p) < 0) out.push(p); });
+  return out;
+}
+function placeMaps(extra) {
+  var g = placeGroups(extra), keys = Object.keys(g), up = Object.create(null), m = Object.create(null);
+  keys.forEach(function(k) { up[k] = k; });
+  function root(k) { while (up[k] !== k) k = up[k]; return k; }
+  // 1) "Aaa / Bbb (XX)" è lo stesso posto di "Aaa (XX)" e di "Bbb (XX)" (se una parte non è in un altro posto composto)
+  var claimed = Object.create(null);
+  keys.forEach(function(ck) {
+    if (ck.indexOf('/') < 0) return;
+    ck.slice(2).split('/').forEach(function(part) {
+      var pk = 'k:' + part;
+      if (pk === ck || !g[pk]) return;
+      claimed[pk] = claimed[pk] === undefined ? ck : false;
+    });
+  });
+  Object.keys(claimed).forEach(function(pk) {
+    var ck = claimed[pk];
+    if (!ck) return;
+    var pp = placeProvs(g[pk]), cp = placeProvs(g[ck]);
+    var fits = pp.every(function(x) { return cp.indexOf(x) >= 0; }) && (cp.length > 0 || pp.length === 0);
+    if (fits) up[root(pk)] = root(ck);
+  });
+  // 2) "Aaa R. (XX)" (con la lettera puntata) è lo stesso posto di "Aaa Romano (XX)", stessa provincia
+  keys.forEach(function(ak) {
+    var dotted = Object.keys(g[ak]).some(function(n) { return n.indexOf('.') >= 0; });
+    if (!dotted || !/ [a-z]$/.test(ak)) return;
+    var ap = placeProvs(g[ak]);
+    if (ap.length !== 1) return;
+    var hits = keys.filter(function(bk) {
+      if (bk === ak || bk.length <= ak.length || bk.indexOf(ak) !== 0) return false;
+      var bp = placeProvs(g[bk]);
+      return bp.length === 1 && bp[0] === ap[0];
+    });
+    if (hits.length === 1) up[root(ak)] = root(hits[0]);
+  });
+  // unione dei gruppi e scelta della scrittura da tenere
+  var merged = Object.create(null);
+  keys.forEach(function(k) {
+    var r = root(k), o = merged[r] || (merged[r] = Object.create(null));
+    Object.keys(g[k]).forEach(function(n) { o[n] = (o[n] || 0) + g[k][n]; });
+  });
+  var maps = Object.create(null);
+  Object.keys(merged).forEach(function(r) { maps[r] = placeResolve(merged[r]); });
+  keys.forEach(function(k) { m[k] = maps[root(k)]; });
+  return m;
+}
+function placeCanonWith(maps, name) {
+  var t = placeTidyName(name), k = placeKey(t);
+  if (!k) return t;
+  var mp = maps['k:' + k];
+  return (mp && mp[t]) || t;
+}
+// nome da salvare: se il posto c'è già in archivio si usa la scrittura già in uso
+function placeCanon(name) {
+  var t = placeTidyName(name);
+  return t ? placeCanonWith(placeMaps(t), t) : t;
+}
+// elenco dei luoghi per i suggerimenti, senza doppioni ('from' = basi di carico, 'to' = destinazioni)
+function placeSuggest(field) {
+  var maps = placeMaps(), seen = Object.create(null), out = [];
+  DB.trasporti.forEach(function(t) {
+    var v = t && t[field];
+    if (!v || typeof v !== 'string') return;
+    var c = placeCanonWith(maps, v);
+    if (c && !seen[c]) { seen[c] = 1; out.push(c); }
+  });
+  return out.sort(function(a, b) { return a.localeCompare(b); });
+}
+// tutti i luoghi (prezzi + tratte) senza doppioni
+function placeSuggestAll() {
+  var maps = placeMaps(), seen = Object.create(null), out = [];
+  function add(v) {
+    if (!v || typeof v !== 'string') return;
+    var c = placeCanonWith(maps, v);
+    if (c && !seen[c]) { seen[c] = 1; out.push(c); }
+  }
+  DB.prodotti.forEach(function(p) { add(p && p.luogo); });
+  DB.trasporti.forEach(function(t) { add(t && t.from); add(t && t.to); });
+  return out.sort(function(a, b) { return a.localeCompare(b); });
+}
+// unisce nell'archivio i luoghi scritti in modi diversi; restituisce quante righe ha toccato e cosa è diventato cosa
+function placesTidy() {
+  var maps = placeMaps(), n = 0, seen = Object.create(null), pairs = [];
+  function fix(rec, f) {
+    var v = rec && rec[f];
+    if (!v || typeof v !== 'string') return;
+    var c = placeCanonWith(maps, v);
+    if (c && c !== v) {
+      var pk = v + '\u0001' + c;
+      if (!seen[pk]) { seen[pk] = 1; pairs.push([v, c]); }
+      rec[f] = c; n++;
+    }
+  }
+  DB.trasporti.forEach(function(t) { fix(t, 'from'); fix(t, 'to'); });
+  DB.prodotti.forEach(function(p) { fix(p, 'luogo'); });
+  return { n: n, pairs: pairs };
+}
+function placesTidyMsg(r) {
+  var shown = r.pairs.filter(function(p) { return placeTidyName(p[0]) !== p[1]; });
+  if (!shown.length) return 'Luoghi sistemati: ' + r.n;
+  var parts = shown.slice(0, 2).map(function(p) { return '«' + p[0] + '» → «' + p[1] + '»'; });
+  return 'Luoghi unificati: ' + parts.join(', ') + (shown.length > 2 ? ' e altri ' + (shown.length - 2) : '');
+}
+
+// Con la tastiera aperta le finestre restano nella parte visibile dello schermo e scorrono (senza muovere il resto dell'app)
+(function() {
+  var vv = window.visualViewport;
+  if (!vv) return;
+  var root = document.documentElement;
+  function sync() {
+    if (Math.abs(vv.height - window.innerHeight) < 2 && vv.offsetTop < 2) {
+      root.style.removeProperty('--vvh'); root.style.removeProperty('--vvt');
+    } else {
+      root.style.setProperty('--vvh', Math.round(vv.height) + 'px');
+      root.style.setProperty('--vvt', Math.round(vv.offsetTop) + 'px');
+    }
+  }
+  vv.addEventListener('resize', sync);
+  vv.addEventListener('scroll', sync);
+  sync();
+})();
 
 function init() {
   themeInit();
@@ -2498,39 +2626,6 @@ function init() {
   }
   // ────────────────────────────────────────────────────────
 
-  // Normalizza destinazioni sinonime già in archivio
-  DB.trasporti.forEach(function(t){ t.to = normalizeDest(t.to); });
-  // Fix prezzi errati da versioni precedenti
-  var _fixed = false;
-  DB.trasporti.forEach(function(t) {
-    if (t.carrier==='COAP' && t.from==='Bientina (PI)' && t.to==='Verolavecchia (BS)' && t.unit==='€/vg' && t.price<100) { t.price=32.5; t.unit='€/ton'; _fixed=true; }
-    if (t.carrier==='COAP' && t.from==='Mercatino Conca (PU)' && t.unit==='€/vg' && t.price<100) { t.unit='€/ton'; _fixed=true; }
-  });
-  if (_fixed) save();
-  // Precarica dati Excel REV 03/2026 se archivio vuoto
-  // ── Carica dati incorporati se necessario ──────────────────
-  var needSave = false;
-
-  // Tariffe: caricate SOLO al primo avvio. Se poi l'utente svuota l'archivio,
-  // resta vuoto (per ripristinare c'è il pulsante in Import).
-  if (!DB.pdfLoaded) {
-    if (DB.trasporti.length === 0) {
-      DB.trasporti = builtinTariffe();
-      DB.pdfRev = PDF_REV;
-    }
-    DB.pdfLoaded = true;
-    needSave = true;
-  }
-
-  // Prodotti KarMa: caricati al primo avvio o quando cambia la revisione del listino.
-  // Non più "se mancano dei record": cancellare un prezzo non lo fa tornare e
-  // non azzera le modifiche fatte agli altri.
-  if (DB.karmaRev !== KARMA_REV) {
-    applyKarma(false);
-    needSave = true;
-  }
-
-  if (needSave) save();
   // Imposta data oggi nel form prodotti
   var _mpData = document.getElementById('mpData');
   if (_mpData) _mpData.value = new Date().toISOString().split('T')[0];
@@ -2541,12 +2636,20 @@ function init() {
   });
   refreshAll();
   undoLoad(); undoRefreshUI(); backupRefreshUI();
+  // luoghi scritti in due modi ("Rivabella" e "Rivabella (RA)"): si uniscono, con il pulsante Annulla
+  try {
+    var _psnap = undoSnapshot(), _pr = placesTidy();
+    if (_pr.n) { save(); refreshAll(); undoToast('Luoghi unificati', _psnap, '✅ ' + placesTidyMsg(_pr), 'ok'); }
+  } catch (e) {}
   driveRestore();
 }
 
 var _autoSaveTimer = null;
 
+var _placesTidyOff = false;
 function save() {
+  // ogni salvataggio unisce i luoghi scritti in due modi ("Rivabella" / "Rivabella (RA)"), tratte e prezzi insieme
+  if (!_placesTidyOff) { try { placesTidy(); } catch (e) {} }
   DB.lastUpdate = new Date().toISOString();
   if (typeof markDirty === "function") try { markDirty(); } catch(e) {}
   if (!lsSet('archivio-tariffe-v3', JSON.stringify(DB))) {
@@ -2833,54 +2936,6 @@ function formatPrice(v) {
 }
 
 // ===================== IMPORT FILE =====================
-function loadKarmaData() {
-  try {
-    if (typeof KARMA_DATA === 'undefined' || !KARMA_DATA || !KARMA_DATA.length) {
-      showToast('❌ KARMA_DATA non disponibile', 'warn'); return;
-    }
-    var nOwn = DB.prodotti.filter(function(p){ return p.source !== 'karma'; }).length;
-    var nChanged = DB.prodotti.filter(function(p){ return p.source === 'karma' && p.edited; }).length +
-                   Object.keys(DB.karmaHidden || {}).length;
-    var msg = 'Ricarico il listino KarMa originale (' + KARMA_DATA.length + ' prezzi).\n\n';
-    msg += nChanged ? 'I prezzi KarMa che hai modificato o cancellato (' + nChanged + ') tornano come erano.\n' : '';
-    msg += nOwn ? 'I tuoi ' + nOwn + ' prodotti inseriti a mano o importati da Excel restano.\n' : '';
-    msg += '\nContinuo?';
-    if (!confirm(msg)) return;
-    // Sostituisce SOLO i prezzi KarMa: manuali e importati restano
-    var _us = undoSnapshot();
-    var added = applyKarma(true);
-    save();
-    refreshAll();
-    undoToast('listino KarMa ricaricato', _us, '✅ KarMa: ' + added + ' prezzi caricati', 'ok');
-  } catch(e) {
-    showToast('❌ Errore KarMa: ' + e.message, 'warn');
-  }
-}
-
-function reloadBuiltinData() {
-  // Le tariffe inserite o modificate a mano hanno rev "Manuale": quelle si tengono (anche l'import Excel non le tocca)
-  var manual = DB.trasporti.filter(function(t){ return t.rev === 'Manuale'; });
-  var others = DB.trasporti.length - manual.length;
-  var msg = 'Ricarico le tariffe REV 03/2026 incorporate (' + PDF_DATA.length + ' prezzi).\n\n';
-  msg += manual.length ? 'Le ' + manual.length + ' tariffe inserite o modificate a mano restano.\n' : '';
-  msg += others ? 'Le altre ' + others + ' tariffe attuali (incorporate o importate da Excel) vengono sostituite.\n' : '';
-  msg += '\nContinuo?';
-  if (!confirm(msg)) return;
-  // Se una tariffa a mano ha la stessa tratta + trasportatore + unità, vince quella a mano
-  var mk = {};
-  manual.forEach(function(t){ mk[t.from + '|' + t.to + '|' + t.carrier + '|' + t.unit] = 1; });
-  var base = builtinTariffe().filter(function(t){
-    return !mk[t.from + '|' + t.to + '|' + t.carrier + '|' + t.unit];
-  });
-  var _us = undoSnapshot();
-  DB.trasporti = base.concat(manual);
-  DB.pdfLoaded = true;
-  DB.pdfRev = PDF_REV;
-  save();
-  refreshAll();
-  undoToast('tariffe incorporate ricaricate', _us, '✅ Tariffe REV 03/2026 ricaricate (' + DB.trasporti.length + ' prezzi, ' + manual.length + ' manuali conservate)', 'ok');
-}
-
 // Tabella righe × colonne di un foglio (celle unite: il valore c'è solo nella prima; le altre restano vuote)
 function sheetToMatrix(ws) {
   var ref = ws && ws['!ref'];
@@ -2983,7 +3038,7 @@ function impParseCell(raw) {
   if (typeof raw === 'number') {
     if (!isFinite(raw) || raw < 0) { out.bad = String(raw); return out; }
     if (raw === 0) return out;
-    // un numero solo, sotto 100, è un prezzo a tonnellata (come già fa l'archivio per COAP); da 100 in su è a viaggio
+    // un numero solo, sotto 100, è un prezzo a tonnellata (come già fa l'archivio per i trasportatori che prezzano a tonnellata); da 100 in su è a viaggio
     if (raw < 100) out.guess++;
     out.items.push({ price: Math.round(raw * 1000) / 1000, unit: raw < 100 ? '€/ton' : '€/vg', prov: false });
     return out;
@@ -3031,7 +3086,7 @@ function impCarrierCols(row) {
 function impIsNote(s) {
   return /^\s*\*/.test(s) || /^min\.?\s*tax\b/i.test(s) || /^(nota|note|n\.b\.?|attenzione)\b/i.test(s);
 }
-// toglie l'asterisco di nota in fondo a una località ("Tarmassia IdS (VR) *")
+// toglie l'asterisco di nota in fondo a una località ("Monteluce IdS (VR) *")
 function impStar(s) { return impClean(String(s).replace(/\s*\*+\s*$/, '')); }
 function impIsLabel(s) {
   return /^(base di carico|luogo di consegna|base|destinazione|partenza|consegna|carico|condizioni|pagamento)$/i.test(s) || /condizioni|pagamento/i.test(s);
@@ -3249,6 +3304,26 @@ function impClassify(items, refDate) {
     if (pr) res.protette.push({ it: it, ex: pr.rec, why: pr.why });
     else res.diverse.push({ it: it, ex: list[0] });
   }
+  // "ricarica completa": le tariffe dei trasportatori che hanno prezzi nel file ma che nel file non ci sono più.
+  // Quelle inserite o modificate a mano, o più recenti del file, restano sempre.
+  var cset = {}, fkeys = {};
+  for (i = 0; i < items.length; i++) {
+    cset[impNorm(items[i].carrier)] = 1;
+    fkeys[impKey(items[i].from, items[i].to, items[i].carrier, items[i].unit)] = 1;
+  }
+  res.fuori = { togliere: [], restano: [] };
+  for (i = 0; i < DB.trasporti.length; i++) {
+    t = DB.trasporti[i];
+    if (!t || !cset.hasOwnProperty(impNorm(t.carrier))) continue;
+    if (fkeys.hasOwnProperty(impKey(t.from, t.to, t.carrier, t.unit || '€/vg'))) continue;
+    if (impProtect([t], refDate)) res.fuori.restano.push(t); else res.fuori.togliere.push(t);
+  }
+  res.fuori.togliere.sort(function(a, b) {
+    var x = impNorm(a.carrier), y = impNorm(b.carrier);
+    if (x !== y) return x < y ? -1 : 1;
+    x = impNorm(a.from + ' ' + a.to); y = impNorm(b.from + ' ' + b.to);
+    return x < y ? -1 : (x > y ? 1 : 0);
+  });
   return res;
 }
 
@@ -3259,7 +3334,7 @@ function impRowsHtml(arr, fn, max) {
   if (arr.length > n) h += '<div class="imp-more">…e altre ' + (arr.length - n) + '</div>';
   return h;
 }
-// Elenco richiudibile. key = 'diff' | 'prot' | 'new' | 'skip'; lo stato aperto/chiuso scelto dall'utente si ricorda fra un ridisegno e l'altro
+// Elenco richiudibile. key = 'diff' | 'prot' | 'new' | 'rem' | 'skip'; lo stato aperto/chiuso scelto dall'utente si ricorda fra un ridisegno e l'altro
 function impSecHtml(key, title, body, defOpen) {
   var st = _impPlan && _impPlan.openSec ? _impPlan.openSec : {};
   var open = st.hasOwnProperty(key) ? st[key] : defOpen;
@@ -3315,6 +3390,8 @@ function impRender() {
   var nDiff = c.diverse.length, nProt = c.protette.length;
   if (!nDiff && !nProt) p.over = false;
   if (!nProt || !p.over) p.overProt = false;
+  var nRem = c.fuori.togliere.length, nRest = c.fuori.restano.length;
+  if (!nRem) p.rem = false;
   var set = function(id, v) { var e = _el(id); if (e) e.textContent = String(v); };
   set('impNNew', c.nuove.length); set('impNSame', c.uguali.length); set('impNDiff', nDiff + nProt); set('impNSkip', p.skipped.length);
   var tiles = { impTNew: c.nuove.length, impTDiff: nDiff + nProt, impTSkip: p.skipped.length };
@@ -3334,6 +3411,11 @@ function impRender() {
     h += impSecHtml('new', '➕ ' + c.nuove.length + ' nuove', impRowsHtml(c.nuove, function(it) {
       return impRowHtml(it, impMoney(it.price, it.unit) + (it.prov ? ' ⚠️' : ''), '', '');
     }, 60), !nDiff && !nProt);
+  }
+  if (nRem) {
+    h += impSecHtml('rem', p.rem ? '🗑 ' + nRem + ' verranno tolte (non sono più nel file)' : '📦 ' + nRem + ' non sono nel file: restano', impRowsHtml(c.fuori.togliere, function(t) {
+      return impRowHtml(t, impMoney(Number(t.price) || 0, t.unit || '€/vg'), '', '');
+    }, 60), false);
   }
   if (p.skipped.length) {
     h += impSecHtml('skip', '⚠️ ' + p.skipped.length + ' non lette', impRowsHtml(p.skipped, function(s) {
@@ -3365,14 +3447,27 @@ function impRender() {
     hint = nDiff ? 'I ' + nDiff + (nDiff === 1 ? ' prezzo diverso diventa quello del file.' : ' prezzi diversi diventano quelli del file.') : '';
     if (nProt && !p.overProt) hint += (hint ? ' ' : '') + (nProt === 1 ? 'La tariffa tua o più recente resta com\'è' : 'Le ' + nProt + ' tariffe tue o più recenti restano come sono') + ' (puoi sovrascrivere anche quelle qui sotto).';
   }
-  hint += ' Le tariffe che nel file non ci sono non si toccano mai.';
+  if (!p.rem) hint += ' Le tariffe che nel file non ci sono non si toccano.';
   var hn = _el('impModeHint');
   if (hn) hn.textContent = hint;
   var pr = _el('impProtRow'), pc = _el('impUpdProt');
   if (pr) pr.style.display = (p.over && nProt) ? '' : 'none';
   if (pc) pc.checked = !!p.overProt;
   set('impNProt', nProt);
+  var rr = _el('impRemRow'), rc = _el('impRem');
+  if (rr) rr.style.display = nRem ? '' : 'none';
+  if (rc) rc.checked = !!p.rem;
+  var rt = _el('impRemTitle');
+  if (rt) rt.innerHTML = nRem === 1 ? 'Togli anche <b id="impNRem">1</b> tariffa che nel file non c\'è più' : 'Togli anche le <b id="impNRem">' + nRem + '</b> tariffe che nel file non ci sono più';
+  var rh = _el('impRemHint');
+  if (rh) rh.textContent = 'Solo dei trasportatori che nel file hanno almeno un prezzo.' + (nRest ? ' ' + (nRest === 1 ? 'Resta 1 tariffa tua o più recente del file.' : 'Restano ' + nRest + ' tariffe tue o più recenti del file.') : '') + ' Con Annulla torna tutto com\'era.';
   impRefreshBtn();
+}
+// casella "togli anche quelle che nel file non ci sono più"
+function impSetRem(on) {
+  if (!_impPlan) return;
+  _impPlan.rem = !!on;
+  impRender();
 }
 // "Mantieni le mie" / "Sovrascrivi"
 function impSetMode(over) {
@@ -3390,7 +3485,7 @@ function impSetProt(on) {
 function impShow() {
   var p = _impPlan;
   if (!p) return;
-  p.over = false; p.overProt = false; p.openSec = {};  // di partenza si mantiene tutto e gli elenchi seguono la regola base
+  p.over = false; p.overProt = false; p.rem = false; p.openSec = {};  // di partenza si mantiene tutto e gli elenchi seguono la regola base
   var f = _el('impFile');
   if (f) f.textContent = p.filename + (p.sheet ? ' · foglio "' + p.sheet + '"' : '') + ' · ' + p.carriers.length + ' trasportatori · ' + p.items.length + ' prezzi letti';
   var d = _el('impData');
@@ -3411,9 +3506,10 @@ function impToUpdate(c, p) {
 function impRefreshBtn() {
   var p = _impPlan, b = _el('impGo'), x = _el('impCancel');
   if (!p || !p.cls || !b) return;
-  var n = p.cls.nuove.length, m = impToUpdate(p.cls, p).length, parts = [];
+  var n = p.cls.nuove.length, m = impToUpdate(p.cls, p).length, r = p.rem ? p.cls.fuori.togliere.length : 0, parts = [];
   if (n) parts.push(n + (n === 1 ? ' nuova' : ' nuove'));
   if (m) parts.push(m + (m === 1 ? ' sovrascritta' : ' sovrascritte'));
+  if (r) parts.push(r + (r === 1 ? ' tolta' : ' tolte'));
   b.textContent = parts.length ? 'Importa: ' + parts.join(' + ') : 'Niente da importare';
   b.disabled = !parts.length;
   if (x) x.textContent = parts.length ? 'Annulla (non cambia niente)' : 'Chiudi';
@@ -3446,10 +3542,11 @@ function impApply() {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dv)) dv = '';
   var c = impClassify(p.items, impRefDate());
   var list = impToUpdate(c, p);
-  var n = c.nuove.length, m = list.length, i;
+  var drop = p.rem ? c.fuori.togliere : [];
+  var n = c.nuove.length, m = list.length, r = drop.length, i;
   var log = document.getElementById('logTrasporti');
   closeModal('modalImport');
-  if (!n && !m) {
+  if (!n && !m && !r) {
     _impPlan = null;
     if (log) addLog(log, 'ℹ️ Niente da importare: ' + c.uguali.length + ' già presenti', 'warn');
     showToast('Import: niente di nuovo (' + c.uguali.length + ' già presenti)', 'warn');
@@ -3470,11 +3567,13 @@ function impApply() {
     if (dv) ex.data = dv;
     ex.rev = p.rev;                                  // note e altri campi restano
   }
+  if (r) DB.trasporti = DB.trasporti.filter(function(t) { return drop.indexOf(t) < 0; });
   save(); refreshAll();
   _impPlan = null;
   var parts = [];
   if (n) parts.push(n + (n === 1 ? ' nuova' : ' nuove'));
   if (m) parts.push(m + (m === 1 ? ' sovrascritta' : ' sovrascritte'));
+  if (r) parts.push(r + (r === 1 ? ' tolta' : ' tolte'));
   var keptDiff = c.diverse.length - (p.over ? c.diverse.length : 0);
   var keptProt = c.protette.length - (p.overProt ? c.protette.length : 0);
   var summary = parts.join(', ') + ' · ' + c.uguali.length + ' già presenti';
@@ -3516,7 +3615,7 @@ function ipHas(x) {
   var t = ipClean(x);
   return t !== '' && t !== '-' && t !== '—' && t !== '–';
 }
-// nome senza le parentesi (anche annidate), per confrontare "Ponzano" con "Ponzano RM" o "Ardenghi (Dosolo (MN))" con "Ardenghi"
+// nome senza le parentesi (anche annidate), per confrontare "Pratoverde" con "Pratoverde RM" o "Gialli (Ponteluna (MN))" con "Gialli"
 function ipPlain(s) {
   var t = String(s == null ? '' : s).toLowerCase(), prev;
   do { prev = t; t = t.replace(/\([^()]*\)/g, ' '); } while (t !== prev);
@@ -3659,7 +3758,39 @@ function ipClassify(items, refDate) {
     if (pr) res.protette.push({ it: it, ex: targets, why: pr.why, rec: pr.rec });
     else res.diverse.push({ it: it, ex: targets });
   }
+  // "ricarica completa": i prezzi in archivio dei prodotti che nel file hanno almeno un prezzo (stesso tipo: acquisto / vendita)
+  // ma che nel file non ci sono più. Per non togliere mai per sbaglio, il confronto qui è largo: nome e luogo contano anche
+  // se scritti un po' diversi ("Borgo Alto" / "Borgo Alto (XX)"). Tuoi, modificati, più recenti del file o a più fornitori: restano.
+  var scope = {}, byProd = {};
+  for (i = 0; i < items.length; i++) {
+    var sk2 = impNorm(items[i].prodotto) + '|' + items[i].tipo;
+    scope[sk2] = 1;
+    if (!byProd.hasOwnProperty(sk2)) byProd[sk2] = [];
+    byProd[sk2].push(items[i]);
+  }
+  res.fuori = { togliere: [], restano: [] };
+  for (i = 0; i < DB.prodotti.length; i++) {
+    p = DB.prodotti[i];
+    if (!p) continue;
+    var sk3 = impNorm(p.prodotto) + '|' + p.tipo;
+    if (!scope.hasOwnProperty(sk3)) continue;
+    var cand = byProd[sk3], covered = false;
+    for (var q = 0; q < cand.length && !covered; q++) if (ipCovers(p, cand[q])) covered = true;
+    if (covered) continue;
+    if (ipProtect([p], refDate, { tipo: p.tipo })) res.fuori.restano.push(p); else res.fuori.togliere.push(p);
+  }
+  res.fuori.togliere.sort(function(a, b) {
+    var x = impNorm(a.prodotto) + '|' + a.tipo + '|' + impNorm(a.entity), y = impNorm(b.prodotto) + '|' + b.tipo + '|' + impNorm(b.entity);
+    return x < y ? -1 : (x > y ? 1 : 0);
+  });
   return res;
+}
+// il prezzo in archivio è "coperto" da questa riga del file? (stesso prodotto e tipo già deciso fuori; qui entità, luogo, unità, consegna / fornitore)
+function ipCovers(rec, it) {
+  if ((rec.unita || '€/ton') !== (it.unita || '€/ton')) return false;
+  function same(a, b) { var x = ipPlain(a), y = ipPlain(b); return (!x && !y) || ipLoose(a, b); }
+  if (!same(rec.entity, it.entity) || !same(rec.luogo, it.luogo)) return false;
+  return it.tipo === 'acquisto' ? ipDestCovered(rec, it.dest) : ipSupplierCovered(rec, it.fornitore);
 }
 
 function ipRowHtml(it, rightTop, rightSub, extra) {
@@ -3722,9 +3853,10 @@ function ipToUpdate(c, p) {
 function ipRefreshBtn() {
   var p = _ipPlan, b = _el('ipGo'), x = _el('ipCancel');
   if (!p || !p.cls || !b) return;
-  var n = p.cls.nuove.length, m = ipToUpdate(p.cls, p).length, parts = [];
+  var n = p.cls.nuove.length, m = ipToUpdate(p.cls, p).length, r = p.rem ? p.cls.fuori.togliere.length : 0, parts = [];
   if (n) parts.push(n + (n === 1 ? ' nuovo' : ' nuovi'));
   if (m) parts.push(m + (m === 1 ? ' sovrascritto' : ' sovrascritti'));
+  if (r) parts.push(r + (r === 1 ? ' tolto' : ' tolti'));
   b.textContent = parts.length ? 'Importa: ' + parts.join(' + ') : 'Niente da importare';
   b.disabled = !parts.length;
   if (x) x.textContent = parts.length ? 'Annulla (non cambia niente)' : 'Chiudi';
@@ -3737,6 +3869,8 @@ function ipRender() {
   var nDiff = c.diverse.length, nProt = c.protette.length, nOver = ipOverable(c, p).length;
   if (!nDiff && !nProt) p.over = false;
   if (!nOver || !p.over) p.overProt = false;
+  var nRem = c.fuori.togliere.length, nRest = c.fuori.restano.length;
+  if (!nRem) p.rem = false;
   var set = function(id, v) { var e = _el(id); if (e) e.textContent = String(v); };
   set('ipNNew', c.nuove.length); set('ipNSame', c.uguali.length); set('ipNDiff', nDiff + nProt); set('ipNSkip', p.skipped.length);
   var tiles = { ipTNew: c.nuove.length, ipTDiff: nDiff + nProt, ipTSkip: p.skipped.length };
@@ -3749,6 +3883,9 @@ function ipRender() {
   if (c.nuove.length) h += ipSecHtml('new', '➕ ' + c.nuove.length + ' nuovi', impRowsHtml(c.nuove, function(it) {
     return ipRowHtml(it, impMoney(it.prezzo, it.unita), '', it.known ? 'stesso prezzo già in archivio, ma ' + (it.tipo === 'acquisto' ? 'consegna nuova' : 'fornitore nuovo') : '');
   }, 60), !nDiff && !nProt);
+  if (nRem) h += ipSecHtml('rem', p.rem ? '🗑 ' + nRem + ' verranno tolti (non sono più nel file)' : '📦 ' + nRem + ' non sono nel file: restano', impRowsHtml(c.fuori.togliere, function(r) {
+    return ipRowHtml({ prodotto: r.prodotto, tipo: r.tipo, entity: r.entity, luogo: r.luogo }, impMoney(Number(r.prezzo) || 0, r.unita || '€/ton'), '', ipHead(r.note) ? esc(ipHead(r.note)) : '');
+  }, 60), false);
   if (p.skipped.length) h += ipSecHtml('skip', '⚠️ ' + p.skipped.length + ' non lette', impRowsHtml(p.skipped, function(s) {
     return '<div class="imp-row"><div class="imp-rl"><div class="imp-r1">Riga ' + s.row + '</div><div class="imp-r2">"' + esc(s.text) + '" — ' + esc(s.why) + '</div></div></div>';
   }, 40), false);
@@ -3771,13 +3908,26 @@ function ipRender() {
     hint = nDiff ? (nDiff === 1 ? 'Il prezzo diverso diventa quello del file.' : 'I ' + nDiff + ' prezzi diversi diventano quelli del file.') : '';
     if (nProt && !p.overProt) hint += (hint ? ' ' : '') + (nProt === 1 ? 'La voce tua o più recente resta com\'è' : 'Le ' + nProt + ' voci tue, più recenti o a più fornitori restano come sono') + (nOver ? ' (puoi sovrascrivere anche quelle qui sotto).' : '.');
   }
-  hint += ' Le voci che nel file non ci sono non si toccano mai.';
+  if (!p.rem) hint += ' Le voci che nel file non ci sono non si toccano.';
   set('ipModeHint', hint);
   var pr = _el('ipProtRow'), pc = _el('ipUpdProt');
   if (pr) pr.style.display = (p.over && nOver) ? '' : 'none';
   if (pc) pc.checked = !!p.overProt;
   set('ipNProt', nOver);
+  var rr = _el('ipRemRow'), rc = _el('ipRem');
+  if (rr) rr.style.display = nRem ? '' : 'none';
+  if (rc) rc.checked = !!p.rem;
+  var rt = _el('ipRemTitle');
+  if (rt) rt.innerHTML = nRem === 1 ? 'Togli anche <b id="ipNRem">1</b> prezzo che nel file non c\'è più' : 'Togli anche i <b id="ipNRem">' + nRem + '</b> prezzi che nel file non ci sono più';
+  var rh = _el('ipRemHint');
+  if (rh) rh.textContent = 'Solo dei prodotti che nel file hanno almeno un prezzo, e solo acquisti o vendite che nel file ci sono.' + (nRest ? ' ' + (nRest === 1 ? 'Resta 1 voce tua, più recente del file o a più fornitori.' : 'Restano ' + nRest + ' voci tue, più recenti del file o a più fornitori.') : '') + ' Con Annulla torna tutto com\'era.';
   ipRefreshBtn();
+}
+// casella "togli anche quelli che nel file non ci sono più"
+function ipSetRem(on) {
+  if (!_ipPlan) return;
+  _ipPlan.rem = !!on;
+  ipRender();
 }
 function ipSetMode(over) {
   if (!_ipPlan) return;
@@ -3793,7 +3943,7 @@ function ipSetProt(on) {
 function ipShow() {
   var p = _ipPlan;
   if (!p) return;
-  p.over = false; p.overProt = false; p.openSec = {};
+  p.over = false; p.overProt = false; p.rem = false; p.openSec = {};
   var f = _el('ipFile');
   if (f) f.textContent = p.filename + ' · ' + p.nRows + ' righe · ' + p.items.length + ' prezzi letti';
   var d = _el('ipData');
@@ -3829,10 +3979,11 @@ function ipApply() {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dv)) dv = impToday();
   var c = ipClassify(p.items, ipRefDate());
   var list = ipToUpdate(c, p);
-  var n = c.nuove.length, m = list.length, i, j;
+  var drop = p.rem ? c.fuori.togliere : [];
+  var n = c.nuove.length, m = list.length, r = drop.length, i, j;
   var log = document.getElementById('logProdotti');
   closeModal('modalImportProd');
-  if (!n && !m) {
+  if (!n && !m && !r) {
     _ipPlan = null;
     if (log) addLog(log, 'ℹ️ Niente da importare: ' + c.uguali.length + ' già presenti', 'warn');
     showToast('Import: niente di nuovo (' + c.uguali.length + ' già presenti)', 'warn');
@@ -3851,11 +4002,16 @@ function ipApply() {
       if (ex.source === 'karma') ex.edited = true;      // se no, il prossimo aggiornamento del listino KarMa rimetterebbe il prezzo vecchio
     }
   }
+  if (r) {
+    for (i = 0; i < r; i++) forgetKarma(drop[i]);          // un prezzo KarMa tolto non deve tornare con il prossimo listino
+    DB.prodotti = DB.prodotti.filter(function(x) { return drop.indexOf(x) < 0; });
+  }
   save(); refreshAll();
   _ipPlan = null;
   var parts = [];
   if (n) parts.push(n + (n === 1 ? ' nuovo' : ' nuovi'));
   if (m) parts.push(m + (m === 1 ? ' sovrascritto' : ' sovrascritti'));
+  if (r) parts.push(r + (r === 1 ? ' tolto' : ' tolti'));
   var keptDiff = c.diverse.length - (p.over ? c.diverse.length : 0);
   var keptProt = c.protette.length - (p.overProt ? ipOverable(c, p).length : 0);
   var summary = parts.join(', ') + ' · ' + c.uguali.length + ' già presenti';
@@ -3910,7 +4066,7 @@ function prodFmt(v) {
 
 // Mese del listino KarMa in uso ("03/2026"): i prezzi del listino hanno solo il mese, non il giorno
 function prodListinoMese() {
-  var m = /(\d{1,2}\/\d{4})/.exec(String((DB && DB.karmaRev) || KARMA_REV || ''));
+  var m = /(\d{1,2}\/\d{4})/.exec(String((DB && DB.karmaRev) || ''));
   return m ? m[1] : '';
 }
 // Data da scrivere dopo "prezzo del": giorno preciso se c'è, altrimenti il mese del listino KarMa
@@ -3930,7 +4086,7 @@ function prodIndexOf(p) {
   return -1;
 }
 
-// Legge il campo Note: "→ Fiscaglia (FE) / Ponzano RM" = consegne, "da Incontrato (Bientina (PI))" = provenienza,
+// Legge il campo Note: "→ Rivabella (FE) / Pratoverde RM" = consegne, "da Rossi (Valdoro (PI))" = provenienza,
 // qualsiasi altro testo = nota libera.
 function prodRoute(note) {
   var s = String(note == null ? '' : note).replace(/^\s+|\s+$/g, '');
@@ -4185,14 +4341,72 @@ function autoFillCondizioni() {
   }
 }
 
+// Tendine di Base / Destinazione / Trasportatore: le stesse del modulo prodotti (al posto di quelle del telefono, che coprono i campi)
+function taGetList(field) {
+  if (field === 'From') return placeSuggest('from');
+  if (field === 'To') return placeSuggest('to');
+  var seen = {}, out = [];
+  DB.trasporti.forEach(function(r) { var c = r && r.carrier ? String(r.carrier).replace(/^\s+|\s+$/g, '') : ''; if (c && !seen[c]) { seen[c] = 1; out.push(c); } });
+  return out.sort(function(a, b) { return a.localeCompare(b); });
+}
+function taRender(field, items, q) {
+  var dd = document.getElementById('mtAc' + field), inp = document.getElementById('mt' + field);
+  if (!dd) return;
+  dd.innerHTML = '';
+  var qf = placeFold(q);
+  var shown = qf ? items.filter(function(v) { return placeFold(v).indexOf(qf) >= 0; }) : items;
+  shown.forEach(function(v) {
+    var div = document.createElement('div');
+    div.className = 'mp-ac-item';
+    var at = q ? v.toLowerCase().indexOf(String(q).toLowerCase()) : -1;
+    if (at >= 0) {
+      div.appendChild(document.createTextNode(v.substring(0, at)));
+      var mk = document.createElement('mark');
+      mk.textContent = v.substring(at, at + String(q).length);
+      div.appendChild(mk);
+      div.appendChild(document.createTextNode(v.substring(at + String(q).length)));
+    } else div.textContent = v;
+    acBindPick(div, function() { taSelect(field, v); });
+    dd.appendChild(div);
+  });
+  // voce nuova: solo se non esiste già (per i luoghi, "Rivabella" c'è già se c'è "Rivabella (RA)")
+  var cur = inp ? inp.value.replace(/^\s+|\s+$/g, '') : '';
+  if (cur && !shown.length) {
+    var exists = items.some(function(v) { return field === 'Carrier' ? v.toLowerCase() === cur.toLowerCase() : placeKey(v) === placeKey(cur); });
+    if (!exists) {
+      var nd = document.createElement('div');
+      nd.className = 'mp-ac-item new-item';
+      nd.textContent = (field === 'Carrier' ? '+ Nuovo trasportatore: ' : '+ Nuovo luogo: ') + '«' + cur + '»';
+      acBindPick(nd, function() { taSelect(field, cur); });
+      dd.appendChild(nd);
+    }
+  }
+  if (dd.children.length > 0) dd.classList.remove('hidden'); else dd.classList.add('hidden');
+}
+function taSearch(field) {
+  var inp = document.getElementById('mt' + field);
+  taRender(field, taGetList(field), inp ? inp.value.replace(/^\s+|\s+$/g, '') : '');
+}
+function taOpen(field) { taSearch(field); }
+function taClose(field) {
+  var dd = document.getElementById('mtAc' + field);
+  if (dd) dd.classList.add('hidden');
+}
+function taSelect(field, value) {
+  var inp = document.getElementById('mt' + field);
+  if (inp) inp.value = value;
+  taClose(field);
+  if (field === 'Carrier') autoFillCondizioni();
+}
+document.addEventListener('click', function(e) {
+  ['From', 'To', 'Carrier'].forEach(function(f) {
+    var dd = document.getElementById('mtAc' + f), inp = document.getElementById('mt' + f);
+    if (dd && inp && !dd.contains(e.target) && e.target !== inp) dd.classList.add('hidden');
+  });
+});
+
 function openAddTariffaModal() {
-  // Popola datalist con valori esistenti
-  var _fromSet = {}; DB.trasporti.forEach(function(r){ _fromSet[r.from]=1; }); var froms = Object.keys(_fromSet).sort();
-  var _toSet = {}; DB.trasporti.forEach(function(r){ _toSet[r.to]=1; }); var tos = Object.keys(_toSet).sort();
-  var _cSet = {}; DB.trasporti.forEach(function(r){ if(r.carrier) _cSet[r.carrier]=1; }); var carriers = Object.keys(_cSet).sort();
-  document.getElementById('listFromModal').innerHTML = froms.map(function(f){ return '<option value="' + f + '">'; }).join('');
-  document.getElementById('listToModal').innerHTML = tos.map(function(t){ return '<option value="' + t + '">'; }).join('');
-  document.getElementById('listCarrierModal').innerHTML = carriers.map(function(c){ return '<option value="' + c + '">'; }).join('');
+  ['From', 'To', 'Carrier'].forEach(taClose);
   // Reset form
   document.getElementById('mtFrom').value = '';
   document.getElementById('mtTo').value = '';
@@ -4202,12 +4416,13 @@ function openAddTariffaModal() {
   document.getElementById('mtUnit').value = '€/vg';
   document.getElementById('mtProvisional').checked = false;
   var mtD = document.getElementById('mtData'); if (mtD) mtD.value = '';
+  var mtN = document.getElementById('mtNote'); if (mtN) mtN.value = '';
   document.getElementById('modalTariffa').classList.remove('hidden');
 }
 
 function saveTariffa() {
-  var from = document.getElementById('mtFrom').value.trim();
-  var to = normalizeDest(document.getElementById('mtTo').value.trim());
+  var from = placeCanon(document.getElementById('mtFrom').value);
+  var to = placeCanon(normalizeDest(document.getElementById('mtTo').value.trim()));
   var carrier = document.getElementById('mtCarrier').value.trim();
   var price = parseFloat(document.getElementById('mtPrice').value);
   var unit = document.getElementById('mtUnit').value;
@@ -4234,12 +4449,19 @@ function saveTariffa() {
     document.getElementById('choiceRoute').textContent = from + ' → ' + to;
     document.getElementById('choiceOldPrice').textContent = 'Prezzo attuale: ' + _ex.price + ' ' + _ex.unit;
     document.getElementById('modalTariffaChoice').classList.remove('hidden');
-    document.getElementById('btnAggiungi').onclick = function(){ DB.trasporti.push(_nr); save(); refreshAll(); closeModal('modalTariffaChoice'); closeModal('modalTariffa'); showToast('✅ Tariffa aggiunta', 'ok'); };
+    document.getElementById('btnAggiungi').onclick = function(){ var _sn = undoSnapshot(); DB.trasporti.push(_nr); var _tr = placesTidy(); save(); refreshAll(); closeModal('modalTariffaChoice'); closeModal('modalTariffa'); if (_tr.n) undoToast('Tariffa aggiunta', _sn, '✅ Tariffa aggiunta · ' + placesTidyMsg(_tr), 'ok'); else showToast('✅ Tariffa aggiunta', 'ok'); };
     document.getElementById('btnAggiorna').onclick = function(){ _ex.price=price;_ex.unit=unit;_ex.conditions=conditions;_ex.provisional=provisional;_ex.note=noteVal;_ex.data=dataVal;_ex.rev='Manuale'; save(); refreshAll(); closeModal('modalTariffaChoice'); closeModal('modalTariffa'); showToast('✏️ Tariffa aggiornata', 'ok'); };
     return;
   } else {
+    var _snap = undoSnapshot();
     DB.trasporti.push({from:from, to:to, carrier:carrier, price:price, unit:unit, conditions:conditions, provisional:provisional, note:noteVal, data:dataVal, rev:'Manuale'});
-    showToast(provisional ? '⚠️ Tariffa aggiunta (da confermare)' : '✅ Tariffa aggiunta', provisional?'warn':'ok');
+    var _tidy = placesTidy();
+    save(); refreshAll();
+    closeModal('modalTariffa');
+    var _msg = provisional ? '⚠️ Tariffa aggiunta (da confermare)' : '✅ Tariffa aggiunta';
+    if (_tidy.n) undoToast('Tariffa aggiunta', _snap, _msg + ' · ' + placesTidyMsg(_tidy), provisional ? 'warn' : 'ok');
+    else showToast(_msg, provisional ? 'warn' : 'ok');
+    return;
   }
   save(); refreshAll();
   closeModal('modalTariffa');
@@ -4259,10 +4481,7 @@ function mpGetList(field) {
   }
   if (field === 'Luogo') {
     // Sia da prodotti che da trasporti
-    var fromProd = DB.prodotti.map(function(p){ return (p.luogo||'').trim(); });
-    var fromTras = DB.trasporti.map(function(r){ return r.from; })
-      .concat(DB.trasporti.map(function(r){ return r.to; }));
-    return (function(){var _s={};fromProd.concat(fromTras).forEach(function(v){if(v)_s[v]=1;});return Object.keys(_s).sort();})();
+    return placeSuggestAll();
   }
   return [];
 }
@@ -4294,7 +4513,7 @@ function mpAcRender(field, items, q) {
   // Opzione "Aggiungi nuovo" se il testo non corrisponde esattamente
   var inp = document.getElementById('mp' + field);
   var cur = inp ? inp.value.trim() : '';
-  if (cur && !items.some(function(v){ return v.toLowerCase() === cur.toLowerCase(); })) {
+  if (cur && !items.some(function(v){ return field === 'Luogo' ? placeKey(v) === placeKey(cur) : v.toLowerCase() === cur.toLowerCase(); })) {
     var newDiv = document.createElement('div');
     newDiv.className = 'mp-ac-item new-item';
     newDiv.textContent = '+ Aggiungi "' + cur + '"';
@@ -4443,7 +4662,7 @@ function openEditProdotto(idx, idxs) {
   if (el) {
     el.value = _editingGroup ? '' : (p.note || '');
     el.disabled = !!_editingGroup;
-    el.placeholder = _editingGroup ? 'Le note delle consegne restano come sono' : 'es. da Vender Legnami';
+    el.placeholder = _editingGroup ? 'Le note delle consegne restano come sono' : 'es. da Rossi Legnami';
   }
   el = document.getElementById('epData');     if(el) el.value = p.data || '';
   var unitEl = document.getElementById('epUnita');
@@ -4730,7 +4949,7 @@ function aggBuyInfo(prod, forn, dest) {
   use.forEach(function(p) { var v = Number(p.prezzo) || 0; if (v < lo) lo = v; if (v > hi) hi = v; });
   return { lo: lo, hi: hi, unit: use[0].unita || '€/ton', luogo: use[0].luogo || '', entity: use[0].entity || forn };
 }
-// luogo più usato nei suoi acquisti (serve per scrivere "da Incontrato (Bientina (PI))" come nel listino)
+// luogo più usato nei suoi acquisti (serve per scrivere "da Rossi (Valdoro (PI))" come nel listino)
 function aggSupLuogo(name) {
   var c = {}, best = '', n = 0;
   DB.prodotti.forEach(function(p) { if (p && p.tipo === 'acquisto' && p.luogo && ipLoose(p.entity, name)) c[p.luogo] = (c[p.luogo] || 0) + 1; });
@@ -5066,11 +5285,11 @@ function aggFillLists() {
     out.sort(function(a, b) { return a.localeCompare(b); });
     el.innerHTML = out.map(function(v) { return '<option value="' + esc(v) + '">'; }).join('');
   }
-  set('aggListFrom', DB.trasporti.map(function(t) { return t.from; }));
-  set('aggListTo', DB.trasporti.map(function(t) { return t.to; }));
+  set('aggListFrom', placeSuggest('from'));
+  set('aggListTo', placeSuggest('to'));
   set('aggListProd', DB.prodotti.map(function(p) { return p.prodotto; }));
   set('aggListForn', DB.prodotti.filter(function(p) { return p && p.tipo === 'acquisto'; }).map(function(p) { return p.entity; }));
-  set('aggListLuogo', DB.prodotti.map(function(p) { return p.luogo; }).concat(DB.trasporti.map(function(t) { return t.from; }), DB.trasporti.map(function(t) { return t.to; })));
+  set('aggListLuogo', placeSuggestAll());
 }
 // tipo e luogo più usati da questa persona (precompilati, si possono cambiare)
 function aggDefaults() {
@@ -5101,8 +5320,8 @@ function aggAddNew() {
   }
   var price = '<input class="agg-in" id="' + id + '-p" type="text" inputmode="decimal" autocomplete="off" placeholder="0" oninput="aggNewInput(' + k + ')" onkeydown="aggNewKey(event,' + k + ')">';
   if (t) {
-    h += fld('f', 'Da (partenza)', txt('f', 'es. Bientina (PI)', 'aggListFrom')) +
-         fld('t', 'A (destinazione)', txt('t', 'es. Ponzano R. (RM)', 'aggListTo')) +
+    h += fld('f', 'Da (partenza)', txt('f', 'es. Valdoro (PI)', 'aggListFrom')) +
+         fld('t', 'A (destinazione)', txt('t', 'es. Pratoverde R. (RM)', 'aggListTo')) +
          '<div class="agg-ng">' + fld('p', 'Prezzo', price) +
          fld('u', 'Unità', '<select class="inp" id="' + id + '-u" onchange="aggNewInput(' + k + ')"><option value="€/vg">€/viaggio</option><option value="€/ton">€/ton</option><option value="€/mc">€/mc</option></select>') + '</div>' +
          fld('c', 'Condizioni (facoltativo)', txt('c', 'es. BB 60 gg FM', ''));
@@ -5111,14 +5330,14 @@ function aggAddNew() {
     h += fld('f', 'Prodotto', txt('f', 'es. Cippato', 'aggListProd')) +
          fld('t', 'Che cosa fai con lui?', '<select class="inp" id="' + id + '-t" onchange="aggNewInput(' + k + ')"><option value="acquisto"' + (df.tipo === 'acquisto' ? ' selected' : '') + '>Acquisto: compro da lui</option><option value="vendita"' + (df.tipo === 'vendita' ? ' selected' : '') + '>Vendita: vendo a lui</option></select>') +
          '<div class="agg-nsup" id="' + id + '-sb">' +
-           fld('s', 'Da chi la compri? (fornitore)', txt('s', 'es. Incontrato', 'aggListForn')) +
+           fld('s', 'Da chi la compri? (fornitore)', txt('s', 'es. Rossi', 'aggListForn')) +
            '<div class="agg-nbuy" id="' + id + '-bb">' + fld('b', 'A che prezzo la compri da lui? (facoltativo)', '<input class="agg-in" id="' + id + '-b" type="text" inputmode="decimal" autocomplete="off" placeholder="0" oninput="aggNewInput(' + k + ')" onkeydown="aggNewKey(event,' + k + ')">') + '</div>' +
            '<div class="agg-ninfo" id="' + id + '-bi" aria-live="polite"></div>' +
          '</div>' +
-         fld('l', 'Dove la consegni? (facoltativo)', txt('l', 'es. Ponzano RM', 'aggListLuogo')) +
+         fld('l', 'Dove la consegni? (facoltativo)', txt('l', 'es. Pratoverde RM', 'aggListLuogo')) +
          '<div class="agg-ng">' + fld('p', 'Prezzo (a cui vendi, se vendita)', price) +
          fld('u', 'Unità', '<select class="inp" id="' + id + '-u" onchange="aggNewInput(' + k + ')"><option>€/ton</option><option>€/mc</option><option>€/q</option><option>€/kg</option><option>€/vg</option></select>') + '</div>' +
-         fld('c', 'Note (facoltativo)', txt('c', 'es. → Ponzano RM', ''));
+         fld('c', 'Note (facoltativo)', txt('c', 'es. → Pratoverde RM', ''));
   }
   h += '<div class="agg-d agg-nm" id="' + id + '-m" aria-live="polite"></div></div>';
   box.insertAdjacentHTML('beforeend', h);
@@ -5159,7 +5378,8 @@ function aggNewStateT(k, seen) {
   if (!to) return { state: 'bad', msg: 'Manca: dove arriva', field: 't' };
   if (price === null) return { state: 'bad', msg: 'Manca: il prezzo', field: 'p' };
   if (isNaN(price)) return { state: 'bad', msg: 'Prezzo non valido', field: 'p' };
-  to = normalizeDest(to);
+  from = placeCanon(from);
+  to = placeCanon(normalizeDest(to));
   var key = aggLow(from) + '|' + aggLow(to) + '|' + unit;
   var dup = DB.trasporti.some(function(t) { return t && t.carrier === _agg.who && aggLow(t.from) + '|' + aggLow(t.to) + '|' + (t.unit || '€/vg') === key; });
   if (dup) return { state: 'bad', msg: 'Questa tratta c\'è già (stessa unità): scrivi il prezzo nella riga sopra', field: 'f' };
@@ -5292,14 +5512,14 @@ document.addEventListener('keydown', function(e) {
 
 
 // ═════════════ GIRO 12 · DA MESSAGGIO ═════════════
-// Incolli o detti una riga ("Segatura Incontrato 75 e vendita a Sicem Ponzano a 130") e compaiono le carte da confermare.
+// Incolli o detti una riga ("Segatura Rossi 75 e vendita a Verdi Pratoverde a 130") e compaiono le carte da confermare.
 // Niente viene scritto finché non premi Salva; dopo il salvataggio c'è sempre Annulla.
 var _msgCards = [], _msgSel = {}, _msgOver = {}, _msgCarrier = '', _msgOpener = null, _msgTimer = null, _msgRec = null;
 
 var MG_STOP = { di: 1, del: 1, della: 1, dei: 1, delle: 1, da: 1, a: 1, e: 1, il: 1, la: 1, lo: 1, ad: 1, al: 1, alla: 1, srl: 1, spa: 1, snc: 1, sas: 1, sa: 1 };
 var MG_CGEN = { trasporti: 1, trasporto: 1, trasportatore: 1, srl: 1, spa: 1, snc: 1, sas: 1, di: 1, e: 1 };
 
-// minuscolo, senza accenti, senza segni: "B.F. Agro Ind.le" → "b f agro ind le"
+// minuscolo, senza accenti, senza segni: "A.B. Agro Ind.le" → "a b agro ind le"
 function mgFold(s) {
   var t = String(s == null ? '' : s).toLowerCase();
   try { t = t.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) {}
@@ -5361,7 +5581,7 @@ function mgEntries(names, keepStop, generic) {
   });
   return out;
 }
-// quale nome dell'elenco comincia come le parole scritte (la corrispondenza più lunga); anche "in contrato" = "Incontrato" e una lettera sbagliata
+// quale nome dell'elenco comincia come le parole scritte (la corrispondenza più lunga); anche "ros si" = "Rossi" e una lettera sbagliata
 function mgMatch(words, entries) {
   var n, k, hit;
   for (n = words.length; n >= 1; n--) {
@@ -5458,7 +5678,7 @@ function mgCliEntries() { return mgEntries(DB.prodotti.filter(function(p) { retu
 function mgCarEntries() { return mgEntries(DB.trasporti.map(function(t) { return t && t.carrier; }), true, true); }
 function mgDistinct(arr) { var seen = {}, out = []; arr.forEach(function(v) { if (v && !seen[v]) { seen[v] = 1; out.push(v); } }); return out; }
 
-// "Segatura Incontrato, Tosco e Carnovale" → prodotto + uno o più fornitori (o solo i fornitori)
+// "Segatura Rossi, Bianchi e Neri" → prodotto + uno o più fornitori (o solo i fornitori)
 function mgSupList(txt) {
   var sups = mgSupEntries(), segs = String(txt || '').split(/\s*(?:,|\+|;)\s*|\s+&\s+|\s+e\s+/i), out = [], allKnown = true, anyKnown = false, seen = {};
   segs.forEach(function(seg) {
@@ -5497,12 +5717,12 @@ function mgHead(txt) {
     if (!best || sc > best.sc) best = { sc: sc, j: j, pm: pm, sl: sl };
   }
   if (best) return { prods: best.pm.list.map(function(e) { return e.name; }), prodTxt: mgBefore(T, best.j), sups: best.sl ? best.sl.list : [] };
-  // niente prodotto: forse sono scritti solo i fornitori ("Incontrato 42 vendita a …")
+  // niente prodotto: forse sono scritti solo i fornitori ("Rossi 42 vendita a …")
   sl = w.length ? mgSupList(t0) : null;
   if (sl && sl.allKnown) return { prods: null, prodTxt: '', sups: sl.list };
   return { prods: null, prodTxt: ipClean(txt), sups: [], unknown: true };
 }
-// "Sicem Ponzano" [da Incontrato, Tosco e Carnovale] → cliente + luogo (+ fornitori)
+// "Verdi Pratoverde" [da Rossi, Bianchi e Neri] → cliente + luogo (+ fornitori)
 function mgSaleHead(txt) {
   var sups = [], left = ipClean(txt), m = /(?:^|\s)da\s+(.+)$/i.exec(left);
   if (m) {
@@ -5515,7 +5735,7 @@ function mgSaleHead(txt) {
     out.luogoTxt = mgAfter(T, cm.n);
     return out;
   }
-  // solo il posto ("vendita a Ponzano 130"): vale se lo conosce un solo cliente
+  // solo il posto ("vendita a Pratoverde 130"): vale se lo conosce un solo cliente
   if (left) {
     var owners = mgDistinct(DB.prodotti.filter(function(p) { return p && p.tipo === 'vendita' && p.luogo && mgSameLuogo(p.luogo, left); }).map(function(p) { return p.entity; }));
     if (owners.length === 1) { out.cli = { name: owners[0], fuzzy: false }; out.luogoTxt = left; }
@@ -5542,7 +5762,7 @@ function mgParseLine(line) {
   var sm = MG_SELL.exec(s), left = s, right = '', perForm = false;
   if (sm) { left = s.slice(0, sm.index); right = s.slice(sm.index + sm[0].length); }
   else {
-    // "… 125 per Sicem Ponzano": il prezzo prima vale per quel cliente (solo se "per" è seguito da un cliente che conosco)
+    // "… 125 per Verdi Pratoverde": il prezzo prima vale per quel cliente (solo se "per" è seguito da un cliente che conosco)
     var pm = /\s+per\s+(.+)$/i.exec(s);
     if (pm && mgSaleHead(mgSplitPrice(pm[1]).before).cli) { left = s.slice(0, pm.index); right = pm[1]; perForm = true; }
   }
@@ -5567,14 +5787,14 @@ function mgParseTr(s, tm, dm) {
   var tail = rp.after.replace(/^[\s€.,;:\-–]+/, '').replace(/^(?:con|tramite|trasportatore|vettore|di)\s+/i, '');
   if (tail) it.carrierTxt = tail;
   left = ipClean(left).replace(/^da\s+/i, '');
-  var cm = /^(.+?)\s*[:\-–]\s+(.+)$/.exec(left);          // "Cevolo: Bientina"
+  var cm = /^(.+?)\s*[:\-–]\s+(.+)$/.exec(left);          // "Bruni: Valdoro"
   if (cm && !(it.carrierTxt)) {
     var cw = mgWords(mgTokens(cm[1], true, true)), hit = cw.length ? mgMatch(cw, mgCarEntries()) : null;
     if (hit && hit.n === cw.length) { it.carrierTxt = cm[1]; left = ipClean(cm[2]); }
   }
   var cw2 = /^con\s+(.+?)\s+(?:da\s+)?(.+)$/i.exec(left);
   if (cw2 && !it.carrierTxt) { it.carrierTxt = cw2[1]; left = ipClean(cw2[2]); }
-  // "Cevolo Bientina": il trasportatore davanti, se tutto insieme non è un posto che conosco
+  // "Bruni Valdoro": il trasportatore davanti, se tutto insieme non è un posto che conosco
   if (!it.carrierTxt && !DB.trasporti.some(function(t) { return t && entSameTown(t.from, left); })) {
     var T = mgTokens(left, true, true), w = mgWords(T), pm = w.length > 1 ? mgMatch(w, mgCarEntries()) : null;
     if (pm && pm.n < w.length && !pm.fuzzy) {
@@ -5643,8 +5863,8 @@ function mgProdChoice(card, ctx, ov, optionsNames, label) {
 function mgBuildProd(it, li) {
   var key = 'p:' + mgFold(it.line), cards = [], ov = mgOv(key);
   var head = mgHead(it.head), ctx = mgResolveProd(it, key, cards);
-  if (!it.buy && !it.sell) return [mgErr(key, it.line, 'Non vedo nessun prezzo.', 'Scrivi il prezzo alla fine, per esempio: Segatura Incontrato 75')];
-  if (it.sell && it.sell.price === null) return [mgErr(key, it.line, 'Manca il prezzo di vendita.', 'Scrivilo dopo il cliente, per esempio: Segatura vendita a Sicem Ponzano 130')];
+  if (!it.buy && !it.sell) return [mgErr(key, it.line, 'Non vedo nessun prezzo.', 'Scrivi il prezzo alla fine, per esempio: Segatura Rossi 75')];
+  if (it.sell && it.sell.price === null) return [mgErr(key, it.line, 'Manca il prezzo di vendita.', 'Scrivilo dopo il cliente, per esempio: Segatura vendita a Verdi Pratoverde 130')];
   if (head.unknown && !ov.prod) {
     var cu = mgNewCard('err', key, 'Non conosco «' + (it.head || it.line) + '»', it.line);
     cu.note = 'Non riconosco il prodotto né il fornitore.';
@@ -5846,8 +6066,8 @@ function mgNoteTail(note) {
 // ---- trasporto ----
 function mgBuildTr(it) {
   var key = 't:' + mgFold(it.line), ov = mgOv(key);
-  if (it.price === null) return [mgErr(key, it.line, 'Manca il prezzo.', 'Per esempio: Bientina Destinazione Mezzano € 420')];
-  if (!it.from || !it.to) return [mgErr(key, it.line, 'Non capisco da dove parte o dove arriva.', 'Per esempio: Bientina Destinazione Mezzano € 420')];
+  if (it.price === null) return [mgErr(key, it.line, 'Manca il prezzo.', 'Per esempio: Valdoro Destinazione Rivabella € 420')];
+  if (!it.from || !it.to) return [mgErr(key, it.line, 'Non capisco da dove parte o dove arriva.', 'Per esempio: Valdoro Destinazione Rivabella € 420')];
   var route = DB.trasporti.filter(function(t) { return t && entSameTown(t.from, it.from) && entSameTown(t.to, it.to); });
   var fromC = mgDistinct(DB.trasporti.map(function(t) { return t && t.from; }).filter(function(v) { return v && entSameTown(v, it.from); }));
   var toC = mgDistinct(DB.trasporti.map(function(t) { return t && t.to; }).filter(function(v) { return v && entSameTown(v, it.to); }));
@@ -5997,6 +6217,57 @@ function msgClear() {
   _msgSel = {}; _msgOver = {};
   msgRender();
 }
+// Gli esempi del "?" si costruiscono con i TUOI nomi (prodotto, fornitori, cliente, tratta più usati): nel codice non ce ne sono
+var _msgTries = [];
+function msgExData() {
+  var ex = { prod: 'Segatura', sups: ['Rossi', 'Bianchi', 'Neri'], cli: 'Verdi', luo: 'Pratoverde', buy: 75, sell: 130, many: 125, from: 'Valdoro', to: 'Rivabella', price: 420 };
+  function top(o) { var b = '', n = 0, k; for (k in o) { if (Object.prototype.hasOwnProperty.call(o, k) && o[k] > n) { n = o[k]; b = k; } } return b; }
+  function bump(o, k) { o[k] = (o[k] || 0) + 1; }
+  function town(v) { return String(v || '').replace(/\s*\([^()]*\)\s*$/, '').replace(/^\s+|\s+$/g, ''); }
+  try {
+    var pc = {}, i, p;
+    for (i = 0; i < DB.prodotti.length; i++) { p = DB.prodotti[i]; if (p && p.prodotto) bump(pc, p.prodotto); }
+    var prod = top(pc);
+    if (prod) {
+      ex.prod = prod;
+      var sc = {}, cc = {}, lc = {};
+      for (i = 0; i < DB.prodotti.length; i++) {
+        p = DB.prodotti[i];
+        if (!p || p.prodotto !== prod || !p.entity) continue;
+        if (p.tipo === 'acquisto') bump(sc, p.entity);
+        else { bump(cc, p.entity); if (p.luogo) { lc[p.entity] = lc[p.entity] || {}; bump(lc[p.entity], town(p.luogo)); } }
+      }
+      var real = Object.keys(sc).sort(function(a, b) { return sc[b] - sc[a]; }).slice(0, 3);
+      if (real.length) { ex.sups = real.concat(ex.sups.filter(function(n) { return real.indexOf(n) < 0; })).slice(0, 3); }
+      var cli = top(cc);
+      if (cli) { ex.cli = cli; ex.luo = lc[cli] ? top(lc[cli]) : ''; }
+    }
+    var rc = {}, t;
+    for (i = 0; i < DB.trasporti.length; i++) { t = DB.trasporti[i]; if (t && t.from && t.to) bump(rc, town(t.from) + '\u0001' + town(t.to)); }
+    var r = top(rc);
+    if (r) { ex.from = r.split('\u0001')[0]; ex.to = r.split('\u0001')[1]; }
+  } catch (e) {}
+  return ex;
+}
+function msgHelpFill() {
+  var e = msgExData(), s1 = e.sups[0], cl = e.cli + (e.luo ? ' ' + e.luo : '');
+  var full = e.prod + ' ' + s1 + ' ' + e.buy + ' e vendita a ' + cl + ' a ' + e.sell;
+  _msgTries = [
+    ['Acquisto e vendita insieme', full],
+    ['Solo acquisto', e.prod + ' ' + s1 + ' ' + e.buy],
+    ['Solo vendita, per tutti i fornitori', e.prod + ' vendita a ' + cl + ' ' + e.sell],
+    ['Più fornitori, stesso prezzo', e.prod + ' ' + e.sups[0] + ', ' + e.sups[1] + ' e ' + e.sups[2] + ' ' + e.many + ' per ' + cl],
+    ['Trasporto', e.from + ' Destinazione ' + e.to + ' € ' + e.price]
+  ];
+  var ex = document.getElementById('mgExLine');
+  if (ex) ex.innerHTML = '<span class="mg-c-prod">' + esc(e.prod) + '</span> <span class="mg-c-sup">' + esc(s1) + '</span> <span class="mg-c-buy">' + e.buy + '</span> <span class="mg-c-key">e vendita a</span> <span class="mg-c-cli">' + esc(e.cli) + '</span>' + (e.luo ? ' <span class="mg-c-luo">' + esc(e.luo) + '</span>' : '') + ' <span class="mg-c-sell">' + e.sell + '</span>';
+  var lst = document.getElementById('mgTryList');
+  if (lst) lst.innerHTML = _msgTries.map(function(x, i) {
+    return '<button type="button" class="mg-try" onclick="msgTry(' + i + ')"><span><b>' + esc(x[0]) + '</b><code>' + esc(x[1]) + '</code></span></button>';
+  }).join('');
+  var ta = document.getElementById('msgText'); if (ta) ta.placeholder = full;
+}
+function msgTry(i) { if (_msgTries[i]) msgSetText(_msgTries[i][1]); }
 function msgSetText(t) {
   var ta = document.getElementById('msgText');
   if (!ta) return;
@@ -6055,6 +6326,7 @@ function msgOpen() {
   var ta = document.getElementById('msgText'); if (ta) ta.value = '';
   var d = document.getElementById('msgDate'); if (d) d.value = impToday();
   var mic = document.getElementById('msgMic'); if (mic) mic.style.display = (window.SpeechRecognition || window.webkitSpeechRecognition) ? '' : 'none';
+  msgHelpFill();
   bd.classList.remove('hidden');
   var seen = '0';
   try { seen = localStorage.getItem('archivio-msg-help') || ''; } catch (e) {}
@@ -6139,7 +6411,6 @@ function loadJSON(event) {
     delete DB.app; delete DB.exportedAt;
     // il file è la verità: i dati incorporati non devono ricomparire sopra
     DB.pdfLoaded = true;
-    if (!DB.karmaRev) DB.karmaRev = KARMA_REV;
     normalizeDB();
     save(); refreshAll();
     undoToast('archivio ripristinato da file', _us, '✅ Archivio caricato da file', 'ok');
@@ -6156,7 +6427,6 @@ function clearProdotti() {
   var _us = undoSnapshot();
   DB.prodotti = [];
   DB.karmaHidden = {};
-  DB.karmaRev = KARMA_REV;   // resta vuoto: il listino non torna da solo
   save(); refreshAll();
   undoToast('tutti i prodotti eliminati', _us, '🗑 Prodotti eliminati', 'warn');
 }
@@ -6173,8 +6443,7 @@ function clearProdottiManuali() {
 
 function clearAll() {
   var _us = undoSnapshot();
-  // pdfLoaded/karmaRev impostati: all'avvio successivo l'archivio resta davvero vuoto
-  DB = {trasporti:[], prodotti:[], lastUpdate: null, pdfLoaded: true, karmaRev: KARMA_REV, karmaHidden: {}};
+  DB = {trasporti:[], prodotti:[], lastUpdate: null, pdfLoaded: true, karmaHidden: {}};
   save(); refreshAll();
   closeModal('modalClear');
   undoToast('archivio svuotato', _us, '🗑 Archivio svuotato', 'warn');
@@ -6504,18 +6773,18 @@ var _trOpener = null;
 function entKey(p) { return String(p && p.entity ? p.entity : '—').replace(/^\s+|\s+$/g, ''); }
 function entTrim(s) { return String(s == null ? '' : s).replace(/^\s+|\s+$/g, ''); }
 
-// confronto dei luoghi tra listino prodotti e listino trasporti: "Ponzano RM" = "Ponzano R. (RM)",
-// "Fiscaglia (FE)" = "Migliaro / Fiscaglia (FE)": conta il nome del paese, non la sigla della provincia
+// confronto dei luoghi tra listino prodotti e listino trasporti: "Pratoverde RM" = "Pratoverde R. (RM)",
+// "Rivabella (FE)" = "Valdoro / Rivabella (FE)": conta il nome del paese, non la sigla della provincia
 function entTown(s) {
   return entTrim(String(s == null ? '' : s).toLowerCase().replace(/\([^()]*\)/g, ' ').replace(/\./g, ' ').replace(/\s+/g, ' '));
 }
-// nomi dei posti scritti in modo diverso: "Ponzano RM" = "Ponzano R. (RM)", "Migliaro/Fiscaglia" = "Fiscaglia",
-// "Cetica" = "Castel S. Nicolo-Cetica", "Vione-Stadolina" = "Vione - Stadolina", "S. Felice sul P.ro" = "S.Felice sul Panaro"
+// nomi dei posti scritti in modo diverso: "Pratoverde RM" = "Pratoverde R. (RM)", "Valdoro/Rivabella" = "Rivabella",
+// "Rivabella" = "Castel Nuovo-Rivabella", "Monte-Lago" = "Monte - Lago", "S. Rocco sul P.ro" = "S.Rocco sul Pozzo"
 function entParts(s) {
   var out = [], t = String(s == null ? '' : s).toLowerCase().replace(/\([^()]*\)/g, ' ');
   t.split(/\s*\/\s*/).forEach(function(p) {
     out.push(p.replace(/\s*[-\u2013]\s*/g, '-'));
-    // trattino attaccato ("Castel S. Nicolo-Cetica"): vale anche ognuna delle due parti; "Cremona - cantieri" (con spazi) è una dicitura, non due posti
+    // trattino attaccato ("Castel Nuovo-Rivabella"): vale anche ognuna delle due parti; "Borgonovo - cantieri" (con spazi) è una dicitura, non due posti
     if (!/\s[-\u2013]|[-\u2013]\s/.test(p) && /[-\u2013]/.test(p)) p.split(/[-\u2013]/).forEach(function(q) { out.push(q); });
   });
   return out;
@@ -7479,7 +7748,7 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
   var container = document.getElementById('resultsContainer');
   if (!container) return;
   if (DB.trasporti.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa caricata.<br>Vai su <strong>Import</strong>.</div></div>';
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-text">Nessuna tariffa qui.<br>Tocca <strong>Drive</strong> in alto per ritrovare i tuoi dati, oppure vai su <strong>Import</strong>.</div></div>';
     return;
   }
   if (routes.length === 0) {
@@ -7679,7 +7948,8 @@ function undoLast() {
   // le finestre aperte puntano a righe che potrebbero non esserci più
   var ids = ['modalEditTratta', 'modalEditProdotto', 'modalProdSheet', 'modalAggiorna', 'modalMsg', 'modalProdotto', 'modalClear', 'modalEntity', 'modalShare'];
   for (var i = 0; i < ids.length; i++) { var m = _el(ids[i]); if (m && m.classList) m.classList.add('hidden'); }
-  save();
+  _placesTidyOff = true;
+  try { save(); } finally { _placesTidyOff = false; }
   refreshAll();
   undoPersist(); undoRefreshUI();
   showToast('↩️ Annullato: ' + u.label, 'ok');
@@ -8062,7 +8332,8 @@ function drivePayload() {
     prodotti: DB.prodotti,
     lastUpdate: DB.lastUpdate,
     karmaHidden: DB.karmaHidden || {},
-    karmaRev: DB.karmaRev || KARMA_REV,
+    karmaRev: DB.karmaRev || '',
+    pdfRev: DB.pdfRev || '',
     pdfLoaded: true,
     savedAt: new Date().toISOString()
   });
@@ -8198,9 +8469,9 @@ function _applyDriveData(d) {
   if (Array.isArray(d.prodotti))  DB.prodotti  = d.prodotti;
   if (d.lastUpdate) DB.lastUpdate = d.lastUpdate;
   if (d.karmaHidden && typeof d.karmaHidden === 'object') DB.karmaHidden = d.karmaHidden;
-  // i dati incorporati non devono ricomparire sopra quelli di Drive
   DB.pdfLoaded = true;
-  if (!DB.karmaRev) DB.karmaRev = KARMA_REV;
+  if (d.karmaRev) DB.karmaRev = d.karmaRev;
+  if (d.pdfRev) DB.pdfRev = d.pdfRev;
   normalizeDB();
   lsSet('archivio-tariffe-v3', JSON.stringify(DB));
   refreshAll();
@@ -8256,8 +8527,9 @@ function driveSyncCheck(reason, silent) {
         driveEnd();
         return;
       }
-      if (lastSync && !dirty) {                                                // qui nessuna modifica: prendo quelle dell'altro dispositivo
-        driveAdopt(remote, meta, 'Aggiornato con le modifiche fatte su un altro dispositivo');
+      var localEmpty = !DB.trasporti.length && !DB.prodotti.length;
+      if ((lastSync || localEmpty) && !dirty) {                                // qui nessuna modifica (o archivio vuoto): prendo i dati di Drive
+        driveAdopt(remote, meta, localEmpty ? 'Dati caricati da Drive' : 'Aggiornato con le modifiche fatte su un altro dispositivo');
         setDriveStatus('connected');
         driveEnd();
         return;
@@ -8489,7 +8761,7 @@ init();
   <div class="agg-body">
     <div class="mg-helpbox hidden" id="msgHelp">
       <div class="mg-ht">Come si scrive</div>
-      <div class="mg-ex"><span class="mg-c-prod">Segatura</span> <span class="mg-c-sup">Incontrato</span> <span class="mg-c-buy">75</span> <span class="mg-c-key">e vendita a</span> <span class="mg-c-cli">Sicem</span> <span class="mg-c-luo">Ponzano</span> <span class="mg-c-sell">130</span></div>
+      <div class="mg-ex" id="mgExLine"></div>
       <div class="mg-leg">
         <span><i class="mg-c-prod">●</i> prodotto</span>
         <span><i class="mg-c-sup">●</i> fornitore</span>
@@ -8500,21 +8772,17 @@ init();
         <span><i class="mg-c-sell">●</i> prezzo a cui vendi</span>
       </div>
       <div class="mg-hl">Tocca una riga per provarla:</div>
-      <button type="button" class="mg-try" onclick="msgSetText('Segatura Incontrato 75 e vendita a Sicem Ponzano a 130')"><span><b>Acquisto e vendita insieme</b><code>Segatura Incontrato 75 e vendita a Sicem Ponzano a 130</code></span></button>
-      <button type="button" class="mg-try" onclick="msgSetText('Segatura Incontrato 75')"><span><b>Solo acquisto</b><code>Segatura Incontrato 75</code></span></button>
-      <button type="button" class="mg-try" onclick="msgSetText('Segatura vendita a Sicem Ponzano 130')"><span><b>Solo vendita, per tutti i fornitori</b><code>Segatura vendita a Sicem Ponzano 130</code></span></button>
-      <button type="button" class="mg-try" onclick="msgSetText('Segatura Incontrato, Tosco e Carnovale 125 per Sicem Ponzano')"><span><b>Più fornitori, stesso prezzo</b><code>Segatura Incontrato, Tosco e Carnovale 125 per Sicem Ponzano</code></span></button>
-      <button type="button" class="mg-try" onclick="msgSetText('Bientina Destinazione Mezzano € 420')"><span><b>Trasporto</b><code>Bientina Destinazione Mezzano € 420</code></span></button>
+      <div id="mgTryList"></div>
       <ul class="mg-rules">
         <li>Se scrivi il fornitore (o più fornitori) cambia solo il loro prezzo; se non lo scrivi, il prezzo di vendita vale per tutte le righe di quel cliente.</li>
-        <li>Per il trasporto aggiungi in fondo chi lo fa (<i>… € 420 Cevolo</i>) oppure scegli nella carta.</li>
+        <li>Per il trasporto aggiungi in fondo chi lo fa (<i>… € 420 nome del trasportatore</i>) oppure scegli nella carta.</li>
         <li>Più messaggi: uno per riga.</li>
         <li>Non si salva niente finché non premi Salva, e dopo c'è sempre Annulla.</li>
       </ul>
     </div>
     <div>
       <label class="agg-lab" for="msgText">Scrivi, incolla o detta il messaggio</label>
-      <textarea class="inp mg-ta" id="msgText" rows="3" placeholder="Segatura Incontrato 75 e vendita a Sicem Ponzano a 130" oninput="msgInput()" spellcheck="false" autocapitalize="sentences" autocomplete="off"></textarea>
+      <textarea class="inp mg-ta" id="msgText" rows="3" placeholder="Es.: prodotto, fornitore e prezzo" oninput="msgInput()" spellcheck="false" autocapitalize="sentences" autocomplete="off"></textarea>
       <div class="mg-tools">
         <button type="button" class="agg-mini" onclick="msgPaste()">📋 Incolla</button>
         <button type="button" class="agg-mini" id="msgMic" aria-pressed="false" onclick="msgDictate()">🎤 Detta</button>
@@ -8548,11 +8816,11 @@ init();
       </div>
       <div class="form-group">
         <label class="form-label">Fornitore / Cliente</label>
-        <input class="inp" id="epEntity" type="text" placeholder="es. Vender Legnami">
+        <input class="inp" id="epEntity" type="text" placeholder="es. Rossi Legnami">
       </div>
       <div class="form-group">
         <label class="form-label">Luogo</label>
-        <input class="inp" id="epLuogo" type="text" placeholder="es. Mezzocorona (TN)">
+        <input class="inp" id="epLuogo" type="text" placeholder="es. Montebruno (TN)">
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -8574,7 +8842,7 @@ init();
       </div>
       <div class="form-group">
         <label class="form-label">Note</label>
-        <input class="inp" id="epNote" type="text" placeholder="es. da Vender Legnami">
+        <input class="inp" id="epNote" type="text" placeholder="es. da Rossi Legnami">
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:4px;">
