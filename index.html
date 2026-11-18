@@ -35,6 +35,7 @@
 /* ===== TEMA — scuro navy saturo (predefinito, come prima) e chiaro ===== */
 :root{
   color-scheme:dark;
+  /* Scuro: tornati i colori di prima (Fil li preferisce). Provato e scartato "scuro morbido": bg #0f1520 s1 #151c2a s2 #1a2335 s3 #222d44 b1 #28354e b2 #34445f green #5ed4a8 green2 #3fbf92 green-t #8fe6c6 amber #f2a05f red #f08a8a red-t #f5aaaa blue #7db4f0 blue-t #9cc6f5 gold #e8c060 t1 #e6ebf5 t2 #bcc8e0 t3 #97a7c8 t4 #5a6b8c; rgb: green 94,212,168 amber 242,160,95 red 240,138,138 blue 125,180,240 gold 232,192,96 (theme-color e applyTheme #0f1520) */
   --bg:#0b0f16; --s1:#111720; --s2:#171f2e; --s3:#1e2840;
   --b1:#243048; --b2:#2e3d5c;
   --green:#34d399; --green2:#10b981; --green-t:#86efac;
@@ -46,6 +47,7 @@
   --on-accent:#0b0f16;
   --hd1:#0d1520; --hd2:#111c2e; --hd3:#0d1a28;
   --green-rgb:52,211,153; --amber-rgb:251,146,60; --red-rgb:248,113,113; --blue-rgb:96,165,250; --gold-rgb:251,191,36;
+  --c1:#e8b84a; --c2:#a99bf5; --c3:#4cc9e0; --c4:#f08cb8; --c5:#a8d35a; --c6:#f59e5b; --c7:#c8b9a0; --c8:#8fd0c8;
   --ink-rgb:255,255,255; --shade-rgb:0,0,0; --panel-rgb:10,18,32; --pill-rgb:36,48,72;
   --gdim:rgba(var(--green-rgb),.10);
   --amberdim:rgba(var(--amber-rgb),.14); --ambersolid:rgba(var(--amber-rgb),.22);
@@ -65,6 +67,7 @@
   --on-accent:#ffffff;
   --hd1:#eceff3; --hd2:#f4f5f8; --hd3:#eceff3;
   --green-rgb:4,108,73; --amber-rgb:136,59,7; --red-rgb:184,35,30; --blue-rgb:24,90,191; --gold-rgb:129,87,3;
+  --c1:#8a5d00; --c2:#5b46c4; --c3:#0a6f8a; --c4:#a82b63; --c5:#47730c; --c6:#a8480a; --c7:#6b5b3e; --c8:#1f6b60;
   --ink-rgb:34,41,54; --shade-rgb:40,50,70; --panel-rgb:237,239,243; --pill-rgb:221,225,232;
 }
 html{background:var(--bg);}
@@ -1623,6 +1626,85 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
   .mg-r .mg-p{grid-column:2;text-align:left;}
   .mg-helpbtn{width:40px;height:40px;}
 }
+
+/* ===== SCHEDA TRATTA v2 — bordo luminoso, percorso a linea, colore per leggere subito (nov 2026) ===== */
+.h-logo{width:38px;height:38px;min-width:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:0;background:linear-gradient(145deg,rgba(var(--green-rgb),.22),rgba(var(--blue-rgb),.16));border:1px solid rgba(var(--green-rgb),.35);color:var(--green);}
+.h-logo svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.h-sub{text-transform:none;letter-spacing:.02em;font-size:12.5px;font-weight:600;white-space:nowrap;}
+:root{--cf1:#34466c;--cf2:#26334f;--cfb:#4b6393;}
+:root[data-theme="light"]{--cf1:#c9d2e4;--cf2:#b8c3da;--cfb:#9aa9c6;}
+.rrow.rr2{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--cf1),var(--cf2));border:1px solid var(--cfb);padding:7px;border-radius:26px;box-shadow:0 16px 30px -14px rgba(var(--shade-rgb),.9);margin-bottom:18px;letter-spacing:.012em;line-height:1.4;transform:none;}
+.rrow.rr2:hover{transform:none;border-color:var(--cfb);box-shadow:0 16px 30px -14px rgba(var(--shade-rgb),.9);}
+.rrow.rr2:active{transform:scale(.992);}
+:root[data-theme="light"] .rrow.rr2,:root[data-theme="light"] .rrow.rr2:hover{box-shadow:0 10px 22px -14px rgba(var(--shade-rgb),.45);}
+.rrow.rr2>.in{position:relative;background:linear-gradient(180deg,var(--s1),var(--bg) 170px);border-radius:19px;overflow:hidden;border:1px solid rgba(0,0,0,.35);}
+:root[data-theme="light"] .rrow.rr2>.in{background:var(--s1);border-color:rgba(var(--shade-rgb),.18);}
+.rrow.rr2>.in::before{content:'';position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--blue),var(--green));opacity:.9;z-index:2;}
+.rrow.rr2 .rrow-head{align-items:center;padding:24px 14px 16px;gap:10px;}
+.rrow.rr2 .rrow-route{position:relative;padding-left:26px;}
+.rrow.rr2 .rrow-route::before{content:'';position:absolute;left:5px;top:17px;bottom:15px;width:2px;border-radius:2px;background:linear-gradient(180deg,var(--blue),var(--green));opacity:.75;}
+.rrow.rr2 .rrow-route::after{content:'';position:absolute;left:0;top:5px;width:12px;height:12px;border-radius:50%;border:2.5px solid var(--blue);background:var(--s1);box-sizing:border-box;}
+.rrow.rr2 .rrow-from{font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--t1);}
+.rrow.rr2 .rrow-to-line{margin-top:9px;position:relative;}
+.rrow.rr2 .rrow-to-line::before{content:'';position:absolute;left:-26px;top:50%;margin-top:-6px;width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(var(--green-rgb),.18);}
+.rrow.rr2 .rrow-arrow{display:none;}
+.rrow.rr2 .rrow-to{font-size:17.5px;font-weight:700;color:var(--green);}
+.rrow.rr2 .rrow-best{display:flex;flex-direction:column;align-items:flex-end;text-align:right;}
+.rrow.rr2 .rrow-best-price{order:0;background:none;border:0;padding:0;font-size:38px;font-weight:700;letter-spacing:-.03em;color:var(--green);font-variant-numeric:tabular-nums;line-height:1;display:block;}
+.rrow.rr2 .cur{font-size:.5em;margin-left:3px;vertical-align:.55em;letter-spacing:0;}
+.rrow.rr2 .rrow-best-unit{display:none;}
+.rrow.rr2 .rrow-best-who{order:2;font-size:14px;letter-spacing:.03em;font-weight:700;margin-top:6px;}
+.rrow.rr2 .chips{position:relative;display:block;border-top:2px dotted var(--b2);padding:4px 0 0;}
+.rrow.rr2 .chips::before,.rrow.rr2 .chips::after{content:'';position:absolute;top:-10px;width:18px;height:18px;border-radius:50%;background:var(--cf2);border:2px solid var(--cfb);z-index:1;box-sizing:border-box;}
+.rrow.rr2 .chips::before{left:-11px;}
+.rrow.rr2 .chips::after{right:-11px;}
+.rrow.rr2 .chip{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;background:none;margin:0;padding:17px 16px;border-radius:0;border:0;border-bottom:1px solid rgba(var(--ink-rgb),.07);position:relative;}
+.rrow.rr2 .chip:last-child{border-bottom:0;}
+.rrow.rr2 .chip:active{transform:none;background:rgba(var(--ink-rgb),.05);}
+.rrow.rr2 .chip.best{background:linear-gradient(90deg,rgba(var(--green-rgb),.07),rgba(var(--green-rgb),0) 70%);padding-left:16px;}
+.rrow.rr2 .chip.best::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,transparent 0%,var(--green) 30%,var(--green) 70%,transparent 100%);opacity:.9;box-shadow:0 0 18px 3px rgba(var(--green-rgb),.35);}
+.rrow.rr2 .chip-left{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:10px;row-gap:4px;}
+.rrow.rr2 .chip-who,.rrow.rr2 .chip-note{flex:0 0 100%;}
+.rrow.rr2 .chip-who{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:700;color:var(--t1);white-space:normal;overflow:visible;min-width:0;}
+.rrow.rr2 .chip-who::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--cc,var(--t3));flex-shrink:0;box-shadow:0 0 0 3px color-mix(in srgb,var(--cc,#888) 24%,transparent);}
+.rrow.rr2 .chip.best .chip-who{color:var(--t1);}
+.rrow.rr2 .chip.best .chip-who::after{content:'migliore';margin-left:4px;font-size:12.5px;font-weight:700;color:var(--green);border:1px solid rgba(var(--green-rgb),.5);border-radius:20px;padding:1px 9px;}
+.rrow.rr2 .chip-cond{margin:0;padding:0;font-size:15px;font-weight:600;color:var(--t2);}
+.rrow.rr2 .pay{display:inline-block;font-size:13px;font-weight:700;padding:1px 8px;border-radius:20px;margin-right:7px;letter-spacing:.02em;vertical-align:1px;}
+.rrow.rr2 .pay-bb{color:var(--blue-t);background:rgba(var(--blue-rgb),.16);}
+.rrow.rr2 .pay-riba{color:var(--gold);background:rgba(var(--gold-rgb),.16);}
+.rrow.rr2 .chip-date{display:block;background:none;border:0;padding:0;margin:0 0 0 4px;font-size:14px;font-weight:600;letter-spacing:0;color:var(--t3);}
+.rrow.rr2 .chip-note{margin:2px 0 0;padding:0;font-size:14.5px;font-weight:600;font-style:normal;color:var(--amber);opacity:1;}
+.rrow.rr2 .chip-fuel{display:inline-flex;flex:0 0 auto;align-self:flex-start;font-size:14px;font-weight:700;color:var(--amber);background:rgba(var(--amber-rgb),.12);border:1px solid rgba(var(--amber-rgb),.3);border-radius:10px;padding:3px 10px;margin-top:2px;}
+.rrow.rr2 .chip-right{text-align:right;flex-shrink:0;}
+.rrow.rr2 .chip-val{display:block;font-size:24px;font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums;letter-spacing:-.01em;line-height:1.2;}
+.rrow.rr2 .chip.best .chip-val{color:var(--green);}
+.rrow.rr2 .chip-unit{display:flex;justify-content:flex-end;align-items:center;gap:7px;font-size:13.5px;font-weight:600;color:var(--t3);margin-top:2px;}
+.rrow.rr2 .chip.best .chip-unit{color:var(--t3);}
+.rrow.rr2 .dlt{font-weight:700;border-radius:20px;padding:1px 8px;font-size:13.5px;}
+.rrow.rr2 .dlt.m{color:var(--gold);background:rgba(var(--gold-rgb),.14);}
+.rrow.rr2 .dlt.h{color:var(--red);background:rgba(var(--red-rgb),.14);}
+.rrow.rr2 .rrow-acts{display:flex;padding:6px 16px 18px;gap:10px;justify-content:flex-start;}
+.rrow.rr2 .act{display:flex;align-items:center;gap:8px;background:rgba(var(--ink-rgb),.04);border:1.5px solid var(--b2);border-radius:20px;padding:12px 19px;color:var(--t2);font-size:15px;font-weight:700;}
+.rrow.rr2 .act svg{flex-shrink:0;}
+.rrow.rr2 .act-share{color:var(--blue-t);}
+.rrow.rr2 .act-edit{color:var(--green);border-color:rgba(var(--green-rgb),.45);background:rgba(var(--green-rgb),.07);}
+.rrow.rr2 .rrow-from,.rrow.rr2 .rrow-to,.rrow.rr2 .chip-note,.rrow.rr2 .chip-cond{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;}
+.rrow.rr2 .rrow-from,.rrow.rr2 .rrow-to{line-height:1.2;}
+@media(max-width:380px){.h-sub{font-size:11.5px;letter-spacing:0;}}
+:root[data-theme="light"] .rrow.rr2 .pay-bb{background:rgba(var(--blue-rgb),.10);}
+:root[data-theme="light"] .rrow.rr2 .pay-riba,:root[data-theme="light"] .rrow.rr2 .dlt.m{background:rgba(var(--gold-rgb),.09);}
+:root[data-theme="light"] .rrow.rr2 .dlt.h{background:rgba(var(--red-rgb),.08);}
+@media(max-width:340px){
+  .rrow.rr2 .rrow-best-price{font-size:32px;}
+  .rrow.rr2 .rrow-head{padding:22px 12px 14px;}
+  .rrow.rr2 .rrow-from{font-size:17.5px;}
+  .rrow.rr2 .chip{padding:15px 12px;}
+  .rrow.rr2 .chip.best{padding-left:12px;}
+  .rrow.rr2 .chip-val{font-size:22px;}
+  .rrow.rr2 .rrow-acts{padding:6px 12px 16px;gap:8px;}
+  .rrow.rr2 .act{padding:11px 14px;font-size:14px;}
+}
 </style>
 </head>
 <body>
@@ -1655,10 +1737,10 @@ button.imp-stat[disabled]{cursor:default;opacity:.6;pointer-events:none;}
 
 
 <div class="header">
-  <div class="h-logo">🚛</div>
+  <div class="h-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></div>
   <div class="h-text">
     <div class="h-title">TARIFFE</div>
-    <div class="h-sub">Trasporti &amp; Prodotti <span class="h-ver" style="opacity:.45;font-size:12px;letter-spacing:.05em;">v1.0.0</span></div>
+    <div class="h-sub">Trasporti &amp; Prodotti</div>
   </div>
   <div class="h-badge" id="headerBadge">0 tratte</div>
   <button class="h-theme" id="themeBtn" type="button" onclick="cycleTheme()" aria-label="Cambia tema" title="Cambia tema">
@@ -2628,7 +2710,7 @@ function init() {
 
   // Imposta data oggi nel form prodotti
   var _mpData = document.getElementById('mpData');
-  if (_mpData) _mpData.value = new Date().toISOString().split('T')[0];
+  if (_mpData) _mpData.value = impToday();
   var _mpTipo = document.getElementById('mpTipo');
   if (_mpTipo) _mpTipo.addEventListener('change', function() {
     document.getElementById('mpEntityLabel').textContent =
@@ -3275,8 +3357,10 @@ function impProtect(list, refDate) {
 // Data di riferimento = quella nel campo "Data delle tariffe" (altrimenti REV del file, altrimenti oggi)
 function impRefDate() {
   var f = _el('impData'), v = f ? String(f.value || '') : '';
-  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
-  return (_impPlan && _impPlan.revData) || impToday();
+  var rd = (_impPlan && _impPlan.revData) || '';
+  // le tariffe più recenti del FILE restano protette anche se la data scritta sulle tariffe è oggi: vale la più vecchia delle due
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return (rd && rd < v) ? rd : v;
+  return rd || impToday();
 }
 // Confronto con l'archivio di adesso (si rifà anche al momento di importare)
 function impClassify(items, refDate) {
@@ -3489,7 +3573,7 @@ function impShow() {
   var f = _el('impFile');
   if (f) f.textContent = p.filename + (p.sheet ? ' · foglio "' + p.sheet + '"' : '') + ' · ' + p.carriers.length + ' trasportatori · ' + p.items.length + ' prezzi letti';
   var d = _el('impData');
-  if (d) d.value = p.revData || impToday();
+  if (d) d.value = impToday();                 // di partenza la data di oggi; si cambia a mano se serve
   impRender();
   var m = _el('modalImport');
   if (m) { m.classList.remove('hidden'); var box = m.querySelector ? m.querySelector('.modal') : null; if (box) box.scrollTop = 0; }
@@ -4415,7 +4499,7 @@ function openAddTariffaModal() {
   document.getElementById('mtPrice').value = '';
   document.getElementById('mtUnit').value = '€/vg';
   document.getElementById('mtProvisional').checked = false;
-  var mtD = document.getElementById('mtData'); if (mtD) mtD.value = '';
+  var mtD = document.getElementById('mtData'); if (mtD) mtD.value = impToday();
   var mtN = document.getElementById('mtNote'); if (mtN) mtN.value = '';
   document.getElementById('modalTariffa').classList.remove('hidden');
 }
@@ -4608,7 +4692,7 @@ function openAddProdottoModal(prodotto) {
   var mpL = document.getElementById('mpLuogo');    if(mpL) mpL.value = '';
   var mpPr= document.getElementById('mpPrezzo');   if(mpPr) mpPr.value = '';
   var mpN = document.getElementById('mpNote');     if(mpN) mpN.value = '';
-  var mpD = document.getElementById('mpData');     if(mpD) mpD.value = new Date().toISOString().split('T')[0];
+  var mpD = document.getElementById('mpData');     if(mpD) mpD.value = impToday();
   // Reset radio a Acquisto
   var radios = document.querySelectorAll('input[name="mpTipoR"]');
   radios.forEach(function(r){ r.checked = r.value === 'acquisto'; });
@@ -7744,6 +7828,43 @@ var _driveUnsynced = false;   // ci sono modifiche che NON sono arrivate su Driv
 
 
 
+
+// ── scheda tratta v2: aiuti ──
+var ICO_SHARE = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>';
+var ICO_EDIT = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+// un colore per ogni trasportatore: in ordine alfabetico fra tutti quelli che hai, così due trasportatori non hanno lo stesso colore (fino a 8)
+function carrierColorMap() {
+  var seen = {}, list = [], i, k;
+  for (i = 0; i < DB.trasporti.length; i++) {
+    k = String(DB.trasporti[i].carrier || '').trim().toLowerCase();
+    if (k && !seen[k]) { seen[k] = 1; list.push(k); }
+  }
+  list.sort();
+  var map = {};
+  for (i = 0; i < list.length; i++) map[list[i]] = 'var(--c' + ((i % 8) + 1) + ')';
+  return map;
+}
+// "BB 90 gg FM": la sigla del pagamento diventa una pastiglia colorata (BB blu, RIBA giallo); altre diciture restano testo
+function payTagHtml(cond) {
+  var t = String(cond || '').trim();
+  var m = /^(\S+)\s*(.*)$/.exec(t);
+  if (!m) return esc(t);
+  var k = m[1].toLowerCase().replace(/\./g, '');
+  var cls = (k === 'bb' || k === 'bonifico') ? 'pay-bb' : ((k === 'riba' || k === 'rb') ? 'pay-riba' : '');
+  if (!cls) return esc(t);
+  return '<b class="pay ' + cls + '">' + esc(m[1]) + '</b>' + esc(m[2]);
+}
+// nota "+ PERCENTUALE GASOLIO 3%": con il numero scritto, prezzo + percentuale; senza numero non si calcola nulla
+function fuelFinalText(p) {
+  var n = String(p.note || '');
+  if (!/gasolio|carburante/i.test(n)) return '';
+  var m = /(\d+(?:[.,]\d+)?)\s*%/.exec(n);
+  if (!m) return '';
+  var pct = parseFloat(m[1].replace(',', '.'));
+  if (!(pct > 0 && pct < 100)) return '';
+  var f = Math.round(Number(p.price) * (1 + pct / 100) * 100) / 100;
+  return f.toLocaleString('it-IT', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' €';
+}
 var _renderRapidaPremium = function(routes, filterCarrier) {
   var container = document.getElementById('resultsContainer');
   if (!container) return;
@@ -7766,6 +7887,7 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
   }
   var html = '';
   var totPrezzi = 0;
+  var cmap = carrierColorMap();
   routes.forEach(function(route) {
     var prices = route.prices;
     if (filterCarrier) prices = prices.filter(function(p) { return p.carrier === filterCarrier; });
@@ -7782,26 +7904,32 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
     var bestHtml = '';
     if (best) {
       var ab = abbrev(best.carrier);
-      bestHtml = '<div class="rrow-best"><div class="rrow-best-who">' + ab + '</div>' +
-        '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT', {minimumFractionDigits:0}) + '€</div>' +
+      bestHtml = '<div class="rrow-best"><div class="rrow-best-who" style="color:' + (cmap[String(best.carrier || '').trim().toLowerCase()] || 'var(--t3)') + '">' + ab + '</div>' +
+        '<div class="rrow-best-price">' + best.price.toLocaleString('it-IT', {minimumFractionDigits:0}) + '<span class="cur">€</span></div>' +
         '<div class="rrow-best-unit">' + best.unit + '</div></div>';
     }
     var chipsHtml = '';
+    var minBy = {};
+    allSorted.forEach(function(q) { if (minBy[q.unit] === undefined || q.price < minBy[q.unit]) minBy[q.unit] = q.price; });
     allSorted.forEach(function(p) {
       var isBest = best && p.carrier === best.carrier && p.unit === '€/vg';
       var prov = p.provisional ? '<div class="chip-prov">da conf.</div>' : '';
       var _gIdx = DB.trasporti.indexOf(p);
       if (_gIdx < 0) { for (var _di=0;_di<DB.trasporti.length;_di++){var _t=DB.trasporti[_di];if(_t.from===p.from&&_t.to===p.to&&_t.carrier===p.carrier&&_t.price===p.price){_gIdx=_di;break;}}}
-      chipsHtml += '<div class="chip' + (isBest ? ' best' : '') + '" onclick="event.stopPropagation();openEditSingle(' + _gIdx + ')">' +
+      var dlt = '', diff = p.price - minBy[p.unit];
+      if (diff > 0.0001) dlt = '<span class="dlt ' + (diff / minBy[p.unit] > 0.12 ? 'h' : 'm') + '">+' + diff.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + ' €</span>';
+      var fuel = fuelFinalText(p);
+      chipsHtml += '<div class="chip' + (isBest ? ' best' : '') + '" style="--cc:' + (cmap[String(p.carrier || '').trim().toLowerCase()] || 'var(--t3)') + '" onclick="event.stopPropagation();openEditSingle(' + _gIdx + ')">' +
         '<div class="chip-left">' +
           '<div class="chip-who">' + esc(p.carrier) + '</div>' +
-          (p.conditions ? '<div class="chip-cond">' + esc(p.conditions) + '</div>' : '') +
-          (p.data ? '<div class="chip-date"><span style="width:5px;height:5px;border-radius:50%;background:var(--t4);flex-shrink:0;display:inline-block;"></span>tariffa del ' + formatData(p.data) + '</div>' : '') +
-          (p.note ? '<div class="chip-note">📝 ' + esc(p.note) + '</div>' : '') +
+          (p.conditions ? '<div class="chip-cond">' + payTagHtml(p.conditions) + '</div>' : '') +
+          (p.data ? '<div class="chip-date" aria-label="tariffa del ' + esc(formatData(p.data)) + '">' + esc(formatData(p.data)) + '</div>' : '') +
+          (p.note ? '<div class="chip-note">' + esc(p.note) + '</div>' : '') +
+          (fuel ? '<div class="chip-fuel">con gasolio ' + fuel + '</div>' : '') +
         '</div>' +
         '<div class="chip-right">' +
           '<span class="chip-val">' + p.price.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:2}) + '</span>' +
-          '<span class="chip-unit">' + p.unit + '</span>' +
+          '<span class="chip-unit">' + esc(p.unit) + dlt + '</span>' +
         '</div>' +
         (p.provisional ? '<div class="chip-prov">⚠️ da conf.</div>' : '') +
       '</div>';
@@ -7810,7 +7938,8 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
     var safeKey = esc(key);
     var sf = jq(route.from);
     var st = jq(route.to);
-    html += '<div class="rrow" onclick="jumpToConfronto(this)" data-key="' + safeKey + '" style="border-left-color:' + fromColor(route.from) + ';">' +
+    html += '<div class="rrow rr2" onclick="jumpToConfronto(this)" data-key="' + safeKey + '">' +
+      '<div class="in">' +
       '<div class="rrow-head">' +
         '<div class="rrow-route">' +
           '<div class="rrow-from">' + esc(route.from) + '</div>' +
@@ -7819,9 +7948,9 @@ var _renderRapidaPremium = function(routes, filterCarrier) {
       '</div>' +
       '<div class="chips">' + chipsHtml + '</div>' +
       '<div class="rrow-acts">' +
-        '<button class="act act-share" onclick="event.stopPropagation();openShareTratta(\'' + sf + '\',\'' + st + '\')">📤 Condividi</button>' +
-        '<button class="act act-edit" onclick="event.stopPropagation();openEditTratta(\'' + sf + '\',\'' + st + '\')">✏️ Modifica tratta</button>' +
-      '</div></div>';
+        '<button class="act act-share" aria-label="Condividi la tratta" onclick="event.stopPropagation();openShareTratta(\'' + sf + '\',\'' + st + '\')">' + ICO_SHARE + '<span>Condividi</span></button>' +
+        '<button class="act act-edit" aria-label="Modifica la tratta" onclick="event.stopPropagation();openEditTratta(\'' + sf + '\',\'' + st + '\')">' + ICO_EDIT + '<span>Modifica</span></button>' +
+      '</div></div></div>';
   });
   var _hdr = '<div style="font-size:13.5px;color:var(--t2);margin-bottom:8px;">' + routes.length + ' tratt' + (routes.length === 1 ? 'a' : 'e') +
     ' · ' + totPrezzi + ' prezz' + (totPrezzi === 1 ? 'o' : 'i') + '</div>';
